@@ -1,0 +1,28 @@
+Day-24
+-------------
+Data Driven testing
+------------------
+
+openpyxl - we can work with excel files ( .xlsx) 
+
+
+1) Read data from excel
+2) How to write data into excel
+
+3) data driven test case
+
+
+File-->Workbook--->Sheets-->Rows-->Cells
+
+
+reading
+data=sheet.cell(r,c).value
+
+writing
+sheet.cell(r,c).value="welcome"
+
+
+
+Assingment
+----------
+https://www.cit.com/cit-bank/resources/calculators/certificate-of-deposit-calculator/
