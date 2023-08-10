@@ -63,3 +63,74 @@ Make sure to replace `https://your-sharepoint-site-url/sites/your-site`, `your-u
 
 This example demonstrates how to connect to a SharePoint site, authenticate, and list files in a document library. You can further extend the code to perform other actions like uploading files, creating folders, updating items, etc., using the `shareplum` library.
 
+
+
+
+
+
+
+connecting with SharePoint using selenium
+
+
+Certainly! Since you're using Selenium to interact with SharePoint and want to create a SharePoint list using the data from a DataFrame, I'll provide you with a code example to achieve this. Here's a step-by-step guide and sample code:
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import pandas as pd
+import time
+
+# Create a DataFrame with sample data
+data = {
+    'Serial Number': [1, 2, 3],
+    'Name': ['John', 'Jane', 'Michael'],
+    'Employee Name': ['John Doe', 'Jane Smith', 'Michael Johnson'],
+    'KAD': ['12345', '67890', '54321']
+}
+df = pd.DataFrame(data)
+
+# Start Selenium WebDriver (adjust the path to your ChromeDriver executable)
+driver = webdriver.Chrome(executable_path='path/to/chromedriver')
+
+# Navigate to the SharePoint list creation page
+driver.get('https://your-sharepoint-site-url/_layouts/15/start.aspx#/Lists/')
+
+# Wait for the page to load
+time.sleep(5)
+
+# Find and click the "New" button to create a new item
+new_button = driver.find_element_by_id('idHomePageNewItem')
+new_button.click()
+
+# Wait for the new item form to load
+time.sleep(3)
+
+# Fill in the form fields using DataFrame data
+serial_number_field = driver.find_element_by_id('YourSerialNumberFieldId')
+serial_number_field.send_keys(str(df.loc[0, 'Serial Number']))
+
+name_field = driver.find_element_by_id('YourNameFieldId')
+name_field.send_keys(df.loc[0, 'Name'])
+
+employee_name_field = driver.find_element_by_id('YourEmployeeNameFieldId')
+employee_name_field.send_keys(df.loc[0, 'Employee Name'])
+
+kad_field = driver.find_element_by_id('YourKADFieldId')
+kad_field.send_keys(df.loc[0, 'KAD'])
+
+# Submit the form
+submit_button = driver.find_element_by_id('YourSubmitButtonId')
+submit_button.click()
+
+# Wait for the item to be added
+time.sleep(3)
+
+# Repeat the above steps for each row in the DataFrame
+
+# Close the WebDriver
+driver.quit()
+```
+
+In this code, replace `'path/to/chromedriver'` with the actual path to your ChromeDriver executable, and replace `'https://your-sharepoint-site-url'` with your SharePoint site URL. Adjust the field IDs and element locators (`find_element_by_id`) according to your SharePoint list form.
+
+Please note that using Selenium to interact with SharePoint involves navigating the user interface, filling out forms, and clicking buttons, which can be slower and less reliable than using direct API methods. If you can resolve the SSL error, it would be more efficient and robust to use REST API for SharePoint list operations.
