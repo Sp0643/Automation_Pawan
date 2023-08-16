@@ -1,4 +1,4 @@
-ki#Implicit wait  -
+openpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -177,3 +177,57 @@ In this example, the `--headless` argument is added to the Edge options to enabl
 Remember to replace the placeholder website ("https://www.example.com") with the URL of the website you want to test.
 
 Please ensure you have the required Edge WebDriver and Edge browser versions that are compatible with each other.
+
+
+
+
+Certainly! Below is an example code that demonstrates how to convert a pandas DataFrame to an Excel file, then open that Excel file using the `openpyxl` library, copy the data from one worksheet, and paste it into another worksheet within the same Excel file.
+
+Before running the code, make sure to install the required libraries by using the following commands:
+
+```bash
+pip install pandas openpyxl
+```
+
+Here's the code:
+
+```python
+import pandas as pd
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+
+# Dummy data frame
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 28],
+    'City': ['New York', 'Los Angeles', 'Chicago']
+}
+
+df = pd.DataFrame(data)
+
+# Convert DataFrame to Excel file
+excel_filename = "data_frame.xlsx"
+df.to_excel(excel_filename, index=False)
+
+# Load the Excel file
+workbook = load_workbook(excel_filename)
+
+# Get the active worksheet (change "Sheet1" to the actual sheet name)
+source_sheet = workbook['Sheet1']
+
+# Create a new worksheet for pasting (change "PastedData" to your desired sheet name)
+target_sheet = workbook.create_sheet("PastedData")
+
+# Copy data from the source sheet to the target sheet
+for row in dataframe_to_rows(df, index=False, header=True):
+    target_sheet.append(row)
+
+# Save the changes
+workbook.save(excel_filename)
+
+print("Data copied and pasted in Excel.")
+```
+
+This code snippet will create an Excel file named "data_frame.xlsx" in the same directory where you run the script. It will then copy the data from the original worksheet (named "Sheet1" by default) and paste it into a new worksheet named "PastedData". You can adjust the sheet names and other parameters as needed to match your requirements.
+
+Keep in mind that this code assumes a basic DataFrame-to-Excel conversion and copying process. Depending on your specific use case, you may need to handle formatting, merging cells, or other Excel-related tasks.
