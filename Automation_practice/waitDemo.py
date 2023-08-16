@@ -1,4 +1,4 @@
-#Implicit wait  -
+ki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -134,3 +134,46 @@ driver.quit()
 In this code, replace `'path/to/chromedriver'` with the actual path to your ChromeDriver executable, and replace `'https://your-sharepoint-site-url'` with your SharePoint site URL. Adjust the field IDs and element locators (`find_element_by_id`) according to your SharePoint list form.
 
 Please note that using Selenium to interact with SharePoint involves navigating the user interface, filling out forms, and clicking buttons, which can be slower and less reliable than using direct API methods. If you can resolve the SSL error, it would be more efficient and robust to use REST API for SharePoint list operations.
+
+
+
+
+
+Certainly! Here's an example code that demonstrates how to perform headless browser testing using Selenium with the Microsoft Edge browser in Python:
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.edge.options import Options
+
+# Set up Edge options for headless execution
+edge_options = Options()
+edge_options.add_argument("--headless")
+
+# Create a new Edge WebDriver instance with headless options
+driver = webdriver.Edge(options=edge_options)  # Make sure you have the appropriate Edge driver installed
+
+# Navigate to a website and interact with elements
+driver.get("https://www.example.com")
+print("Title:", driver.title)
+
+search_box = driver.find_element_by_name("q")
+search_box.send_keys("Selenium headless testing")
+search_box.send_keys(Keys.RETURN)
+
+results = driver.find_elements_by_css_selector("h3")
+print("Search results:")
+for result in results:
+    print("-", result.text)
+
+# Close the browser
+driver.quit()
+```
+
+Before running the code, you'll need to make sure you have the Microsoft Edge WebDriver (also known as Microsoft Edge Driver) installed and available in your system's PATH. You can download the appropriate Edge WebDriver for your version of Edge from the official Microsoft Edge WebDriver downloads page: https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/
+
+In this example, the `--headless` argument is added to the Edge options to enable headless mode. This means the browser will run in the background without a visible user interface. You can adjust the code to navigate to any website you want to test and interact with elements as needed.
+
+Remember to replace the placeholder website ("https://www.example.com") with the URL of the website you want to test.
+
+Please ensure you have the required Edge WebDriver and Edge browser versions that are compatible with each other.
