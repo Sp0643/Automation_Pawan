@@ -305,3 +305,101 @@ else:
 Replace `"path_to_folder"` and `"your_file.xlsx"` with the actual folder path and file name you're working with. You can place this code at the beginning of the script that the second person will run. If the file exists, you can proceed with your tasks. If not, you can handle the situation accordingly.
 
 Remember to adjust the "further tasks" and the "handle the situation" parts of the code based on your specific requirements.
+
+
+Certainly! Here's a simple code snippet using the `openpyxl` library to open an Excel file and check if it has data:
+
+```python
+import openpyxl
+
+def check_excel_file(file_path):
+    try:
+        # Load the Excel workbook
+        workbook = openpyxl.load_workbook(file_path)
+        sheet = workbook.active
+        
+        # Check if there are any values in the sheet
+        has_data = any(sheet.iter_rows(values_only=True))
+        
+        if has_data:
+            print("The Excel file has data.")
+        else:
+            print("The Excel file does not have data.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+# Replace with the actual path to your Excel file
+file_path = "path_to_your_excel_file.xlsx"
+check_excel_file(file_path)
+```
+
+Make sure to replace `"path_to_your_excel_file.xlsx"` with the actual path to your Excel file. This code uses the `openpyxl` library to load the workbook and iterates over rows to check if there are any values present. If there are values, it prints that the file has data; otherwise, it prints that the file does not have data.
+
+You can install the `openpyxl` library using `pip` if you haven't already:
+
+```
+pip install openpyxl
+
+
+
+
+```
+
+
+
+
+
+Of course! Here's a Python code snippet that demonstrates how to open an Excel file, check if it has data, and send an email based on your description:
+
+```python
+import pandas as pd
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Replace these values with your actual email and password
+sender_email = "your_email@gmail.com"
+sender_password = "your_password"
+receiver_email = "receiver_email@example.com"
+
+# Load the Excel file using pandas
+file_path = "path_to_your_excel_file.xlsx"
+df = pd.read_excel(file_path)
+
+# Check if the DataFrame has data
+if not df.empty:
+    num_rows = len(df)
+    message = f"The file has data with {num_rows} rows."
+else:
+    message = "The file does not have any data."
+
+# Set up the email server and message
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+subject = "Excel File Data Status"
+msg = MIMEMultipart()
+msg['From'] = sender_email
+msg['To'] = receiver_email
+msg['Subject'] = subject
+msg.attach(MIMEText(message, 'plain'))
+
+# Send the email
+try:
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(sender_email, sender_password)
+    server.sendmail(sender_email, receiver_email, msg.as_string())
+    print("Email sent successfully!")
+except Exception as e:
+    print("Error sending email:", e)
+finally:
+    server.quit()
+```
+
+Remember to replace `"your_email@gmail.com"`, `"your_password"`, `"receiver_email@example.com"`, and `"path_to_your_excel_file.xlsx"` with appropriate values. Also, you might need to enable "Less Secure Apps" in your Gmail settings if you're using a Gmail account for sending emails.
+
+Keep in mind that this code uses the `pandas` library to handle Excel files and the `smtplib` library to send emails. You might need to install these libraries using `pip` if you haven't already:
+
+```
+pip install pandas
+```
