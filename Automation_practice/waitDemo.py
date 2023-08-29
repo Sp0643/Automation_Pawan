@@ -280,3 +280,28 @@ driver.quit()
 In this example, you'll need to replace `"data.xlsx"` with the actual name of your Excel file and `"your-target-selector"` with the appropriate CSS selector for the target element on the webpage.
 
 Please note that the exact implementation may vary depending on the structure of the web page you're working with. Additionally, using a library like `openpyxl` to directly manipulate data from the Excel file is generally more reliable and efficient for extracting data than simulating keyboard shortcuts for copying data.
+
+
+
+Certainly! To accomplish this, you can use the `os` module in Python to check if a file exists in a specific folder. Here's a code snippet that demonstrates how to check if a file exists before running further tasks:
+
+```python
+import os
+
+# Specify the folder path and the file name
+folder_path = "path_to_folder"
+file_name = "your_file.xlsx"
+file_path = os.path.join(folder_path, file_name)
+
+# Check if the file exists
+if os.path.exists(file_path):
+    print("The file exists. You can proceed with further tasks.")
+    # Add your code to run tasks with the existing file here
+else:
+    print("The file does not exist. Please wait for the first user to upload it.")
+    # Add your code to handle the situation when the file is not uploaded yet
+```
+
+Replace `"path_to_folder"` and `"your_file.xlsx"` with the actual folder path and file name you're working with. You can place this code at the beginning of the script that the second person will run. If the file exists, you can proceed with your tasks. If not, you can handle the situation accordingly.
+
+Remember to adjust the "further tasks" and the "handle the situation" parts of the code based on your specific requirements.
