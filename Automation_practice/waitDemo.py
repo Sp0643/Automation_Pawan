@@ -583,3 +583,67 @@ This code snippet does the following:
 4. Finally, it prints the last date of the previous month in the "YYYY-MM-DD" format.
 
 This code will give you the last date of the previous month regardless of the current date.
+
+
+
+
+
+
+To handle situations where some characters do not have data and there is no export button available, you can use a try-except block to catch exceptions and continue the loop. Here's an example of how to modify your code to handle this scenario:
+
+```python
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+import time
+
+def download_character_data(character_names):
+    # Initialize the Selenium WebDriver (you may need to specify the path to your webdriver)
+    driver = webdriver.Chrome()
+
+    # URL of the page you want to navigate to
+    url = "https://example.com"  # Replace with the actual URL
+
+    # Iterate through each character
+    for character in character_names:
+        try:
+            # Navigate to the URL
+            driver.get(url)
+
+            # Find and fill out the form with character's name (replace with your form fields)
+            name_input = driver.find_element_by_id("character_name_input_id")
+            name_input.clear()
+            name_input.send_keys(character)
+            name_input.send_keys(Keys.RETURN)
+
+            # Wait for the data to load (you may need to adjust the wait time)
+            time.sleep(5)  # Adjust the wait time as needed
+
+            # Code to download the data (replace with your download logic)
+            # For example, locate and click the export button
+            export_button = driver.find_element_by_id("export_button_id")
+            export_button.click()
+
+            # Wait for the download to complete (you may need to adjust the wait time)
+            time.sleep(10)  # Adjust the wait time as needed
+
+        except NoSuchElementException:
+            # If the export button is not found, character has no data, continue to the next character
+            print(f"No data found for {character}. Skipping...")
+
+    # Close the WebDriver when done
+    driver.quit()
+
+# Example usage:
+character_names = ["Character A", "Character B", "Character C", "Character D", "Character E"]
+download_character_data(character_names)
+```
+
+In this modified code:
+
+1. We wrap the code for navigating, filling out the form, and downloading data in a try-except block.
+
+2. If the export button is not found (indicated by the `NoSuchElementException`), it means there is no data for the current character, and we print a message and continue to the next character.
+
+3. This way, if a character has no data or no export button, the script will not break but will proceed to the next character in the list.
+
+Make sure to replace `"https://example.com"`, `"character_name_input_id"`, `"export_button_id"`, and the sleep times with the actual URL, form fields, and elements from your web page.
