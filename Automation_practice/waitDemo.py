@@ -1,4 +1,4 @@
-huopenpyxl.utils.dataframeki#Implicit wait  -
+openpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -550,3 +550,36 @@ download_directors_data(director_names)
 ```
 
 You can call the `download_directors_data` function with a list of director names as shown in the example usage. This function will iterate through the provided director names and download their data one by one. Be sure to replace `"https://example.com"` with the actual URL of the page you want to work with and customize the code for your specific web page and download logic.
+
+
+
+
+You can get the last date of the previous month in Python using the `datetime` module. Here's a code snippet to do that:
+
+```python
+from datetime import datetime, timedelta
+
+# Get the current date
+today = datetime.today()
+
+# Calculate the first day of the current month
+first_day_of_current_month = today.replace(day=1)
+
+# Calculate the last day of the previous month by subtracting one day from the first day of the current month
+last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
+
+# Print the last date of the previous month
+print("Last date of the previous month:", last_day_of_previous_month.strftime("%Y-%m-%d"))
+```
+
+This code snippet does the following:
+
+1. It gets the current date using `datetime.today()`.
+
+2. It calculates the first day of the current month by replacing the day part of the current date with 1.
+
+3. It calculates the last day of the previous month by subtracting one day from the first day of the current month.
+
+4. Finally, it prints the last date of the previous month in the "YYYY-MM-DD" format.
+
+This code will give you the last date of the previous month regardless of the current date.
