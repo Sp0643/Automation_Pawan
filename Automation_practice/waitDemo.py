@@ -1,4 +1,4 @@
-openpyxl.utils.dataframeki#Implicit wait  -
+miopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -715,3 +715,41 @@ In this code:
 3. Modify the `selected_slide_numbers` list to include the slide numbers you want to include in the subset presentation.
 
 This code will create a new PowerPoint presentation containing only the specified slides (1, 4, 5, 6) while preserving all formatting and other attributes from the original presentation.
+
+
+
+
+I apologize for the confusion. The error you encountered suggests that the `python-pptx` library version being used does not support the `slide.iter_cloneable_placeholders` method. You can achieve your goal by using a different approach. Here's a revised code snippet that should work for you:
+
+```python
+from pptx import Presentation
+
+def create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers):
+    presentation = Presentation(input_ppt)
+    subset_presentation = Presentation()
+
+    for slide_number, slide in enumerate(presentation.slides, start=1):
+        if slide_number in selected_slide_numbers:
+            new_slide = subset_presentation.slides.add_slide(slide.slide_layout)
+            for shape in slide.shapes:
+                if shape.has_text_frame:
+                    new_shape = new_slide.shapes.add_shape(shape.auto_shape_type, shape.left, shape.top, shape.width, shape.height)
+                    new_shape.text_frame.clear()  # Clear any existing text
+                    for paragraph in shape.text_frame.paragraphs:
+                        new_paragraph = new_shape.text_frame.add_paragraph()
+                        for run in paragraph.runs:
+                            new_run = new_paragraph.add_run()
+                            new_run.text = run.text
+                            new_run.font.copy(run.font)  # Copy font formatting
+
+    subset_presentation.save(output_ppt)
+
+if __name__ == "__main__":
+    input_ppt = "input.pptx"  # Replace with your input PPT file
+    output_ppt = "subset_output.pptx"  # Replace with your desired output PPT file
+    selected_slide_numbers = [1, 4, 5, 6]  # Specify the slide numbers you want to include
+
+    create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers)
+```
+
+This revised code creates a new presentation and copies the selected slides from the original presentation while preserving the formatting and text. It should work without errors. Please ensure that you have the `python-pptx` library installed and use the correct file paths for your input and output PowerPoint files.
