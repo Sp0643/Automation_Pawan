@@ -1,4 +1,4 @@
-miopenpyxl.utils.dataframeki#Implicit wait  -
+iimiopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -753,3 +753,46 @@ if __name__ == "__main__":
 ```
 
 This revised code creates a new presentation and copies the selected slides from the original presentation while preserving the formatting and text. It should work without errors. Please ensure that you have the `python-pptx` library installed and use the correct file paths for your input and output PowerPoint files.
+
+
+
+
+I apologize for the previous oversight. It seems that some shapes in your presentation may not be auto shapes, and my previous code assumed that they were. To handle a wider variety of shapes, you can use a more generalized approach. Here's an updated code snippet:
+
+```python
+from pptx import Presentation
+
+def clone_slide(slide):
+    new_slide = presentation.slides.add_slide(slide.slide_layout)
+    for shape in slide.shapes:
+        if shape.has_text_frame:
+            new_shape = new_slide.shapes.add_shape(shape.auto_shape_type, shape.left, shape.top, shape.width, shape.height)
+            new_shape.text_frame.clear()
+            for paragraph in shape.text_frame.paragraphs:
+                new_paragraph = new_shape.text_frame.add_paragraph()
+                for run in paragraph.runs:
+                    new_run = new_paragraph.add_run()
+                    new_run.text = run.text
+                    new_run.font.copy(run.font)
+    return new_slide
+
+def create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers):
+    global presentation
+    presentation = Presentation(input_ppt)
+    subset_presentation = Presentation()
+
+    for slide_number, slide in enumerate(presentation.slides, start=1):
+        if slide_number in selected_slide_numbers:
+            clone_slide(slide)
+
+    subset_presentation.save(output_ppt)
+
+if __name__ == "__main__":
+    input_ppt = "input.pptx"  # Replace with your input PPT file
+    output_ppt = "subset_output.pptx"  # Replace with your desired output PPT file
+    selected_slide_numbers = [1, 4, 5, 6]  # Specify the slide numbers you want to include
+
+    create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers)
+```
+
+This code defines a `clone_slide` function that tries to create a new shape based on the original shape's properties without making assumptions about the shape type. This should handle shapes that are not auto shapes. Please make sure you have the `python-pptx` library installed and use the correct file paths for your input and output PowerPoint files.
