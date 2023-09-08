@@ -647,3 +647,71 @@ In this modified code:
 3. This way, if a character has no data or no export button, the script will not break but will proceed to the next character in the list.
 
 Make sure to replace `"https://example.com"`, `"character_name_input_id"`, `"export_button_id"`, and the sleep times with the actual URL, form fields, and elements from your web page.
+
+
+To split a PowerPoint (PPT) presentation into individual slides using Python without distorting its formatting, you can use the `python-pptx` library. First, make sure you have it installed. You can install it using pip:
+
+```
+pip install python-pptx
+```
+
+Here's a Python code snippet to split a PPT into individual slides while preserving formatting:
+
+```python
+from pptx import Presentation
+
+def split_ppt(input_ppt, output_folder):
+    presentation = Presentation(input_ppt)
+
+    for i, slide in enumerate(presentation.slides):
+        new_presentation = Presentation()
+        new_presentation.slides.add_slide(slide)
+        
+        # Save the slide as a new PPT file
+        output_path = f"{output_folder}/slide_{i+1}.pptx"
+        new_presentation.save(output_path)
+
+if __name__ == "__main__":
+    input_ppt = "input.pptx"  # Replace with your input PPT file
+    output_folder = "output_slides"  # Replace with your desired output folder
+    
+    split_ppt(input_ppt, output_folder)
+```
+
+Replace `"input.pptx"` with the path to your input PowerPoint file and `"output_slides"` with the desired folder where you want to save the individual slides as separate PPT files. This code will create one PPT file for each slide in the input presentation while preserving their formatting.
+
+Make sure you have the `python-pptx` library installed and replace the input and output paths accordingly.
+
+
+
+
+To create a subset PowerPoint presentation with specific slides (e.g., page 1, 4, 5, 6) while preserving all formatting using Python, you can use the `python-pptx` library. Here's a Python code snippet to achieve this:
+
+```python
+from pptx import Presentation
+
+def create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers):
+    presentation = Presentation(input_ppt)
+    subset_presentation = Presentation()
+
+    for slide_number, slide in enumerate(presentation.slides, start=1):
+        if slide_number in selected_slide_numbers:
+            subset_presentation.slides.add_slide(slide)
+
+    subset_presentation.save(output_ppt)
+
+if __name__ == "__main__":
+    input_ppt = "input.pptx"  # Replace with your input PPT file
+    output_ppt = "subset_output.pptx"  # Replace with your desired output PPT file
+    selected_slide_numbers = [1, 4, 5, 6]  # Specify the slide numbers you want to include
+
+    create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers)
+```
+
+In this code:
+
+1. Replace `"input.pptx"` with the path to your input PowerPoint file.
+2. Replace `"subset_output.pptx"` with the desired output file name.
+3. Modify the `selected_slide_numbers` list to include the slide numbers you want to include in the subset presentation.
+
+This code will create a new PowerPoint presentation containing only the specified slides (1, 4, 5, 6) while preserving all formatting and other attributes from the original presentation.
