@@ -1,4 +1,4 @@
-iimiopenpyxl.utils.dataframeki#Implicit wait  -
+jiiimiopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -833,3 +833,38 @@ if __name__ == "__main__":
 ```
 
 This code uses the `python-pptx2` library, which is more flexible in handling various PowerPoint shapes and should work for your scenario. Make sure to install the library using `pip` and replace the input and output file paths as needed.
+
+
+
+
+
+I understand that you have limitations on library installations. In this case, you can use the `comtypes` library to work with PowerPoint through COM automation. This method requires that Microsoft PowerPoint is installed on your system. Here's an alternative approach:
+
+```python
+import comtypes.client
+
+def create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers):
+    powerpoint = comtypes.client.CreateObject("PowerPoint.Application")
+    presentation = powerpoint.Presentations.Open(input_ppt)
+    subset_presentation = powerpoint.Presentations.Add()
+
+    for slide_number in selected_slide_numbers:
+        try:
+            slide = presentation.Slides(slide_number)
+            slide_copy = slide.Duplicate()
+            subset_presentation.Slides.AddSlide(slide_copy.SlideIndex)
+        except Exception as e:
+            print(f"Error copying slide {slide_number}: {str(e)}")
+
+    subset_presentation.SaveAs(output_ppt)
+    powerpoint.Quit()
+
+if __name__ == "__main__":
+    input_ppt = "input.pptx"  # Replace with your input PPT file
+    output_ppt = "subset_output.pptx"  # Replace with your desired output PPT file
+    selected_slide_numbers = [1, 4, 5, 6]  # Specify the slide numbers you want to include
+
+    create_subset_ppt(input_ppt, output_ppt, selected_slide_numbers)
+```
+
+This code utilizes COM automation to open and manipulate PowerPoint. It should work without requiring additional library installations. Ensure that you have Microsoft PowerPoint installed on your system for this code to function correctly. Adjust the input and output file paths as needed.
