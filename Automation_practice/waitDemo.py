@@ -868,3 +868,55 @@ if __name__ == "__main__":
 ```
 
 This code utilizes COM automation to open and manipulate PowerPoint. It should work without requiring additional library installations. Ensure that you have Microsoft PowerPoint installed on your system for this code to function correctly. Adjust the input and output file paths as needed.
+
+
+
+
+
+
+Certainly! Here's a Python script that accomplishes the tasks you described: downloading a report, changing its name, attaching it to an Outlook mailbox, and sending it over email. To run this script, make sure you have the required libraries installed (Outlook-related libraries and any necessary libraries for downloading files). Additionally, you need to have Outlook configured on your system.
+
+```python
+import os
+import shutil
+import win32com.client
+
+# Replace these with your actual file download URL and desired file name
+download_url = "https://example.com/report.pdf"
+new_file_name = "renamed_report.pdf"
+
+# Replace these with your Outlook email details
+recipient_email = "recipient@example.com"
+subject = "Report Attached"
+body = "Please find the attached report."
+
+# Download the report file
+# You can use libraries like requests to download the file
+# For brevity, we'll just simulate the download here
+# Replace this with your actual download logic
+# import requests
+# response = requests.get(download_url)
+# with open(new_file_name, "wb") as f:
+#     f.write(response.content)
+
+# Simulate renaming the file
+# Replace this with your actual file renaming logic
+# For example, you can use os.rename() to rename the downloaded file
+# os.rename("original_report.pdf", new_file_name)
+
+# Attach the renamed file to an Outlook email
+outlook = win32com.client.Dispatch("Outlook.Application")
+mail = outlook.CreateItem(0)
+mail.Subject = subject
+mail.Body = body
+attachment_path = os.path.abspath(new_file_name)
+mail.Attachments.Add(attachment_path)
+
+# Send the email
+mail.Recipients.Add(recipient_email)
+mail.Send()
+
+print(f"Email sent with the attached file: {new_file_name}")
+```
+
+Remember to replace the placeholders with your actual file download URL, desired file name, recipient's email address, subject, and body for the email. Additionally, you'll need to implement the actual file download and renaming logic as indicated in the comments. This script assumes you are using the Windows platform and have Outlook configured on your system.
