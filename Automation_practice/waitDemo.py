@@ -956,3 +956,5 @@ Presently, I'm engaged in an OCR project, specifically focusing on OCR Collatera
 
 
 This report aims to implement a detective control that reviews daily key money movement activities. It seeks to identify and rectify any inaccuracies within each support function or team's execution of these activities.
+
+This report aims to implement a detective control that reviews daily key money movement activities. It seeks to identify and rectify any inaccuracies within each support function or team's execution of these activities. Additionally, this report can be valuable for governments and assist in reducing risks for banks.
