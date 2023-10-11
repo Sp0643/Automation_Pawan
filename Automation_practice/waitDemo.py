@@ -961,3 +961,5 @@ This report aims to implement a detective control that reviews daily key money m
 
 
 I'm currently a member of the Alteryx to Python Migration Proof of Concept (POC) team. In this role, I've been utilizing my Python expertise to establish database connections, curate data, and subsequently deliver the refined data. To conclude the process, I've employed Selenium to ensure the final data is seamlessly integrated into SharePoint.
+
+
