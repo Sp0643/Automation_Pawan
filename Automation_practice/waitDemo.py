@@ -952,3 +952,7 @@ GitHub makes it easy for teams to work on the same project without overwriting e
 
 
 Presently, I'm engaged in an OCR project, specifically focusing on OCR Collateral. Within this project, I collaborate with a team responsible for providing borrowing-based facilities. These facilities involve scrutinizing collateral files or credit agreements to determine the loan's availability for either a business or an individual. My role primarily revolves around developing a Python script that can selectively extract pertinent information from these documents. The potential impact of this endeavor is substantial, given that most of the documents span from 20 to 300 pages. By extracting only the necessary information, we can condense these documents into a single page or even half a page, which greatly streamlines the decision-making process regarding loan availability and amounts.
+
+
+
+This report aims to implement a detective control that reviews daily key money movement activities. It seeks to identify and rectify any inaccuracies within each support function or team's execution of these activities.
