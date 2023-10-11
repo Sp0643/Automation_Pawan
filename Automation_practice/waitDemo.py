@@ -966,3 +966,10 @@ I'm currently a member of the Alteryx to Python Migration Proof of Concept (POC)
 
 
 Switching from Alteryx to Python offers the advantages of increased flexibility and customization, while also resulting in cost savings for the workflow.
+
+
+Within OCR projects, I'm currently using Regex to extract pertinent data. Looking ahead, I aim to develop more advanced OCR solutions capable of handling a broader range of PDFs and exploring the potential of neural audit OCR for other projects.
+
+
+
+I'm presently involved in the Analytics Workbench (AWB) project, a cloud-based system designed to support various analytics-related projects. My responsibilities include understanding AWB's functionality, securing access for my team, and facilitating a seamless transition from local VDIs to the AWB cloud platform. This transition is expected to have a significant impact, offering increased storage options and a wider array of tools, ultimately enhancing our analytics capabilities within AWB.
