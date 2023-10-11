@@ -920,3 +920,35 @@ print(f"Email sent with the attached file: {new_file_name}")
 ```
 
 Remember to replace the placeholders with your actual file download URL, desired file name, recipient's email address, subject, and body for the email. Additionally, you'll need to implement the actual file download and renaming logic as indicated in the comments. This script assumes you are using the Windows platform and have Outlook configured on your system.
+
+
+
+
+
+Area of Work:
+The primary focus is on the "GSS" initiative, a company-wide effort within the WLO division. This initiative encompasses multiple facets of the Lending Business, including Lending Fulfilment and Lending Servicing. The central area of work involves post-loan disbursement servicing processes, which are conducted by various operations, such as Loan Maintenance, Agency Services, and Commercial Autos. These operations are pivotal components of the Loan Servicing domain.
+
+Impact:
+Before the introduction of GSS, there was a lack of standardized processes. Business operations relied on manual searches across different platforms like SharePoint and spreadsheets to access servicing data. The impact of the GSS initiative has been profound. It has brought about a unified workflow and tool that standardizes processes and incorporates quality control and assurance measures. This standardization has significantly improved efficiency across operational pods, including Loan Maintenance, Agency Services, and Commercial Autos, resulting in an overall enhancement of the Loan Servicing process.
+
+
+
+Within the GSS initiative, I am a member of the Tableau development team. Up to this point, we have successfully deployed four dashboards into production, with one additional dashboard scheduled to go live in October. Additionally, I have actively engaged in peer-reliant quality assurance as part of my responsibilities within GSS.
+
+
+
+Apart from my involvement in Tableau development and quality assurance, I also play a role in the Money Movement Report team. Here, we utilize Python to create the Money Movement Report, which is a highly impactful task. This entails building the report from the ground up and successfully delivering it into production as part of a proof of concept (POC).
+
+
+
+In my mid-year review, I was assigned the goal of automation, specifically focusing on automating reports. To date, I have successfully automated five reports, and I'm presently in the process of automating the sixth report, which is the "executed summary." For this particular task, I've already completed the data extraction phase using Selenium and web scraping techniques.
+
+
+
+
+I'm a member of a GitHub project where our objective is to consolidate all files into a single repository. Through this effort, we aim to streamline version control and enhance collaboration. Within this project, I gained proficiency in GitHub tools and subsequently shared my knowledge with my team members. Part of my role involved training the team on how to effectively utilize GitHub for version control and collaborative work.
+
+GitHub makes it easy for teams to work on the same project without overwriting each other's work, and it helps keep track of changes made over time. It also allows for discussion and code improvement, enhancing collaboration.
+
+
+Presently, I'm engaged in an OCR project, specifically focusing on OCR Collateral. Within this project, I collaborate with a team responsible for providing borrowing-based facilities. These facilities involve scrutinizing collateral files or credit agreements to determine the loan's availability for either a business or an individual. My role primarily revolves around developing a Python script that can selectively extract pertinent information from these documents. The potential impact of this endeavor is substantial, given that most of the documents span from 20 to 300 pages. By extracting only the necessary information, we can condense these documents into a single page or even half a page, which greatly streamlines the decision-making process regarding loan availability and amounts.
