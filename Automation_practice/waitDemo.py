@@ -1,4 +1,4 @@
-jijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
+hujijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -973,3 +973,46 @@ Within OCR projects, I'm currently using Regex to extract pertinent data. Lookin
 
 
 I'm presently involved in the Analytics Workbench (AWB) project, a cloud-based system designed to support various analytics-related projects. My responsibilities include understanding AWB's functionality, securing access for my team, and facilitating a seamless transition from local VDIs to the AWB cloud platform. This transition is expected to have a significant impact, offering increased storage options and a wider array of tools, ultimately enhancing our analytics capabilities within AWB.
+
+
+
+
+Of course, I can help you write a Python function to fetch data for the previous day and construct a date range for your dataframe. Here's a code sample to achieve that:
+
+```python
+import pandas as pd
+import datetime
+
+def fetch_and_create_dataframe():
+    # Get the current day of the week (0 = Monday, 1 = Tuesday, ..., 6 = Sunday)
+    current_day = datetime.datetime.today().weekday()
+
+    if current_day == 0:  # Monday
+        # Fetch data for last Friday, Saturday, and Sunday
+        end_date = datetime.datetime.today() - datetime.timedelta(days=3)
+        start_date = end_date - datetime.timedelta(days=2)
+    else:
+        # Fetch data for the previous day
+        end_date = datetime.datetime.today() - datetime.timedelta(days=1)
+        start_date = end_date
+
+    # Create a date range for the dataframe
+    date_range = pd.date_range(start=start_date, end=end_date)
+
+    # Fetch your data using the start_date and end_date
+    # For demonstration purposes, we'll just print the date range.
+    print("Fetching data for date range:", date_range)
+
+    # Create a dataframe using the date range
+    # You can customize this part to load and structure your data.
+    data = {'Date': date_range, 'Value': [0] * len(date_range)}  # Placeholder data
+    df = pd.DataFrame(data)
+
+    return df
+
+# Call the function to fetch data and create a dataframe
+dataframe = fetch_and_create_dataframe()
+print(dataframe)
+```
+
+This function determines whether it's Monday or not and fetches the data accordingly. It then constructs a date range for the dataframe and creates a placeholder dataframe for demonstration purposes. You should replace the placeholder data with your actual data retrieval and processing logic.
