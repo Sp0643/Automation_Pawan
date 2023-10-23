@@ -1,4 +1,4 @@
-iihujijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
+huiihujijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -1049,3 +1049,34 @@ subset_dataframe = create_subset_dataframe(main_df)
 ```
 
 This function checks the current day of the week and filters the main dataframe accordingly to create a subset. When it's Monday, it selects dates from Friday to Sunday, and for the other four days, it selects the previous day's date. You can customize this function to suit your specific dataframe structure and data retrieval requirements.
+
+
+
+I see, you want to run the report only on Monday and select data for the previous three days (Friday, Saturday, and Sunday), while on the other days, it should select data only for the previous day. Here's a modified code to achieve that:
+
+```python
+import pandas as pd
+import datetime
+
+def create_subset_dataframe(main_df):
+    # Get the current day of the week (0 = Monday, 1 = Tuesday, ..., 6 = Sunday)
+    current_day = datetime.datetime.today().weekday()
+
+    if current_day == 0:  # Monday
+        # Select data for the previous three days (Friday, Saturday, and Sunday)
+        subset_df = main_df[(main_df['post_date'] >= (datetime.datetime.today() - datetime.timedelta(days=3)).date()) &
+                            (main_df['post_date'] <= datetime.datetime.today().date())]
+    else:
+        # Select data for the previous day
+        previous_day = datetime.datetime.today() - datetime.timedelta(days=1)
+        subset_df = main_df[main_df['post_date'] == previous_day.date()]
+
+    return subset_df
+
+# Call the function to create the subset dataframe
+subset_dataframe = create_subset_dataframe(main_df)
+
+# Now, subset_dataframe contains the data you want based on the current day of the week.
+```
+
+This modified code will select data for the previous three days (Friday, Saturday, and Sunday) when it's Monday, and for the other days, it will select data only for the previous day. This should achieve the behavior you described.
