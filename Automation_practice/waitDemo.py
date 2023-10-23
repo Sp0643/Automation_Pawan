@@ -1,4 +1,4 @@
-hujijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
+iihujijiiimiopenpyxl.utils.dataframeki#Implicit wait  -
 #Explicit Wait
 import time
 
@@ -1016,3 +1016,36 @@ print(dataframe)
 ```
 
 This function determines whether it's Monday or not and fetches the data accordingly. It then constructs a date range for the dataframe and creates a placeholder dataframe for demonstration purposes. You should replace the placeholder data with your actual data retrieval and processing logic.
+
+
+
+Certainly, you can create a subset of your main dataframe based on the conditions you mentioned. Here's a code sample to achieve this:
+
+Assuming you have a main dataframe named `main_df` with a column called 'post_date', you can create a subset as follows:
+
+```python
+import pandas as pd
+import datetime
+
+def create_subset_dataframe(main_df):
+    # Get the current day of the week (0 = Monday, 1 = Tuesday, ..., 6 = Sunday)
+    current_day = datetime.datetime.today().weekday()
+
+    if current_day == 0:  # Monday
+        # Select all dates from Friday to Sunday
+        subset_df = main_df[(main_df['post_date'] >= (datetime.datetime.today() - datetime.timedelta(days=3)).date()) &
+                            (main_df['post_date'] <= datetime.datetime.today().date())]
+    else:
+        # Select the previous day's date
+        previous_day = datetime.datetime.today() - datetime.timedelta(days=1)
+        subset_df = main_df[main_df['post_date'] == previous_day.date()]
+
+    return subset_df
+
+# Call the function to create the subset dataframe
+subset_dataframe = create_subset_dataframe(main_df)
+
+# Now, subset_dataframe contains the data you want based on the current day of the week.
+```
+
+This function checks the current day of the week and filters the main dataframe accordingly to create a subset. When it's Monday, it selects dates from Friday to Sunday, and for the other four days, it selects the previous day's date. You can customize this function to suit your specific dataframe structure and data retrieval requirements.
