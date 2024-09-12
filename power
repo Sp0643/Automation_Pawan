@@ -1,0 +1,41 @@
+To filter data, group by question type, and show correct and wrong scores by question type in Power Apps, you can use a combination of `Filter`, `GroupBy`, `AddColumns`, and `Sum` functions. Here's an approach to achieve this:
+
+### Assumptions:
+- You have a data source named `QuizResponses` with columns: `QuestionType`, `IsCorrect` (where `true` represents correct answers and `false` represents wrong answers).
+- You want to group by `QuestionType` and calculate the count of correct and wrong scores.
+
+### Step-by-Step Code:
+
+1. **Filter and Group Data:**
+   - Use the `GroupBy` function to group the data by `QuestionType`.
+
+2. **Calculate Correct and Wrong Scores:**
+   - Use `AddColumns` to add columns for the count of correct and wrong answers.
+
+Here's the complete code:
+
+```PowerApps
+// Step 1: Group data by QuestionType
+ClearCollect(
+    GroupedData,
+    AddColumns(
+        GroupBy(
+            QuizResponses,
+            "QuestionType",
+            "GroupedItems"
+        ),
+        "CorrectScore",
+        Sum(Filter(GroupedItems, IsCorrect = true), 1),
+        "WrongScore",
+        Sum(Filter(GroupedItems, IsCorrect = false), 1)
+    )
+)
+```
+
+### Explanation:
+- **`GroupBy(QuizResponses, "QuestionType", "GroupedItems")`**: Groups the `QuizResponses` table by `QuestionType` and stores the grouped records in `GroupedItems`.
+- **`AddColumns(...)`**: Adds new columns to calculate the correct and wrong scores.
+- **`Sum(Filter(GroupedItems, IsCorrect = true), 1)`**: Sums the count of correct answers within each group.
+- **`Sum(Filter(GroupedItems, IsCorrect = false), 1)`**: Sums the count of wrong answers within each group.
+
+This approach will create a collection (`GroupedData`) that shows the `QuestionType` along with `CorrectScore` and `WrongScore` for each question type, which you can then display in a gallery or any other control in Power Apps.
