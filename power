@@ -39,3 +39,57 @@ ClearCollect(
 - **`Sum(Filter(GroupedItems, IsCorrect = false), 1)`**: Sums the count of wrong answers within each group.
 
 This approach will create a collection (`GroupedData`) that shows the `QuestionType` along with `CorrectScore` and `WrongScore` for each question type, which you can then display in a gallery or any other control in Power Apps.
+
+
+To get the correct and wrong answers marks by question types in Power Apps using Power FX, you can use a combination of `Filter`, `Sum`, and `GroupBy` functions to process the data. Assuming you have a SharePoint list or a collection (`Responses`) that contains user responses with the fields `UserID`, `QuestionType`, `IsCorrect` (boolean indicating if the answer is correct), and `Marks`, here is a sample Power FX code:
+
+### 1. Grouping Responses by Question Type
+First, group the responses by `QuestionType`:
+
+```PowerFx
+// Group responses by QuestionType
+ClearCollect(
+    GroupedResponses,
+    GroupBy(
+        Responses,
+        "QuestionType",
+        "QuestionData"
+    )
+);
+```
+
+### 2. Calculate Correct and Wrong Marks for Each Group
+For each grouped question type, calculate the marks for correct and wrong answers:
+
+```PowerFx
+// Calculate correct and wrong marks for each question type
+ClearCollect(
+    QuestionMarksSummary,
+    AddColumns(
+        GroupedResponses,
+        "CorrectMarks",
+        Sum(
+            Filter(
+                QuestionData,
+                IsCorrect = true
+            ),
+            Marks
+        ),
+        "WrongMarks",
+        Sum(
+            Filter(
+                QuestionData,
+                IsCorrect = false
+            ),
+            Marks
+        )
+    )
+);
+```
+
+### Explanation:
+- `GroupBy` groups the responses by `QuestionType`.
+- `AddColumns` is used to add `CorrectMarks` and `WrongMarks` for each group.
+- `Sum` calculates the total marks for correct and wrong answers within each question type.
+
+This code will create a collection `QuestionMarksSummary` with each question type and the corresponding marks for correct and wrong answers. Let me know if you need further adjustments or clarifications!
