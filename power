@@ -111,3 +111,81 @@ ClearCollect(JoinedCollection,
 );
 
 
+To join the two collections based on the KID (user ID) and ensure that all KIDs are included with appropriate handling of missing scores (i.e., replacing missing scores with zero), you can use the AddColumns, Lookup, and Collect functions in Power Apps. Here's a step-by-step approach:
+
+Step 1: Sample Collections
+
+Let's assume your collections are as follows:
+
+Collection1 (AugustScores):
+
+KID
+
+AugustScore
+
+
+Collection2 (SeptemberScores):
+
+KID
+
+SeptemberScore
+
+
+
+Step 2: Combine the Collections
+
+To create a combined collection that includes all unique KIDs from both collections, you need to merge the collections first:
+
+// Step 1: Combine the unique KIDs from both collections
+ClearCollect(
+    CombinedKIDs,
+    Distinct(AugustScores, KID),
+    Distinct(SeptemberScores, KID)
+);
+
+Step 3: Create the Final Collection with Scores
+
+Now, create a final collection that joins these KIDs with their respective scores from both collections. Missing scores will be replaced with zero.
+
+// Step 2: Create the final collection with scores
+ClearCollect(
+    FinalCollection,
+    AddColumns(
+        CombinedKIDs,
+        "AugustScore",
+        If(
+            !IsBlank(Lookup(AugustScores, KID = Result).AugustScore),
+            Lookup(AugustScores, KID = Result).AugustScore,
+            0
+        ),
+        "SeptemberScore",
+        If(
+            !IsBlank(Lookup(SeptemberScores, KID = Result).SeptemberScore),
+            Lookup(SeptemberScores, KID = Result).SeptemberScore,
+            0
+        )
+    )
+);
+
+Explanation:
+
+1. CombinedKIDs: Merges the distinct KIDs from both collections to ensure all users are included.
+
+
+2. FinalCollection: Adds columns for August and September scores by looking up each KID in the respective collections. If the score is missing, it assigns zero.
+
+
+
+The resulting FinalCollection will have the following structure:
+
+KID
+
+AugustScore (or 0 if not present)
+
+SeptemberScore (or 0 if not present)
+
+
+Let me know if you need further adjustments or explanations!
+
+
+
