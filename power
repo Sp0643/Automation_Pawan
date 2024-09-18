@@ -93,3 +93,19 @@ ClearCollect(
 - `Sum` calculates the total marks for correct and wrong answers within each question type.
 
 This code will create a collection `QuestionMarksSummary` with each question type and the corresponding marks for correct and wrong answers. Let me know if you need further adjustments or clarifications!
+
+
+// Create a joined collection using outer join
+ClearCollect(JoinedCollection,
+    ForAll(
+        Union(
+            ForAll(AugCollection, {user_kid: user_kid, aug_score: aug_score, sep_score: LookUp(SepCollection, user_kid = AugCollection[@user_kid], sep_score)}),
+            ForAll(SepCollection, {user_kid: user_kid, aug_score: LookUp(AugCollection, user_kid = SepCollection[@user_kid], aug_score), sep_score: sep_score})
+        ),
+        {
+            user_kid: user_kid,
+            aug_score: If(IsBlank(aug_score), 0, aug_score),
+            sep_score: If(IsBlank(sep_score), 0, sep_score)
+        }
+    )
+);
