@@ -1,0 +1,228 @@
+To implement the hourly PKT release functionality in Power Apps, including handling different time zones, here’s a step-by-step approach with the necessary logic and recommendations:
+
+
+---
+
+1. Design Overview
+
+Objective: Provide the flexibility to release quizzes on an hourly basis with user-friendly selection (hour and minute) and ensure consistent notifications across time zones.
+
+Key Features:
+
+Toggle between daily and hourly quiz releases.
+
+Time picker with hourly and 5-minute intervals.
+
+Handle time zone conversions to ensure synchronized releases.
+
+Store release times and active quiz windows in a SharePoint list.
+
+Use UTC as the standard time in backend operations and adjust it based on user time zones (e.g., IST, EST).
+
+
+
+
+---
+
+2. Step-by-Step Solution
+
+A. UI Design – Hourly Release Setup in Power Apps
+
+1. Create a Toggle Control
+
+Add a toggle control labeled Release Hourly?.
+
+When the toggle is On, the time picker should become visible.
+
+
+
+2. Time Picker Setup with Dropdowns
+
+Add two dropdown controls:
+Dropdown for Hours
+
+Items: { 0, 1, 2, ..., 23 } (24-hour format).
+
+
+Dropdown for Minutes (in 5-minute intervals)
+
+Items: { 0, 5, 10, 15, ..., 55 }.
+
+
+
+
+3. Show Time Picker on Toggle
+
+Use this formula in the Visible property of the time picker controls:
+
+Toggle_Hourly.Value
+
+
+
+4. Capture Selected Time
+
+Use a button labeled Set Release Time.
+
+On the button's OnSelect property:
+
+Set(varReleaseHour, Dropdown_Hours.Selected.Value);
+Set(varReleaseMinute, Dropdown_Minutes.Selected.Value);
+Set(varReleaseTime, DateAdd(Today(), varReleaseHour, Hours) + Time(0, varReleaseMinute, 0));
+
+This stores the selected release time as a UTC DateTime in the variable varReleaseTime.
+
+
+
+
+
+---
+
+B. Backend Logic – SharePoint List Setup
+
+1. Create a SharePoint List to store quiz releases:
+
+List Name: PKTReleaseDetails
+
+Columns:
+
+ReleaseID: Auto-generated ID.
+
+ReleaseTimeUTC: DateTime (store the varReleaseTime in UTC).
+
+QuizID: Lookup column referencing the quiz.
+
+ActiveWindow: Numeric (duration in minutes, e.g., 45, 60).
+
+TimeZoneOffset: Numeric (for user time zone differences, e.g., -5 for EST, +5.5 for IST).
+
+
+
+
+
+
+---
+
+C. Logic for Managing Time Zones
+
+1. Get User’s Time Zone Offset
+Use the Power Apps Text() function to get the user's offset from UTC:
+
+Set(varUserTimeZoneOffset, Value(Text(Now(), "Z")) / 100);
+
+This stores the user's time zone difference in varUserTimeZoneOffset.
+
+
+2. Convert Release Time to Local Time
+
+When displaying quizzes, convert the stored UTC time to the user’s local time:
+
+Set(varLocalReleaseTime, DateAdd(varReleaseTime, varUserTimeZoneOffset, Hours));
+
+
+
+3. Set Quiz Active Window Logic
+
+Use a timer or collection to manage quiz visibility based on the release window.
+
+Example logic to check if a quiz is active:
+
+If(Now() >= varLocalReleaseTime && 
+   Now() <= DateAdd(varLocalReleaseTime, ActiveWindow, Minutes), 
+   true, 
+   false
+)
+
+
+
+
+
+---
+
+D. Handling Multiple Time Zones and Notifications
+
+1. Convert UTC to Multiple Time Zones Dynamically
+
+When a quiz is released, store its release time in UTC.
+
+For each user, calculate their respective local time using:
+
+Set(varUserLocalTime, DateAdd(varReleaseTime, varUserTimeZoneOffset, Hours));
+
+
+
+2. Real-Time Notifications across Time Zones
+
+Use Power Automate to send notifications at the release time.
+
+Create a flow that:
+
+Triggers on quiz release.
+
+For each user, converts the UTC time to their local time.
+
+Sends a notification through email or Power Apps push notifications.
+
+
+
+
+
+
+---
+
+E. Power Automate Flow for Real-Time Notifications
+
+1. Create a Flow Triggered on New Release
+
+Trigger: When an item is created in the PKTReleaseDetails list.
+
+Actions:
+
+Get User Profiles to retrieve user details and time zones.
+
+Apply to Each User:
+
+Convert release time to the user's local time.
+
+Send an email or push notification with the quiz details.
+
+
+
+
+
+
+
+---
+
+F. Testing and Troubleshooting
+
+1. Test with Multiple Time Zones
+
+Create test user accounts in different time zones (e.g., IST, EST).
+
+Verify that each user receives notifications at the correct local time.
+
+
+
+2. Handle Daylight Savings Time (DST)
+
+Use a service like Microsoft Time Zone API in Power Automate to account for DST adjustments dynamically.
+
+
+
+
+
+---
+
+3. Summary and Recommendations
+
+UI Setup: Toggle to switch between daily/hourly release and a time picker with hour and minute dropdowns.
+
+Backend Logic: Store release times in UTC and adjust based on the user’s time zone.
+
+Real-Time Notifications: Use Power Automate to manage notifications.
+
+Testing: Validate across multiple time zones, including DST handling.
+
+
+This approach ensures a robust, user-friendly solution that handles hourly releases efficiently and provides a seamless experience across time zones.
+
