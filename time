@@ -791,6 +791,103 @@ This approach ensures that the release logic works correctly, regardless of the 
 
 
 
+To ensure you capture the current date and time using the DatePicker in PowerApps, you’ll need to adjust your logic. The DatePicker control only captures the date part, defaulting the time to 12:00 AM, which is causing the issue.
+
+Here's a detailed solution to capture both current date and time accurately and use it in your logic.
+
+
+---
+
+Solution to Capture Current Date and Time
+
+Approach 1: Using Now() for Current Date and Time
+
+Instead of relying solely on the DatePicker, use the Now() function, which returns the current date and time in UTC.
+
+// Set current UTC date and time
+Set(varCurrentUTCDateTime, Now())
+
+Now() will capture both date and time at the moment of execution.
+
+This avoids the default 12:00 AM issue caused by the DatePicker.
+
+
+
+---
+
+Approach 2: Storing User Input with Current Time Adjustment
+
+1. Use the DatePicker to capture the date.
+
+
+2. Use Now() to get the current time and combine the two into a single timestamp.
+
+
+
+Code Example: Merging Date and Current Time
+
+// Get the selected date from the DatePicker
+Set(varSelectedDate, DatePicker1.SelectedDate);
+
+// Get the current time (hours and minutes)
+Set(varCurrentTime, Text(Now(), "[$-en-US]hh:mm:ss"));
+
+// Combine date and current time into a single value
+Set(
+    varFinalDateTime,
+    DateValue(Text(varSelectedDate) & " " & varCurrentTime)
+);
+
+This will create a timestamp that contains both the selected date and the current time when the action occurs.
+
+
+---
+
+Approach 3: Adjusting for Time Zone Differences
+
+Since Now() returns the UTC time, you need to adjust it to the user’s local time. Use the TimeZoneOffset() function to get the user’s offset and adjust the time accordingly.
+
+Code Example: Adjusting for Time Zones
+
+// Get the current UTC date and time
+Set(varCurrentUTCDateTime, Now());
+
+// Adjust for the user’s local time zone offset
+Set(
+    varUserLocalDateTime,
+    DateAdd(varCurrentUTCDateTime, TimeZoneOffset(), Minutes)
+);
+
+
+---
+
+Using the Captured Date-Time in Your Logic
+
+With varFinalDateTime or varUserLocalDateTime available, you can now use it to determine the release window in your PowerApps logic:
+
+If(
+    varUserLocalDateTime >= varUserLocalReleaseDate &&
+    varUserLocalDateTime <= varUserLocalEndDate,
+    Set(varShowAssessmentButton, true),
+    Set(varShowAssessmentButton, false)
+)
+
+
+---
+
+Summary
+
+Use Now() to capture both current date and time.
+
+Combine the selected date and current time for precise timestamps.
+
+Adjust for time zones using TimeZoneOffset() for consistent behavior across users.
+
+
+This approach ensures that the quiz release logic works correctly based on the user’s local date and time without issues caused by the DatePicker's default 12:00 AM behavior.
+
+
+
 
 
 
