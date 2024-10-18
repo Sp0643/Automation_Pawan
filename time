@@ -682,5 +682,117 @@ If you have any questions or need further assistance with specific implementatio
 
 
 
+To handle quiz releases simultaneously across multiple time zones in PowerApps, you'll need to use UTC time and dynamically calculate the offset for each user’s time zone. Here's a detailed step-by-step approach to solve your issue using a combination of PowerApps variables, user time zone offsets, and UTC-based logic:
+
+
+---
+
+Solution Overview
+
+1. Store Dates in UTC:
+Always store Release Date and End Date in UTC in your SharePoint list.
+
+
+2. User-Specific Offset Calculation:
+Use the user's device time to calculate the offset from UTC.
+
+
+3. Synchronize Release Logic:
+Create logic to compare the release window based on user-specific adjusted time.
+
+
+4. Show/Hide the Assessment Button:
+Display the button only if the current user’s local time falls within the active release window.
+
+
+
+
+---
+
+Implementation Steps in PowerApps
+
+Step 1: Capture Dates in UTC
+
+When using the DatePicker, ensure you are always converting the selected date to UTC before storing it in your SharePoint list. PowerApps works internally with UTC.
+
+// Assuming DatePicker1.SelectedDate is the picked date
+Set(varReleaseDateUTC, DateAdd(DatePicker1.SelectedDate, -TimeZoneOffset(), Minutes))
+
+This will ensure that the date you store in varReleaseDateUTC is in UTC, no matter the user's local time zone.
+
+
+---
+
+Step 2: Calculate User's Time Zone Offset
+
+Use the TimeZoneOffset() function in PowerApps to calculate the user’s offset from UTC in minutes. Store this in a local variable.
+
+// Get the user's UTC offset
+Set(varUserOffsetMinutes, TimeZoneOffset())
+
+
+---
+
+Step 3: Adjust Release Date Using User’s Offset
+
+When you load the release and end dates from SharePoint (stored in UTC), adjust them based on the user’s local offset.
+
+// Adjust the UTC release date to the user's local time
+Set(varUserLocalReleaseDate, DateAdd(varReleaseDateUTC, varUserOffsetMinutes, Minutes));
+Set(varUserLocalEndDate, DateAdd(varEndDateUTC, varUserOffsetMinutes, Minutes));
+
+This adjustment ensures that the release logic is evaluated correctly for the user’s local time zone.
+
+
+---
+
+Step 4: Create the Release Logic
+
+Now, build logic to show or hide the assessment button based on the user's local adjusted release window.
+
+If(
+    Now() >= varUserLocalReleaseDate &&
+    Now() <= varUserLocalEndDate,
+    Set(varShowAssessmentButton, true),
+    Set(varShowAssessmentButton, false)
+)
+
+
+---
+
+Step 5: Display the Assessment Button Conditionally
+
+Use the DisplayMode property of the assessment button to control its visibility.
+
+If(varShowAssessmentButton, DisplayMode.Edit, DisplayMode.Disabled)
+
+
+---
+
+Summary of Workflow
+
+1. Store release dates in UTC in the SharePoint list.
+
+
+2. Calculate the user's UTC offset using TimeZoneOffset().
+
+
+3. Adjust the release and end dates to the user's local time zone.
+
+
+4. Show the assessment button based on the user's local time being within the release window.
+
+
+
+
+---
+
+This approach ensures that the release logic works correctly, regardless of the users' time zones. Let me know if you need further clarification or adjustments!
+
+
+
+
+
+
 
 
