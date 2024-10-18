@@ -888,6 +888,68 @@ This approach ensures that the quiz release logic works correctly based on the u
 
 
 
+The issue arises because the DateValue() function only captures the date portion, ignoring any time information. To correctly capture both the date from the DatePicker and the current time, we need to use DateTimeValue() instead of DateValue().
+
+Here’s the correct approach to capture the selected date and combine it with the current time:
+
+
+---
+
+Updated Formula: Combining Date and Time Correctly
+
+// Step 1: Get the selected date from the DatePicker (Date only)
+Set(varSelectedDate, DatePicker1.SelectedDate);
+
+// Step 2: Extract the current time (hours, minutes, and seconds)
+Set(varCurrentTime, Time(Hour(Now()), Minute(Now()), Second(Now())));
+
+// Step 3: Combine the selected date and current time into a single DateTime value
+Set(varFinalDateTime, DateAdd(varSelectedDate, varCurrentTime, TimeUnit.Days));
+
+
+---
+
+Explanation
+
+1. SelectedDate from the DatePicker captures the date only (with time defaulted to 12:00 AM).
+
+
+2. Time() function captures the current time (hours, minutes, and seconds) from Now().
+
+
+3. DateAdd() combines the selected date with the current time by adding the time as a Day-based offset.
+
+
+
+
+---
+
+Display the Final Date-Time Value
+
+To verify the result, you can use a label to display the final value:
+
+Text(varFinalDateTime, "[$-en-US]yyyy-MM-dd hh:mm:ss")
+
+
+---
+
+Why This Works
+
+DateAdd() allows us to add the time component to the date without losing precision.
+
+Time() gives the exact time at the moment of execution.
+
+This approach avoids the issue with defaulting to 12:00 AM.
+
+
+
+---
+
+Let me know if this resolves your issue!
+
+
+
+
 
 
 
