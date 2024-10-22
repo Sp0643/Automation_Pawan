@@ -299,3 +299,200 @@ Provide a seamless experience for users when they open the app.
 
 Feel free to ask if you need further clarification or assistance with any part of this implementation. Good luck with your quiz app!
 
+
+Here’s a step-by-step approach to build your quiz app in PowerApps, capturing release date and time correctly across time zones, and storing it in SharePoint. This will ensure that the quiz notifications are displayed at the correct time for all users, regardless of their time zone.
+
+
+---
+
+Solution Overview
+
+1. User Inputs: Use DatePicker and a custom TimePicker to select the release date and time.
+
+
+2. Storing Date and Time: Convert selected values to UTC before storing them in a SharePoint list.
+
+
+3. Fetching and Displaying the Quiz Notification: Convert the UTC time back to the user’s local time when displayed.
+
+
+4. Managing Active Period: Capture the number of hours for the quiz to remain active and trigger notifications accordingly.
+
+
+5. Notification Logic: Notify all users based on their local time zones.
+
+
+
+
+---
+
+Step-by-Step Implementation
+
+1. Designing the Input Interface (PowerApps)
+
+DatePicker for Release Date:
+
+Insert a DatePicker from the new modern controls.
+
+Name it dpReleaseDate to capture the release date.
+
+
+Custom TimePicker for Release Time:
+
+Use Dropdowns or Sliders to capture the hour and minute.
+
+Name them ddlHour and ddlMinute respectively.
+
+
+
+Input for Quiz Active Duration (in Hours):
+
+Add a Slider or Dropdown to capture how long the quiz will remain active.
+
+Name this input ddlActiveDuration.
+
+
+
+
+---
+
+2. Capturing and Storing Date and Time in SharePoint List
+
+Concatenate Date and Time as UTC:
+
+
+// Convert to UTC DateTime
+Set(
+   varReleaseDateTimeUTC,
+   DateAdd(
+      DateTimeValue(
+         Text(dpReleaseDate.SelectedDate) & " " & 
+         Text(Value(ddlHour.Selected.Value), "[$-en-US]00") & ":" & 
+         Text(Value(ddlMinute.Selected.Value), "[$-en-US]00")
+      ),
+      TimeZoneOffset(),
+      Minutes
+   )
+);
+
+// Store in SharePoint List
+Patch(
+   'QuizReleaseList',
+   Defaults('QuizReleaseList'),
+   {
+       Title: "Quiz 1",
+       ReleaseDateTimeUTC: varReleaseDateTimeUTC,
+       ActiveDurationHours: Value(ddlActiveDuration.Selected.Value)
+   }
+);
+
+Explanation:
+
+dpReleaseDate.SelectedDate: Fetches the selected date.
+
+ddlHour.Selected.Value and ddlMinute.Selected.Value: Fetch the hour and minute.
+
+DateAdd(..., TimeZoneOffset(), Minutes): Adjusts the time to UTC before storing in SharePoint.
+
+Patch: Saves the data to SharePoint.
+
+
+
+
+---
+
+3. Retrieving and Displaying Notifications Based on Time Zones
+
+Fetch Data from SharePoint:
+
+
+ClearCollect(
+   colQuizData,
+   'QuizReleaseList'
+);
+
+Convert UTC Time to User’s Local Time:
+
+
+ForAll(
+   colQuizData,
+   Collect(
+       colQuizDisplay,
+       {
+           QuizTitle: ThisRecord.Title,
+           ReleaseTimeLocal: DateAdd(ThisRecord.ReleaseDateTimeUTC, -TimeZoneOffset(), Minutes),
+           ExpiryTimeLocal: DateAdd(ThisRecord.ReleaseDateTimeUTC, ThisRecord.ActiveDurationHours * 60, Minutes)
+       }
+   )
+);
+
+Explanation:
+
+DateAdd(ThisRecord.ReleaseDateTimeUTC, -TimeZoneOffset(), Minutes): Converts UTC time back to local time.
+
+ExpiryTimeLocal: Adds the active duration to the release time.
+
+
+
+
+---
+
+4. Notification Logic in PowerApps
+
+Display Notification for Ongoing Quizzes:
+
+
+If(
+   Now() >= ThisRecord.ReleaseTimeLocal && Now() <= ThisRecord.ExpiryTimeLocal,
+   Notify("A new quiz is available: " & ThisRecord.QuizTitle, NotificationType.Information)
+);
+
+Explanation:
+
+This checks if the current time (Now()) is within the release and expiry window to trigger the notification.
+
+
+
+
+---
+
+5. Additional Considerations
+
+Handling Multiple Time Zones: Since all the calculations are done in UTC and converted to local time dynamically, all users will see the quiz at the correct time in their respective time zones.
+
+Testing: Test with different time zones to ensure the conversion logic is correct.
+
+SharePoint List Structure: Ensure the SharePoint list includes columns like:
+
+Title (Text): Name of the quiz
+
+ReleaseDateTimeUTC (DateTime): Stores the UTC release date and time
+
+ActiveDurationHours (Number): Stores the active period duration
+
+
+
+
+---
+
+Summary Workflow
+
+1. Admin selects the release date, time, and active duration.
+
+
+2. The release date and time are adjusted to UTC and stored in SharePoint.
+
+
+3. When users open the app, the stored UTC time is converted to their local time.
+
+
+4. The quiz notification is displayed if the quiz is active based on the user’s time zone.
+
+
+
+
+---
+
+This design ensures that the quiz notification works across multiple time zones and provides a seamless experience for all users.
+
+
