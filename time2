@@ -496,3 +496,79 @@ Summary Workflow
 This design ensures that the quiz notification works across multiple time zones and provides a seamless experience for all users.
 
 
+
+Here’s the modified formula to include the time-based logic at the beginning. This logic ensures that the user can only proceed if the current time (Now()) is within the ReleaseTime and EndTime range from the PKTReleaseDetails list.
+
+Final Formula with Time Logic:
+
+If(
+    // Check if the current time is within the ReleaseTime and EndTime
+    Now() >= First(Filter(PKTReleaseDetails, Kid = currentKid)).ReleaseTime &&
+    Now() <= First(Filter(PKTReleaseDetails, Kid = currentKid)).EndTime,
+
+    // Proceed with Quiz Attempt Check
+    If(
+        !IsBlank(First(Filter(QuizResponsePKT, Kid = currentKid))),
+        // Notify the user if they have already taken the quiz
+        Notify(
+            "You have already attempted the quiz.",
+            NotificationType.Warning
+        ),
+
+        // Check if User Exists in User Data
+        If(
+            !IsBlank(First(Filter(USERDATAPKT, Kid = currentKid))),
+            // Navigate to Instruction Page if the user exists
+            Navigate(InstructionPage, ScreenTransition.None),
+
+            // Notify the user if not found
+            Notify(
+                "User not found. Please contact your Administrator for access assistance.",
+                NotificationType.Warning
+            )
+        )
+    ),
+
+    // Notify if the current time is outside the allowed window
+    Notify(
+        "The attempt window for the quiz is closed.",
+        NotificationType.Error
+    )
+)
+
+
+---
+
+Explanation:
+
+1. Time Logic:
+
+The outer If checks if the current time (Now()) is within the ReleaseTime and EndTime from the PKTReleaseDetails list.
+
+If the condition is true, it moves to the next If block to check if the user has already taken the quiz.
+
+If false, it displays a notification: "The attempt window for the quiz is closed."
+
+
+
+2. Quiz Attempt Check:
+
+If the user has already taken the quiz, it shows a warning notification: "You have already attempted the quiz."
+
+
+
+3. User Data Check:
+
+If the user exists in USERDATAPKT, it navigates to the InstructionPage.
+
+If the user is not found, it shows a warning notification: "User not found. Please contact your Administrator for access assistance."
+
+
+
+
+
+---
+
+This formula ensures that the time-based logic is executed first, followed by the quiz attempt check and user validation, with appropriate notifications at each step.
+
+
