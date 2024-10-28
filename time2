@@ -571,4 +571,74 @@ If the user is not found, it shows a warning notification: "User not found. Plea
 
 This formula ensures that the time-based logic is executed first, followed by the quiz attempt check and user validation, with appropriate notifications at each step.
 
+To combine the date from a DatePicker and time from Now() into a string and patch it into a SharePoint list, follow these steps:
+
+Steps:
+
+1. Extract the Date from the DatePicker
+
+
+2. Extract the Time using Now()
+
+
+3. Format both as strings
+
+
+4. Concatenate them
+
+
+5. Patch to SharePoint List
+
+
+
+Example Code:
+
+// Step 1: Extract Date from DatePicker (e.g., DatePicker1)
+Set(varSelectedDate, DateValue(DatePicker1.SelectedDate));
+
+// Step 2: Extract Current Time in 12-hour format
+Set(varCurrentTime, Text(Now(), "hh:mm tt"));
+
+// Step 3: Combine Date and Time as a String
+Set(varDateTimeString, 
+    Text(varSelectedDate, "yyyy-MM-dd") & " " & varCurrentTime
+);
+
+// Step 4: Patch to SharePoint List
+Patch(
+    'YourSharePointList',
+    Defaults('YourSharePointList'),
+    {
+        Title: "New Entry",  // Example field
+        CombinedDateTime: varDateTimeString  // Storing the combined string
+    }
+);
+
+Explanation:
+
+1. DateValue(DatePicker1.SelectedDate) extracts only the date from the DatePicker.
+
+
+2. Text(Now(), "hh:mm tt") formats the current time in 12-hour format.
+
+
+3. Text(varSelectedDate, "yyyy-MM-dd") converts the date into a string (you can change the format as needed).
+
+
+4. Concatenation: The date and time are joined with " " (space) in between.
+
+
+5. Patch() updates the SharePoint list with the combined date and time string.
+
+
+
+Example Output:
+
+"2024-10-28 03:45 PM"
+
+
+This approach ensures that both date and time are properly formatted and stored as a string in the SharePoint list. Adjust field names as per your SharePoint setup.
+
+
+
 
