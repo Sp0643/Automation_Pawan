@@ -642,3 +642,61 @@ This approach ensures that both date and time are properly formatted and stored 
 
 
 
+To display time in the format of "1 minute 40 seconds" in PowerApps, you can use a combination of Text() and some mathematical operations to convert seconds into minutes and seconds.
+
+Here’s how you can achieve this:
+
+Formula for Time Conversion
+
+Text(
+    Floor(YourSeconds / 60), 
+    "[$-en-US]0"
+) & " minute " & 
+Text(
+    Mod(YourSeconds, 60), 
+    "[$-en-US]0"
+) & " second"
+
+Explanation:
+
+1. YourSeconds / 60: This calculates the total number of minutes (in decimal).
+
+
+2. Floor(YourSeconds / 60): Extracts the integer part of the minutes.
+
+
+3. Mod(YourSeconds, 60): Gets the remaining seconds.
+
+
+4. Text(): Converts the numbers to text format with no decimals.
+
+
+5. Concatenation (&): Combines the values with appropriate text labels ("minute" and "second").
+
+
+
+Example:
+
+If YourSeconds = 100:
+
+Floor(100 / 60) = 1 minute
+
+Mod(100, 60) = 40 seconds
+
+Output: "1 minute 40 second"
+
+
+
+This will give you the result in the proper format. You can further customize it to handle plural forms if needed, for example:
+
+Text(
+    Floor(YourSeconds / 60), 
+    "[$-en-US]0"
+) & " minute" & If(Floor(YourSeconds / 60) <> 1, "s", "") & " " & 
+Text(
+    Mod(YourSeconds, 60), 
+    "[$-en-US]0"
+) & " second" & If(Mod(YourSeconds, 60) <> 1, "s", "")
+
+This version ensures that "minute" and "second" are pluralized correctly.
+
