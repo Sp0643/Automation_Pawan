@@ -61,4 +61,59 @@ Exceptions: Handles Selenium-specific errors (e.g., NoSuchElementException).
 
 Select: Interacts with drop-down menus on web pages.
 
+Here’s an explanation of the code:
+
+Function: edge_setup()
+
+This function sets up and configures the Microsoft Edge browser for automation using Selenium.
+
+Code Breakdown:
+
+1. serv_obj = Service('C:/ProgramData/Microsoft/EdgeDriver/msedgedriver.exe')
+
+Creates a service object that points to the Microsoft Edge WebDriver executable (msedgedriver.exe).
+
+This is essential for Selenium to control the Edge browser.
+
+
+
+2. preferences = {"download.default_directory": location_from}
+
+Configures browser preferences, specifically setting the default directory for downloaded files (location_from).
+
+
+
+3. ops = webdriver.EdgeOptions()
+
+Creates an EdgeOptions object to set browser-specific options, such as preferences and experimental features.
+
+
+
+4. ops.add_experimental_option("prefs", preferences)
+
+Adds the defined preferences (e.g., download location) to the Edge browser configuration.
+
+
+
+5. driver = webdriver.Edge(service=serv_obj, options=ops)
+
+Initializes the Edge WebDriver with the specified service (serv_obj) and options (ops).
+
+This creates a browser instance ready for automation.
+
+
+
+6. return driver
+
+Returns the configured WebDriver instance for use in automation tasks.
+
+
+
+
+Purpose:
+
+This function streamlines the process of setting up an Edge browser with customized settings, such as downloading files to a specific folder. It’s particularly useful in scenarios requiring controlled file downloads or specific browser configurations.
+
+
+
 
