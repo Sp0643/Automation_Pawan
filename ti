@@ -42,3 +42,107 @@ If today is December 9, 2024:
 Start Date: 2024-09-01
 End Date: 2024-11-30
 
+
+
+
+
+To create a collection in PowerApps as per your requirements, you can use the Collect() and AddColumns() functions along with filtering to build the desired structure. Here's how you can proceed:
+
+Steps to Create the Collection
+
+1. Original Collection Assumed Structure:
+
+PKT Month
+
+KID
+
+Username
+
+Percentage
+
+Team
+
+Process
+
+
+
+2. Objective: Create a new collection with:
+
+Columns for PKT Month, Username, KID, Team, and Process.
+
+An additional column aggregating all users who attempted the test in December or other specified months.
+
+
+
+3. PowerApps Formula: Use the following formula to create the new collection.
+
+// Step 1: Filter the original data by month and add new columns dynamically
+ClearCollect(
+    NewCollection,
+    AddColumns(
+        Filter(
+            OriginalCollection, 
+            PKTMonth = "December" // Adjust month as required
+        ),
+        "MonthData",
+        Filter(OriginalCollection, PKTMonth = Self.PKTMonth)
+    )
+);
+
+// Step 2: Dynamically create additional months if needed
+ClearCollect(
+    FinalCollection,
+    AddColumns(
+        NewCollection,
+        "PKT-December",
+        Filter(OriginalCollection, PKTMonth = "December"),
+        "PKT-November",
+        Filter(OriginalCollection, PKTMonth = "November"),
+        "PKT-October",
+        Filter(OriginalCollection, PKTMonth = "October")
+    )
+);
+
+
+4. Explanation:
+
+Filter: Filters the original collection for a specific month (e.g., "December").
+
+AddColumns: Adds additional columns dynamically for each month, containing filtered user data.
+
+ClearCollect: Creates a new collection (or overwrites an existing one).
+
+
+
+5. Resulting Collection Structure: The FinalCollection will have:
+
+PKT Month
+
+Username
+
+KID
+
+Team
+
+Process
+
+PKT-December (contains user data for December)
+
+PKT-November (contains user data for November)
+
+PKT-October (contains user data for October)
+
+
+
+
+Key Notes:
+
+Replace OriginalCollection with the name of your actual data source or collection.
+
+Update the month names as required for your scenario.
+
+You can add additional months in the AddColumns function to extend the logic.
+
+
+If you want to see this in action or need further customizations, let me know!
+
