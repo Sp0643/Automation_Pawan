@@ -203,4 +203,71 @@ AddColumns(
 This approach creates calculated columns on-the-fly in your Power Apps formulas, so you do not need to add them permanently to the data source.
 
 
+If some values are still greater than 100, it could be due to:
+
+1. Logic Scope: The If condition might not be applied properly to all relevant rows.
+
+
+2. Data Structure: Nested or grouped tables may require additional steps to ensure all values are processed correctly.
+
+
+
+Let’s refine the logic to handle these cases comprehensively.
+
+Updated Code with Proper Handling
+
+Here’s the updated version of your code to ensure that all values greater than 100 are divided by 2 before summing:
+
+ClearCollect(
+    TrendingCharti,
+    AddColumns(
+        GroupBy(CombinedData1, Kid, UserFirst, Team, GroupedTable),
+        "PKT_DEC", Sum(GroupedTable, If(Value(December_PKT) > 100, Value(December_PKT) / 2, Value(December_PKT))),
+        "PKT_NOV", Sum(GroupedTable, If(Value(November_PKT) > 100, Value(November_PKT) / 2, Value(November_PKT))),
+        "PKT_SEP", Sum(GroupedTable, If(Value(September_PKT) > 100, Value(September_PKT) / 2, Value(September_PKT))),
+        "PKT_OCT", Sum(GroupedTable, If(Value(October_PKT) > 100, Value(October_PKT) / 2, Value(October_PKT))),
+        "PKT_AUG", Sum(GroupedTable, If(Value(August_PKT) > 100, Value(August_PKT) / 2, Value(August_PKT)))
+    )
+)
+
+Key Changes
+
+1. Value Function:
+
+Ensures that text-based numbers are converted to numeric values before applying the condition.
+
+Helps in cases where data might be stored as text.
+
+
+
+2. Ensure Correct Scope:
+
+The If condition now explicitly checks and applies logic to all rows before summing.
+
+
+
+
+Debugging Steps
+
+1. Check Data in CombinedData1: Verify if CombinedData1 has clean numeric data for December_PKT, November_PKT, etc. If values are stored as text, the Value function is necessary.
+
+
+2. Inspect Nested Tables: If GroupedTable itself contains subgroups or nested structures, you may need to apply the logic before grouping. Example:
+
+ForAll(CombinedData1, Patch(ThisRecord, { December_PKT: If(December_PKT > 100, December_PKT / 2, December_PKT) }))
+
+
+3. Test Outputs:
+
+Add a temporary Collection to inspect results:
+
+ClearCollect(TestData, GroupedTable)
+
+Check whether all values above 100 are divided correctly.
+
+
+
+
+Let me know if this resolves the issue or if you’d like help troubleshooting further!
+
 
