@@ -63,3 +63,102 @@ Switch(
 
 Check these points, and the formula should work as expected. Let me know if you need further assistance!
 
+
+
+Short Answer:
+You can use the AddColumns function (in tools like Power Apps) or a similar method in your chosen platform to create a new column. The new column's values can be pulled from other collections by using lookups or joins keyed on a shared identifier. For example, in Power Apps, you might write something like:
+
+ClearCollect(
+    CombinedCollection,
+    AddColumns(
+        PrimaryCollection,
+        "NewColumn",
+        Lookup(SecondaryCollection, ID = PrimaryCollection.ID, SecondaryValue)
+    )
+)
+
+Detailed Explanation and Steps:
+
+1. Identify a Common Key:
+Before you can add a column from another collection, you need a common field (key) that links the records in your primary collection to the records in your secondary collection(s). For instance, if both collections have a unique ID or OrderNumber, that field will be the bridge between them.
+
+
+2. Choose Your Environment and Method:
+
+Power Apps (Canvas Apps):
+In Power Apps, you use AddColumns to add a column dynamically to a collection, and Lookup or Filter functions to find the corresponding value in another collection.
+
+Excel or Power Query:
+In Excel, you might use VLOOKUP() or XLOOKUP() to bring data from another table into a new column. In Power Query, you would Merge Queries based on a key field.
+
+Relational Databases (SQL, etc.):
+In SQL, you would typically use JOIN clauses in a SELECT query to combine columns from multiple tables.
+
+
+The principle is the same across platforms: You need a join (or lookup) key, a method to reference another data source, and a function or command to add the resulting data as a new column.
+
+
+3. Using Power Apps as an Example:
+Suppose you have two collections:
+
+PrimaryCollection with fields: ID, Name, Date
+
+SecondaryCollection with fields: ID, Status, Score
+
+
+If you want to add Score from SecondaryCollection into PrimaryCollection as ScoreColumn, you can do:
+
+ClearCollect(
+    CombinedCollection,
+    AddColumns(
+        PrimaryCollection,
+        "ScoreColumn",
+        Lookup(SecondaryCollection, ID = PrimaryCollection.ID, Score)
+    )
+)
+
+How this works:
+
+AddColumns iterates over every record in PrimaryCollection.
+
+For each record, Lookup finds the corresponding record in SecondaryCollection where the ID matches.
+
+It then pulls out the Score field from SecondaryCollection and inserts it into a new column named ScoreColumn.
+
+ClearCollect stores the result into CombinedCollection, which now has all the original fields from PrimaryCollection plus a new column ScoreColumn.
+
+
+
+4. Multiple Data Sources: If your data needs to come from multiple collections or tables, you may perform multiple lookups, or you could nest AddColumns:
+
+ClearCollect(
+    FinalCollection,
+    AddColumns(
+        AddColumns(
+            PrimaryCollection,
+            "ScoreColumn",
+            Lookup(SecondaryCollection, ID = PrimaryCollection.ID, Score)
+        ),
+        "CategoryColumn",
+        Lookup(TertiaryCollection, CategoryID = PrimaryCollection.CategoryID, CategoryName)
+    )
+)
+
+Here, we first add ScoreColumn from SecondaryCollection. Then we apply another AddColumns to the resulting collection to add CategoryColumn from TertiaryCollection.
+
+
+5. Error Handling and Validation:
+
+Make sure that the fields you reference exist in the given collections.
+
+Confirm that the Lookup or Filter function returns a single record (or the correct record) for each row.
+
+If some records don’t match (no corresponding ID), consider using IfError or handling blanks gracefully.
+
+
+
+
+Conclusion:
+By identifying a common key and using functions like AddColumns and Lookup in Power Apps, or equivalent functions in other environments, you can add columns sourced from different collections or tables. Each row’s value is determined dynamically using the shared identifiers, ensuring the new column is correctly populated on a per-record basis.
+
+
