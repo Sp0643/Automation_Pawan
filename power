@@ -162,3 +162,45 @@ Conclusion:
 By identifying a common key and using functions like AddColumns and Lookup in Power Apps, or equivalent functions in other environments, you can add columns sourced from different collections or tables. Each row’s value is determined dynamically using the shared identifiers, ensuring the new column is correctly populated on a per-record basis.
 
 
+Below is an example of how you might create 5 new calculated columns in a Power Apps formula. The logic is: For each new column, check the pktmonth column. If it matches a specified month, assign the percentage value; if not, assign 0.
+
+In this example, we’ll create 5 columns: December_Pct, November_Pct, September_Pct, plus two additional months for demonstration (you can choose whichever months you need):
+
+AddColumns(
+    YourDataSource,
+    "December_Pct", If(pktmonth = "December", percentage, 0),
+    "November_Pct", If(pktmonth = "November", percentage, 0),
+    "September_Pct", If(pktmonth = "September", percentage, 0),
+    "January_Pct", If(pktmonth = "January", percentage, 0),
+    "February_Pct", If(pktmonth = "February", percentage, 0)
+)
+
+How this works:
+
+1. AddColumns: Takes an existing table (YourDataSource) and returns a new table with added calculated columns.
+
+
+2. Each new column (e.g., "December_Pct") uses an If statement:
+
+Checks if pktmonth equals the given month.
+
+If it does, it returns the value from the percentage column.
+
+If it doesn’t, it returns 0.
+
+
+
+
+You can replace "January", "February", or any other month names as needed, and adjust the column names accordingly. If you only need December, November, and September columns, just omit the other two. For example:
+
+AddColumns(
+    YourDataSource,
+    "December_Pct", If(pktmonth = "December", percentage, 0),
+    "November_Pct", If(pktmonth = "November", percentage, 0),
+    "September_Pct", If(pktmonth = "September", percentage, 0)
+)
+
+This approach creates calculated columns on-the-fly in your Power Apps formulas, so you do not need to add them permanently to the data source.
+
+
+
