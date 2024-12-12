@@ -151,3 +151,73 @@ Check the shape of the dataset to confirm all rows are loaded.
 
 If this still doesn’t resolve the issue, you might need to inspect the Excel file structure more closely (e.g., merged cells, extra sheets, etc.). Let me know if you'd like help debugging further!
 
+
+
+
+The error occurs because the read_excel() function in pandas doesn't support the skip_blank_lines argument. Instead, skip_blank_lines is supported by read_csv(). For Excel files, blank lines are handled differently.
+
+Here’s the corrected approach:
+
+Corrected Code
+
+import pandas as pd
+
+def find_header_and_extract_data(file_path, known_headers):
+    # Read the Excel file without headers
+    df = pd.read_excel(file_path, header=None)
+
+    # Find the row index containing all the known headers
+    header_row = None
+    for i, row in df.iterrows():
+        if all(header in row.values for header in known_headers):
+            header_row = i
+            break
+
+    if header_row is not None:
+        # Re-read the file using the identified header row
+        data = pd.read_excel(file_path, header=header_row)
+        
+        # Ensure the full dataset is read
+        print(f"Total rows in the dataset: {data.shape[0]}")
+        return data
+    else:
+        print("Header not found.")
+        return None
+
+# Example usage:
+file_path = "your_excel_file.xlsx"
+known_headers = ["Column1", "Column2", "Column3"]  # Replace with your actual header names
+
+data = find_header_and_extract_data(file_path, known_headers)
+if data is not None:
+    print("Extracted Data:")
+    print(data.head())  # Display the first few rows
+
+Key Changes:
+
+1. Removed the skip_blank_lines argument, as it is not valid for read_excel().
+
+
+2. Ensured that all rows are processed by checking the shape of the DataFrame (df.shape[0]).
+
+
+3. Confirmed no rows are skipped during the second read of the file.
+
+
+
+Debugging Steps:
+
+Check DataFrame Shape After Initial Read:
+
+print(f"Total rows read in initial DataFrame: {df.shape[0]}")
+
+This ensures all rows are being loaded initially.
+
+Inspect header_row: Confirm the identified header row is accurate:
+
+print(f"Identified header row: {header_row}")
+
+
+If issues persist, the structure of the Excel file (e.g., merged cells, blank rows) could require a more tailored approach. Let me know if you’d like assistance debugging further.
+
+
