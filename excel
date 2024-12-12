@@ -79,3 +79,75 @@ Extracted Data:
 
 Would you like me to help you test this with a sample Excel file?
 
+The issue may arise if pandas automatically determines a limited range of rows to read due to how the Excel file is structured. This can happen if there are empty rows or inconsistencies in the data. Here's how to address it:
+
+Adjustments to Ensure All Rows Are Read
+
+1. Set skip_blank_lines=False: This ensures pandas reads blank rows, if any, in the file.
+
+
+2. Manually Validate the Header Row: Make sure that once the header is found, you re-read the data from that row onward.
+
+
+3. No Truncation of Rows: Confirm pandas is not truncating the dataset due to display settings.
+
+
+
+Here’s the updated code:
+
+import pandas as pd
+
+def find_header_and_extract_data(file_path, known_headers):
+    # Read the Excel file without headers and ensure all rows are loaded
+    df = pd.read_excel(file_path, header=None, skip_blank_lines=False)
+
+    # Find the row index containing all the known headers
+    header_row = None
+    for i, row in df.iterrows():
+        if all(header in row.values for header in known_headers):
+            header_row = i
+            break
+
+    if header_row is not None:
+        # Re-read the file from the identified header row onward
+        data = pd.read_excel(file_path, header=header_row)
+        
+        # Ensure the full dataset is read (check the number of rows)
+        print(f"Total rows in the dataset: {data.shape[0]}")
+        return data
+    else:
+        print("Header not found.")
+        return None
+
+# Example usage:
+file_path = "your_excel_file.xlsx"
+known_headers = ["Column1", "Column2", "Column3"]  # Replace with your actual header names
+
+data = find_header_and_extract_data(file_path, known_headers)
+if data is not None:
+    print("Extracted Data:")
+    print(data.head())  # Display the first few rows
+
+Debugging Steps
+
+1. Check the Row Count: Add a print(df.shape[0]) after the first read to verify how many rows are initially read.
+
+
+2. Inspect the File: If there are blank or merged cells, they might be causing issues.
+
+
+3. Read Without Truncation: Confirm pandas settings using:
+
+pd.set_option('display.max_rows', None)  # To display all rows
+
+
+
+Output Verification
+
+Before re-reading the file, ensure the header_row is correctly identified.
+
+Check the shape of the dataset to confirm all rows are loaded.
+
+
+If this still doesn’t resolve the issue, you might need to inspect the Excel file structure more closely (e.g., merged cells, extra sheets, etc.). Let me know if you'd like help debugging further!
+
