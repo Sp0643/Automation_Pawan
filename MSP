@@ -652,3 +652,201 @@ Derived Tables (Subqueries) let you use the result directly in a SELECT statemen
 
 This should allow you to proceed without needing write access. Let me know if you need further modifications!
 
+
+
+
+
+
+The MS Access queries you shared involve multiple operations, including:
+
+1. Creating temporary tables (SELECT ... INTO)
+
+
+2. Aggregations (GROUP BY, COUNT, SUM)
+
+
+3. Conditional updates (UPDATE ... SET)
+
+
+4. Inserts (INSERT INTO ... SELECT)
+
+
+5. Ordering and filtering (ORDER BY, WHERE)
+
+
+
+Since you don't have write access to the IBM DB2 database, I will rewrite these queries using pandasql (for SQL-like operations on Pandas DataFrames) and sqlite3 (for temporary in-memory databases).
+
+
+---
+
+Python Equivalent Implementation
+
+import pandas as pd
+import pandasql as psql
+import sqlite3
+
+# Create a temporary SQLite database in memory
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+# Simulated data loading from DB2 (replace this with actual pyodbc queries)
+# Assuming these DataFrames are fetched from IBM DB2:
+rimthai_contract = pd.DataFrame([...])  # Replace with actual data
+rimthai_company = pd.DataFrame([...])
+rimtha1_asset = pd.DataFrame([...])
+
+# Load DataFrames into SQLite
+rimthai_contract.to_sql("RIMTHAI_CONTRACT", conn, index=False, if_exists="replace")
+rimthai_company.to_sql("RIMTHAI_COMPANY", conn, index=False, if_exists="replace")
+rimtha1_asset.to_sql("RIMTHA1_ASSET", conn, index=False, if_exists="replace")
+
+# 1. Creating the first temporary table (Dorrie_A_Asset)
+query_1 = """
+CREATE TEMP TABLE Dorrie_A_Asset AS 
+SELECT 
+    A.CUSTOMER_NBR, 
+    A.CONTRACT_ID, 
+    A.ASSET_NBR, 
+    B.COMPANY_NM, 
+    B.COMP_OWN_CD, 
+    C.ACCT_PLAN_ID, 
+    C.CONTRACT_BAL, 
+    C.TOTAL_RENT, 
+    B.COST_CENTER_CD, 
+    C.BRANCH_CO_NBR
+FROM RIMTHAI_CONTRACT C
+INNER JOIN RIMTHAI_COMPANY B ON C.BRANCH_CO_NBR = B.COMPANY_NBR
+INNER JOIN RIMTHA1_ASSET A ON C.CONTRACT_ID = A.CONTRACT_ID 
+                            AND C.CUSTOMER_NBR = A.CUSTOMER_NBR
+WHERE C.CONTRACT_STATUS = 'A' AND A.ASSET_STATUS = 'A';
+"""
+cursor.execute(query_1)
+
+# 2. Aggregation and creating another temporary table
+query_2 = """
+CREATE TEMP TABLE Dorrie_A_Asset2 AS
+SELECT 
+    CUSTOMER_NBR, 
+    CONTRACT_ID, 
+    COUNT(ASSET_NBR) AS CountOfASSET_NBR, 
+    COMPANY_NM, 
+    COMP_OWN_CD, 
+    ACCT_PLAN_ID, 
+    CONTRACT_BAL, 
+    TOTAL_RENT, 
+    COST_CENTER_CD AS JAU_Number, 
+    BRANCH_CO_NBR
+FROM Dorrie_A_Asset
+GROUP BY CUSTOMER_NBR, CONTRACT_ID, COMPANY_NM, COMP_OWN_CD, ACCT_PLAN_ID, CONTRACT_BAL, TOTAL_RENT, COST_CENTER_CD, BRANCH_CO_NBR;
+"""
+cursor.execute(query_2)
+
+# 3. Updating values based on conditions
+cursor.execute("""
+UPDATE Dorrie_A_Asset2 
+SET JAU_Number = '0' 
+WHERE BRANCH_CO_NBR = '70';
+""")
+
+cursor.execute("""
+UPDATE Dorrie_A_Asset2 
+SET JAU_Number = 'No AU Nbr' 
+WHERE BRANCH_CO_NBR IN ('55', '60', '65', '66', '67', '80', '85', '90');
+""")
+
+# 4. Aggregation and inserting into another table
+query_3 = """
+CREATE TEMP TABLE Dorrie_A_Asset3 AS 
+SELECT 
+    FIRST(ACCT_PLAN_ID) AS FirstOfACCT_PLAN_ID,
+    CUSTOMER_NBR, 
+    COMP_OWN_CD, 
+    COMPANY_NM, 
+    COUNT(CONTRACT_ID) AS CountOfCONTRACT_ID, 
+    SUM(CountOfASSET_NBR) AS SumOfCountOfASSET_NBR, 
+    SUM(CONTRACT_BAL) AS SumOfCONTRACT_BAL, 
+    SUM(TOTAL_RENT) AS SumOfTOTAL_RENT
+FROM Dorrie_A_Asset2
+GROUP BY CUSTOMER_NBR, COMP_OWN_CD, COMPANY_NM
+ORDER BY FirstOfACCT_PLAN_ID;
+"""
+cursor.execute(query_3)
+
+# 5. Updating values based on COMP_OWN_CD
+cursor.execute("""
+UPDATE Dorrie_A_Asset3 
+SET COMPANY_NM = 'RICOH' 
+WHERE COMP_OWN_CD = 'IKON';
+""")
+
+cursor.execute("""
+UPDATE Dorrie_A_Asset3 
+SET COMPANY_NM = 'WELLS FARGO' 
+WHERE COMP_OWN_CD = 'IFS';
+""")
+
+# 6. Final insertion into Counts table
+query_4 = """
+CREATE TEMP TABLE Counts AS 
+SELECT 
+    datetime('now') AS report_ran,
+    COMPANY_NM, 
+    FirstOfACCT_PLAN_ID, 
+    COUNT(CUSTOMER_NBR) AS "# Customers", 
+    SUM(CountOfCONTRACT_ID) AS "# Contracts", 
+    SUM(SumOfCountOfASSET_NBR) AS "# Assets", 
+    SUM(SumOfTOTAL_RENT) AS "SumOfSumOfTOTAL_RENT"
+FROM Dorrie_A_Asset3
+GROUP BY COMPANY_NM, FirstOfACCT_PLAN_ID
+ORDER BY COMPANY_NM, FirstOfACCT_PLAN_ID;
+"""
+cursor.execute(query_4)
+
+# 7. Retrieving the final report
+query_5 = """
+SELECT 
+    report_ran, 
+    COMPANY_NM, 
+    FirstOfACCT_PLAN_ID, 
+    "# Customers", 
+    "# Contracts", 
+    "# Assets", 
+    SumOfSumOfTOTAL_RENT
+FROM Counts
+ORDER BY report_ran DESC, COMPANY_NM, FirstOfACCT_PLAN_ID;
+"""
+
+# Fetch results and convert to Pandas DataFrame
+final_report = pd.read_sql_query(query_5, conn)
+
+# Display the results
+import ace_tools as tools
+tools.display_dataframe_to_user(name="Final Report", dataframe=final_report)
+
+# Close the connection
+conn.close()
+
+
+---
+
+Key Adjustments from MS Access to Python
+
+1. Using sqlite3 for managing temporary tables since you can't write to IBM DB2.
+
+
+2. Rewriting SELECT INTO as CREATE TEMP TABLE ... AS SELECT ... in SQLite.
+
+
+3. Handling UPDATE statements correctly for conditions.
+
+
+4. Replacing First() aggregation with FIRST_VALUE() where applicable.
+
+
+5. Using datetime('now') in SQLite instead of Now() in Access for timestamp generation.
+
+
+
+Let me know if you need further modifications or explanations!
+
