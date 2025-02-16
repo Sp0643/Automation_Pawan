@@ -1,5 +1,236 @@
 
 
+It looks like your MS Access SQL query has some formatting and syntax issues that need correction before we can convert it to IBM DB2 SQL.
+
+
+---
+
+Issues in the Query
+
+1. Syntax Errors and Typos:
+
+Some column and table names are incorrectly formatted (e.g., RIMTHAΑΣ, RIMTΗΑΣ).
+
+10 appears in the SELECT clause without an alias.
+
+CONTRACT ID-RIMTHAL ASSET.CONTRACT (0) is incorrectly written.
+
+Missing aliases and incorrect brackets/parentheses.
+
+
+
+2. INTO (Dorrie A Asset FROM Issue:
+
+In MS Access, SELECT INTO is used for creating a new table.
+
+In DB2, INSERT INTO should be used instead.
+
+
+
+3. Joins Need Correction:
+
+The join conditions are not properly formatted.
+
+
+
+4. WHERE Clause Issues:
+
+WHERE RIMTHAI CONTRACT.CONTRACT STATUS)-"A") is incorrect.
+
+Correct format: WHERE RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A' (DB2 uses = instead of -).
+
+
+
+
+
+---
+
+Corrected MS Access SQL
+
+If the goal is to create a new table
+
+SELECT 
+    RIMTHAI_ASSET.CUSTOMER_NBR, 
+    RIMTHAI_ASSET.CONTRACT_ID, 
+    RIMTHAI_ASSET.ASSET_NBR, 
+    RIMTHAI_COMPANY.COMPANY_NM, 
+    RIMTHAI_COMPANY.COMP_OWN_CD, 
+    RIMTHAI_CONTRACT.ACCT_PLAN_ID, 
+    RIMTHAI_CONTRACT.CONTRACT_BAL, 
+    RIMTHAI_CONTRACT.TOTAL_RENT, 
+    RIMTHAI_COMPANY.COST_CENTER_CD, 
+    RIMTHAI_CONTRACT.BRANCH_CO_NBR
+INTO Dorrie_A_Asset  -- Creates a new table in MS Access
+FROM 
+    (RIMTHAI_CONTRACT 
+    INNER JOIN RIMTHAI_COMPANY 
+    ON RIMTHAI_CONTRACT.BRANCH_CO_NBR = RIMTHAI_COMPANY.COMPANY_NBR) 
+    INNER JOIN RIMTHAI_ASSET 
+    ON (RIMTHAI_CONTRACT.CONTRACT_ID = RIMTHAI_ASSET.CONTRACT_ID 
+    AND RIMTHAI_CONTRACT.CUSTOMER_NBR = RIMTHAI_ASSET.CUSTOMER_NBR)
+WHERE 
+    RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A' 
+    AND RIMTHAI_ASSET.ASSET_STATUS = 'A'
+GROUP BY 
+    RIMTHAI_ASSET.CUSTOMER_NBR, 
+    RIMTHAI_ASSET.CONTRACT_ID, 
+    RIMTHAI_ASSET.ASSET_NBR, 
+    RIMTHAI_COMPANY.COMPANY_NM, 
+    RIMTHAI_COMPANY.COMP_OWN_CD, 
+    RIMTHAI_CONTRACT.ACCT_PLAN_ID, 
+    RIMTHAI_CONTRACT.CONTRACT_BAL, 
+    RIMTHAI_CONTRACT.TOTAL_RENT, 
+    RIMTHAI_COMPANY.COST_CENTER_CD, 
+    RIMTHAI_CONTRACT.BRANCH_CO_NBR;
+
+
+---
+
+DB2 Equivalent Query
+
+If the goal is to insert data into an existing table
+
+INSERT INTO Dorrie_A_Asset ( 
+    CUSTOMER_NBR, CONTRACT_ID, ASSET_NBR, COMPANY_NM, COMP_OWN_CD, 
+    ACCT_PLAN_ID, CONTRACT_BAL, TOTAL_RENT, COST_CENTER_CD, BRANCH_CO_NBR
+)
+SELECT 
+    RIMTHAI_ASSET.CUSTOMER_NBR, 
+    RIMTHAI_ASSET.CONTRACT_ID, 
+    RIMTHAI_ASSET.ASSET_NBR, 
+    RIMTHAI_COMPANY.COMPANY_NM, 
+    RIMTHAI_COMPANY.COMP_OWN_CD, 
+    RIMTHAI_CONTRACT.ACCT_PLAN_ID, 
+    RIMTHAI_CONTRACT.CONTRACT_BAL, 
+    RIMTHAI_CONTRACT.TOTAL_RENT, 
+    RIMTHAI_COMPANY.COST_CENTER_CD, 
+    RIMTHAI_CONTRACT.BRANCH_CO_NBR
+FROM 
+    RIMTHAI_CONTRACT 
+    INNER JOIN RIMTHAI_COMPANY 
+    ON RIMTHAI_CONTRACT.BRANCH_CO_NBR = RIMTHAI_COMPANY.COMPANY_NBR
+    INNER JOIN RIMTHAI_ASSET 
+    ON RIMTHAI_CONTRACT.CONTRACT_ID = RIMTHAI_ASSET.CONTRACT_ID 
+    AND RIMTHAI_CONTRACT.CUSTOMER_NBR = RIMTHAI_ASSET.CUSTOMER_NBR
+WHERE 
+    RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A' 
+    AND RIMTHAI_ASSET.ASSET_STATUS = 'A';
+
+
+---
+
+Key Differences in DB2 Version
+
+1. INSERT INTO Instead of SELECT INTO
+
+MS Access: SELECT ... INTO table_name
+
+DB2: Use INSERT INTO table_name SELECT ...
+
+
+
+2. Joins Format
+
+MS Access requires extra parentheses in multi-table joins.
+
+DB2 follows ANSI SQL and does not require parentheses.
+
+
+
+3. Data Type Handling
+
+MS Access: Uses TEXT, MEMO, YES/NO for text and boolean values.
+
+DB2: Uses VARCHAR, CLOB, and BOOLEAN or SMALLINT.
+
+
+
+4. String Literals in WHERE Clause
+
+MS Access: Uses double quotes ("A")
+
+DB2: Uses single quotes ('A')
+
+
+
+
+
+---
+
+Final Steps for Migration
+
+1. Verify Column Names
+
+Ensure that the column names match exactly in DB2.
+
+Example: CUSTOMER_NBR vs. CUSTOMER_NBR_ (check for unintended underscores or typos).
+
+
+2. Create Table in DB2 (if it doesn't exist)
+
+CREATE TABLE Dorrie_A_Asset (
+    CUSTOMER_NBR VARCHAR(20),
+    CONTRACT_ID VARCHAR(20),
+    ASSET_NBR VARCHAR(20),
+    COMPANY_NM VARCHAR(100),
+    COMP_OWN_CD VARCHAR(10),
+    ACCT_PLAN_ID VARCHAR(20),
+    CONTRACT_BAL DECIMAL(15,2),
+    TOTAL_RENT DECIMAL(15,2),
+    COST_CENTER_CD VARCHAR(20),
+    BRANCH_CO_NBR VARCHAR(20)
+);
+
+3. Execute Query in Python Using pyodbc
+
+import pyodbc
+
+conn = pyodbc.connect("DSN=mydsn;UID=user;PWD=password")
+cursor = conn.cursor()
+
+insert_query = """
+INSERT INTO Dorrie_A_Asset (CUSTOMER_NBR, CONTRACT_ID, ASSET_NBR, COMPANY_NM, COMP_OWN_CD, 
+    ACCT_PLAN_ID, CONTRACT_BAL, TOTAL_RENT, COST_CENTER_CD, BRANCH_CO_NBR)
+SELECT 
+    RIMTHAI_ASSET.CUSTOMER_NBR, 
+    RIMTHAI_ASSET.CONTRACT_ID, 
+    RIMTHAI_ASSET.ASSET_NBR, 
+    RIMTHAI_COMPANY.COMPANY_NM, 
+    RIMTHAI_COMPANY.COMP_OWN_CD, 
+    RIMTHAI_CONTRACT.ACCT_PLAN_ID, 
+    RIMTHAI_CONTRACT.CONTRACT_BAL, 
+    RIMTHAI_CONTRACT.TOTAL_RENT, 
+    RIMTHAI_COMPANY.COST_CENTER_CD, 
+    RIMTHAI_CONTRACT.BRANCH_CO_NBR
+FROM RIMTHAI_CONTRACT 
+INNER JOIN RIMTHAI_COMPANY ON RIMTHAI_CONTRACT.BRANCH_CO_NBR = RIMTHAI_COMPANY.COMPANY_NBR
+INNER JOIN RIMTHAI_ASSET 
+    ON RIMTHAI_CONTRACT.CONTRACT_ID = RIMTHAI_ASSET.CONTRACT_ID 
+    AND RIMTHAI_CONTRACT.CUSTOMER_NBR = RIMTHAI_ASSET.CUSTOMER_NBR
+WHERE RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A' 
+    AND RIMTHAI_ASSET.ASSET_STATUS = 'A';
+"""
+
+cursor.execute(insert_query)
+conn.commit()
+conn.close()
+
+
+---
+
+Summary
+
+Fixed syntax errors in MS Access query.
+
+Converted the query to DB2 SQL (ANSI SQL standard).
+
+Used INSERT INTO instead of SELECT INTO.
+
+Provided a Python pyodbc example to execute the query.
+
+
+Let me know if you encounter any errors while running this in DB2!
+
 
 
 
