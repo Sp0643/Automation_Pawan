@@ -1097,4 +1097,187 @@ The code snippet demonstrates connecting to the SQLite database, executing the q
 Adjust the table and column names as needed for your actual schema.
 
 
+Below is a complete Python solution that rewrites your MS Access update/aggregate queries into SQLite‑compatible SQL and runs them on a temporary SQLite database. In this example, we assume that the table Dorrie_A_Asset2 already exists in SQLite (populated from your earlier steps) and that you’ll create new tables Dorrie_A_Asset3 and Counts from it.
+
+For clarity, note the following changes compared to your original MS Access syntax:
+
+• In SQLite you use double quotes (or no quoting if names are simple) for identifiers with spaces.
+• Instead of the MS Access “INTO” clause, we use “CREATE TABLE … AS SELECT …” for making a new table.
+• SQLite does not have a built‑in First() aggregate; we use MIN() to simulate “first” for ACCT_PLAN_ID. (Adjust if needed.)
+• The Now() function is replaced by SQLite’s datetime('now').
+• The UPDATE syntax has been fixed and multiple OR conditions are replaced with an IN clause where appropriate.
+
+Below is the full Python code:
+
+
+---
+
+import sqlite3
+
+# Connect to an in‑memory SQLite database (or use a file if desired)
+conn = sqlite3.connect(":memory:")
+cursor = conn.cursor()
+
+# --------------------------
+# Assume Dorrie_A_Asset2 exists.
+# For demonstration, you might create and populate it.
+# Example creation (adjust types and sample data as needed):
+cursor.execute("""
+CREATE TABLE Dorrie_A_Asset2 (
+    CUSTOMER_NBR TEXT,
+    CONTRACT_ID TEXT,
+    ASSET_NBR INTEGER,
+    COMPANY_NM TEXT,
+    COMP_OWN_CD TEXT,
+    ACCT_PLAN_ID TEXT,
+    CONTRACT_BAL REAL,
+    TOTAL_RENT REAL,
+    "AU Number" TEXT,
+    BRANCH_CO_NBR TEXT
+)
+""")
+# (Optional) Insert sample data into Dorrie_A_Asset2 here...
+# conn.commit()
+
+# --------------------------
+# 1. Update "AU Number" to "0" where BRANCH_CO_NBR is "70"
+update_query1 = '''
+UPDATE Dorrie_A_Asset2 
+SET "AU Number" = '0'
+WHERE BRANCH_CO_NBR = '70';
+'''
+cursor.execute(update_query1)
+
+# 2. Update "AU Number" to "No AU Nar" where BRANCH_CO_NBR is in a list of values.
+update_query2 = '''
+UPDATE Dorrie_A_Asset2 
+SET "AU Number" = 'No AU Nar'
+WHERE BRANCH_CO_NBR IN ('55','60','65','66','67','80','85','90');
+'''
+cursor.execute(update_query2)
+conn.commit()
+
+# --------------------------
+# 3. Create Dorrie_A_Asset3 as an aggregate table from Dorrie_A_Asset2.
+# Using CREATE TABLE AS SELECT. We simulate First(ACCT_PLAN_ID) with MIN(ACCT_PLAN_ID).
+create_table_query = '''
+CREATE TABLE Dorrie_A_Asset3 AS
+SELECT 
+    MIN(ACCT_PLAN_ID) AS FirstOfACCT_PLAN_ID,
+    CUSTOMER_NBR,
+    COMP_OWN_CD,
+    COMPANY_NM,
+    COUNT(CONTRACT_ID) AS CountOfCONTRACT_ID,
+    SUM("CountOfASSET_NBR") AS SumOfCountOfASSET_NBR,  -- assumes Dorrie_A_Asset2 has this column from a previous aggregation
+    SUM(CONTRACT_BAL) AS SumOfCONTRACT_BAL,
+    SUM(TOTAL_RENT) AS SumOfTOTAL_RENT
+FROM Dorrie_A_Asset2
+GROUP BY 
+    CUSTOMER_NBR,
+    COMP_OWN_CD,
+    COMPANY_NM;
+'''
+# Note: If Dorrie_A_Asset2 does not have a column CountOfASSET_NBR,
+# you may need to compute COUNT(ASSET_NBR) in a subquery.
+cursor.execute(create_table_query)
+conn.commit()
+
+# --------------------------
+# 4. Update Dorrie_A_Asset3 COMPANY_NM based on COMP_OWN_CD values.
+update_query3 = '''
+UPDATE Dorrie_A_Asset3 
+SET COMPANY_NM = 'RICOH'
+WHERE COMP_OWN_CD = 'IKON';
+'''
+cursor.execute(update_query3)
+
+update_query4 = '''
+UPDATE Dorrie_A_Asset3 
+SET COMPANY_NM = 'WELLS FARGO'
+WHERE COMP_OWN_CD = 'IFS';
+'''
+cursor.execute(update_query4)
+conn.commit()
+
+# --------------------------
+# 5. Create the Counts table.
+# First, create Counts with the desired schema.
+cursor.execute("""
+CREATE TABLE Counts (
+    "report ran" TEXT,
+    COMPANY_NM TEXT,
+    FirstOfACCT_PLAN_ID TEXT,
+    "# Customers" INTEGER,
+    "# Contracts" INTEGER,
+    "# Assets" INTEGER,
+    "S GR" REAL
+)
+""")
+conn.commit()
+
+# 6. Insert aggregated data into Counts.
+insert_query = '''
+INSERT INTO Counts ("report ran", COMPANY_NM, FirstOfACCT_PLAN_ID, "# Customers", "# Contracts", "# Assets", "S GR")
+SELECT 
+    datetime('now') AS "report ran",
+    COMPANY_NM,
+    FirstOfACCT_PLAN_ID,
+    COUNT(CUSTOMER_NBR) AS "# Customers",
+    SUM(CountOfCONTRACT_ID) AS "# Contracts",
+    SUM(SumOfCountOfASSET_NBR) AS "# Assets",
+    SUM(SumOfTOTAL_RENT) AS "S GR"
+FROM Dorrie_A_Asset3
+GROUP BY COMPANY_NM, FirstOfACCT_PLAN_ID;
+'''
+cursor.execute(insert_query)
+conn.commit()
+
+# --------------------------
+# 7. Retrieve and print results from the Counts table.
+select_query = '''
+SELECT "report ran", COMPANY_NM, FirstOfACCT_PLAN_ID, "# Customers", "# Contracts", "# Assets", "S GR"
+FROM Counts
+ORDER BY "report ran" DESC, COMPANY_NM, FirstOfACCT_PLAN_ID;
+'''
+cursor.execute(select_query)
+results = cursor.fetchall()
+
+# Print the results
+for row in results:
+    print(row)
+
+# Close the connection when done.
+conn.close()
+
+
+---
+
+Explanation
+
+1. Update Queries:
+• The first update sets "AU Number" to '0' where BRANCH_CO_NBR equals '70'.
+• The second update sets "AU Number" to 'No AU Nar' when BRANCH_CO_NBR is one of several values (using an IN clause).
+
+
+2. Creating an Aggregated Table (Dorrie_A_Asset3):
+We use CREATE TABLE ... AS SELECT to build a new table aggregating data from Dorrie_A_Asset2. In this example, MIN() is used to simulate the “First” value of ACCT_PLAN_ID.
+
+
+3. Further Updates on Dorrie_A_Asset3:
+Two updates adjust COMPANY_NM based on different COMP_OWN_CD values.
+
+
+4. Counts Table:
+We create the Counts table with columns matching your target schema and then insert aggregated results using datetime('now') for the report timestamp.
+The SELECT aggregates customer counts, sums of contracts, assets, and total rent.
+
+
+5. Result Retrieval:
+Finally, we select and print data from the Counts table.
+
+
+
+Adjust table names, column names, and aggregation details as needed to match your real schema and requirements.
+
+
 
