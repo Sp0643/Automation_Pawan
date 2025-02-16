@@ -983,3 +983,118 @@ Key Points:
 Feel free to adjust the connection strings and column names as necessary for your environment. Let me know if you need further modifications or have additional queries to translate!
 
 
+
+
+Below is an example of how you can convert your MS Access query into a SQLite‑compatible SQL statement and then run it to create a new temporary table from an existing one. In MS Access you used an “INTO” clause, but in SQLite you can achieve the same result using the CREATE TABLE … AS SELECT … syntax.
+
+Assuming your original table is named Dorrie_A_Asset with columns such as:
+
+• CUSTOMER_NBR
+• CONTRACT_ID
+• ASSET_NBR
+• COMPANY_NM
+• COMP_OWN_CO
+• ACCT_PLAN_ID
+• CONTRACT_BAL
+• TOTAL_RENT
+• COST_CENTER_CD
+• BRANCH_CO_NBR
+
+A corrected and SQLite‑adapted version of your query would be:
+
+CREATE TABLE Dorrie_A_Asset2 AS
+SELECT 
+    CUSTOMER_NBR, 
+    CONTRACT_ID, 
+    COUNT(ASSET_NBR) AS CountOfASSET_NBR,
+    COMPANY_NM, 
+    COMP_OWN_CO, 
+    ACCT_PLAN_ID, 
+    CONTRACT_BAL, 
+    TOTAL_RENT, 
+    COST_CENTER_CD AS "AU Number",
+    BRANCH_CO_NBR
+FROM Dorrie_A_Asset
+GROUP BY 
+    CUSTOMER_NBR,
+    CONTRACT_ID,
+    COMPANY_NM,
+    COMP_OWN_CO,
+    ACCT_PLAN_ID,
+    CONTRACT_BAL,
+    TOTAL_RENT,
+    COST_CENTER_CD,
+    BRANCH_CO_NBR;
+
+Below is a complete Python snippet using sqlite3 to execute the above query on your SQLite temporary database and then display a few rows from the new table:
+
+import sqlite3
+
+# Connect to your SQLite in-memory database or an existing one.
+conn_sqlite = sqlite3.connect(":memory:")
+cursor = conn_sqlite.cursor()
+
+# (For demonstration purposes, let's assume Dorrie_A_Asset already exists.
+#  In your real use-case, this table should have been created/populated earlier.)
+
+# --- Execute the query to create the new table ---
+create_table_query = """
+CREATE TABLE Dorrie_A_Asset2 AS
+SELECT 
+    CUSTOMER_NBR, 
+    CONTRACT_ID, 
+    COUNT(ASSET_NBR) AS CountOfASSET_NBR,
+    COMPANY_NM, 
+    COMP_OWN_CO, 
+    ACCT_PLAN_ID, 
+    CONTRACT_BAL, 
+    TOTAL_RENT, 
+    COST_CENTER_CD AS "AU Number",
+    BRANCH_CO_NBR
+FROM Dorrie_A_Asset
+GROUP BY 
+    CUSTOMER_NBR,
+    CONTRACT_ID,
+    COMPANY_NM,
+    COMP_OWN_CO,
+    ACCT_PLAN_ID,
+    CONTRACT_BAL,
+    TOTAL_RENT,
+    COST_CENTER_CD,
+    BRANCH_CO_NBR;
+"""
+
+cursor.execute(create_table_query)
+conn_sqlite.commit()
+
+# --- Query the newly created table and print 5 rows ---
+cursor.execute("SELECT * FROM Dorrie_A_Asset2 LIMIT 5;")
+rows = cursor.fetchall()
+print(rows)
+
+# Close the connection if done
+conn_sqlite.close()
+
+Explanation
+
+1. SQLite CREATE TABLE AS SELECT:
+Instead of using the MS Access “INTO” clause, SQLite uses CREATE TABLE table_name AS SELECT … to create a new table from query results.
+
+
+2. COUNT and GROUP BY:
+The COUNT(ASSET_NBR) aggregation is applied, and the GROUP BY clause includes all the non-aggregated columns.
+
+
+3. Alias for Column:
+The alias "AU Number" is assigned to COST_CENTER_CD. In SQLite, if a column name contains spaces, you can enclose it in double quotes.
+
+
+4. Python Execution:
+The code snippet demonstrates connecting to the SQLite database, executing the query to create the new table, and then retrieving and printing 5 rows from that new table.
+
+
+
+Adjust the table and column names as needed for your actual schema.
+
+
+
