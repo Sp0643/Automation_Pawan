@@ -850,3 +850,136 @@ Key Adjustments from MS Access to Python
 
 Let me know if you need further modifications or explanations!
 
+
+
+
+Below is one way to “translate” your MS Access query into a DB2‑friendly SQL statement and show you how to use it in Python with pyodbc. Note that I had to make some assumptions/corrections because the original query contains a few typos and unusual syntax (for example, using “–” instead of “=” and mixed table prefixes like “RIMTHA1” and “RIMTHAI”). In the rewritten query, I’ve assumed that:
+
+• All objects come from the same schema (here, RIMTHA1)
+• The join on ASSET is meant to equate CONTRACT_ID and CUSTOMER_NBR
+• Column names with spaces (e.g. “COMPANY NM”) have been renamed with underscores (e.g. COMPANY_NM)
+• The “INTO [Dorrie A Asset]” clause (which in Access creates a new table) is omitted since you only have read access; later, we can store the results in a temporary SQLite table if needed
+
+The rewritten SQL might look like this:
+
+SELECT 
+    A.CUSTOMER_NBR,
+    A.CONTRACT_ID,
+    A.ASSET_NBR,
+    C.COMPANY_NM,
+    C.COMP_OWN_CD,
+    CT.ACCT_PLAN_ID,
+    CT.CONTRACT_BAL,
+    CT.TOTAL_RENT,
+    C.COST_CENTER_CD,
+    CT.BRANCH_CO_NBR
+FROM RIMTHA1.CONTRACT AS CT
+JOIN RIMTHA1.COMPANY AS C 
+    ON CT.BRANCH_CO_NBR = C.COMPANY_NBR
+JOIN RIMTHA1.ASSET AS A 
+    ON CT.CONTRACT_ID = A.CONTRACT_ID 
+   AND CT.CUSTOMER_NBR = A.CUSTOMER_NBR
+WHERE CT.CONTRACT_STATUS = 'A' 
+  AND A.ASSET_STATUS = 'A'
+GROUP BY 
+    A.CUSTOMER_NBR, 
+    A.CONTRACT_ID, 
+    A.ASSET_NBR, 
+    C.COMPANY_NM, 
+    C.COMP_OWN_CD, 
+    CT.ACCT_PLAN_ID, 
+    CT.CONTRACT_BAL, 
+    CT.TOTAL_RENT, 
+    C.COST_CENTER_CD, 
+    CT.BRANCH_CO_NBR;
+
+Below is an example Python snippet that connects to your IBM DB2 database using pyodbc, runs the query, loads the results into a pandas DataFrame, and then (if needed) writes that DataFrame to a temporary SQLite table so you can reuse the data for further SQL queries without write access to DB2:
+
+
+---
+
+import pyodbc
+import pandas as pd
+import sqlite3
+
+# Connect to IBM DB2 (fill in your connection details)
+conn_db2 = pyodbc.connect(
+    "DRIVER={IBM DB2 ODBC DRIVER};"
+    "DATABASE=your_db_name;"
+    "HOSTNAME=your_host;"
+    "PORT=your_port;"
+    "PROTOCOL=TCPIP;"
+    "UID=your_username;"
+    "PWD=your_password;"
+)
+
+# Define the DB2 SQL query
+sql_query = """
+SELECT 
+    A.CUSTOMER_NBR,
+    A.CONTRACT_ID,
+    A.ASSET_NBR,
+    C.COMPANY_NM,
+    C.COMP_OWN_CD,
+    CT.ACCT_PLAN_ID,
+    CT.CONTRACT_BAL,
+    CT.TOTAL_RENT,
+    C.COST_CENTER_CD,
+    CT.BRANCH_CO_NBR
+FROM RIMTHA1.CONTRACT AS CT
+JOIN RIMTHA1.COMPANY AS C 
+    ON CT.BRANCH_CO_NBR = C.COMPANY_NBR
+JOIN RIMTHA1.ASSET AS A 
+    ON CT.CONTRACT_ID = A.CONTRACT_ID 
+   AND CT.CUSTOMER_NBR = A.CUSTOMER_NBR
+WHERE CT.CONTRACT_STATUS = 'A' 
+  AND A.ASSET_STATUS = 'A'
+GROUP BY 
+    A.CUSTOMER_NBR, 
+    A.CONTRACT_ID, 
+    A.ASSET_NBR, 
+    C.COMPANY_NM, 
+    C.COMP_OWN_CD, 
+    CT.ACCT_PLAN_ID, 
+    CT.CONTRACT_BAL, 
+    CT.TOTAL_RENT, 
+    C.COST_CENTER_CD, 
+    CT.BRANCH_CO_NBR;
+"""
+
+# Execute the query and load into a pandas DataFrame
+df = pd.read_sql(sql_query, conn_db2)
+conn_db2.close()
+
+# Optional: Create a temporary SQLite table from the DataFrame
+conn_sqlite = sqlite3.connect(':memory:')  # In-memory SQLite DB
+df.to_sql('Dorrie_A_Asset', conn_sqlite, index=False, if_exists='replace')
+
+# Now you can reuse the table 'Dorrie_A_Asset' in subsequent SQL queries via sqlite3 or pandasql.
+# For example, using sqlite3:
+cursor = conn_sqlite.cursor()
+cursor.execute("SELECT * FROM Dorrie_A_Asset LIMIT 5;")
+print(cursor.fetchall())
+
+conn_sqlite.close()
+
+
+---
+
+Key Points:
+
+1. Rewriting the Query:
+– I replaced the Access‑specific “INTO [Dorrie A Asset]” clause with a plain SELECT (since you only have read access).
+– I corrected the join conditions so that the ASSET table joins on both CONTRACT_ID and CUSTOMER_NBR.
+– I assumed that the “–” symbols in the original query were meant to be “=” operators.
+
+
+2. Temporary Storage:
+– Since you can’t write back to DB2, you can load the result into a pandas DataFrame and then use the DataFrame’s to_sql method to create a temporary SQLite table (in memory).
+– Once the table is in SQLite, you can run additional queries against it using either the sqlite3 module or pandasql, reusing as much SQL as possible.
+
+
+
+Feel free to adjust the connection strings and column names as necessary for your environment. Let me know if you need further modifications or have additional queries to translate!
+
+
