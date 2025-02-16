@@ -1,0 +1,245 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Your queries appear to be written in MS Access SQL and need to be translated into IBM Db2 SQL for proper execution. Below is a breakdown of each query along with an explanation and its equivalent Db2 SQL.
+
+
+---
+
+1️⃣ Creating a Table with Aggregated Data
+
+MS Access Query:
+
+SELECT 
+    Count([Dorrie A Asset].ASSET_NBR) AS CountOfASSET_NBR, 
+    [Dorrie A Asset].COMPANY_NM, 
+    [Dorrie A Asset].COMP_OWN_CD, 
+    [Dorrie A Asset].ACCT_PLAN_ID, 
+    [Dorrie A Asset].CONTRACT_BAL, 
+    [Dorrie A Asset].TOTAL_RENT, 
+    [Dorrie A Asset].COST_CENTER_CD AS [AU Number], 
+    [Dorrie A Asset].BRANCH_CO_NBR 
+INTO [Dorrie A Asset2]
+FROM [Dorrie A Asset]
+GROUP BY 
+    [Dorrie A Asset].CUSTOMER_NBR, 
+    [Dorrie A Asset].CONTRACT_ID, 
+    [Dorrie A Asset].COMPANY_NM, 
+    [Dorrie A Asset].COMP_OWN_CD, 
+    [Dorrie A Asset].ACCT_PLAN_ID, 
+    [Dorrie A Asset].CONTRACT_BAL, 
+    [Dorrie A Asset].TOTAL_RENT, 
+    [Dorrie A Asset].COST_CENTER_CD, 
+    [Dorrie A Asset].BRANCH_CO_NBR;
+
+Db2 Equivalent:
+
+CREATE TABLE "Dorrie_A_Asset2" AS 
+(
+    SELECT 
+        COUNT("ASSET_NBR") AS CountOfASSET_NBR, 
+        "COMPANY_NM", 
+        "COMP_OWN_CD", 
+        "ACCT_PLAN_ID", 
+        "CONTRACT_BAL", 
+        "TOTAL_RENT", 
+        "COST_CENTER_CD" AS "AU Number", 
+        "BRANCH_CO_NBR"
+    FROM "Dorrie_A_Asset"
+    GROUP BY 
+        "CUSTOMER_NBR", 
+        "CONTRACT_ID", 
+        "COMPANY_NM", 
+        "COMP_OWN_CD", 
+        "ACCT_PLAN_ID", 
+        "CONTRACT_BAL", 
+        "TOTAL_RENT", 
+        "COST_CENTER_CD", 
+        "BRANCH_CO_NBR"
+) WITH NO DATA;
+
+INSERT INTO "Dorrie_A_Asset2" 
+SELECT 
+    COUNT("ASSET_NBR"), 
+    "COMPANY_NM", 
+    "COMP_OWN_CD", 
+    "ACCT_PLAN_ID", 
+    "CONTRACT_BAL", 
+    "TOTAL_RENT", 
+    "COST_CENTER_CD", 
+    "BRANCH_CO_NBR"
+FROM "Dorrie_A_Asset"
+GROUP BY 
+    "CUSTOMER_NBR", 
+    "CONTRACT_ID", 
+    "COMPANY_NM", 
+    "COMP_OWN_CD", 
+    "ACCT_PLAN_ID", 
+    "CONTRACT_BAL", 
+    "TOTAL_RENT", 
+    "COST_CENTER_CD", 
+    "BRANCH_CO_NBR";
+
+
+---
+
+2️⃣ Updating AU Number Based on Conditions
+
+MS Access Query:
+
+UPDATE [Dorrie A Asset2] 
+SET [AU Number] = "0" 
+WHERE [BRANCH_CO_NBR] = "70";
+
+Db2 Equivalent:
+
+UPDATE "Dorrie_A_Asset2" 
+SET "AU Number" = '0' 
+WHERE "BRANCH_CO_NBR" = '70';
+
+MS Access Query:
+
+UPDATE [Dorrie A Asset2] 
+SET [AU Number] = "No AU Nbr" 
+WHERE [BRANCH_CO_NBR] IN ("55", "60", "65", "66", "67", "80", "85", "90");
+
+Db2 Equivalent:
+
+UPDATE "Dorrie_A_Asset2" 
+SET "AU Number" = 'No AU Nbr' 
+WHERE "BRANCH_CO_NBR" IN ('55', '60', '65', '66', '67', '80', '85', '90');
+
+
+---
+
+3️⃣ Creating Another Aggregated Table
+
+MS Access Query:
+
+SELECT 
+    First([Dorrie A Asset2].ACCT_PLAN_ID) AS FirstOfACCT_PLAN_ID, 
+    [Dorrie A Asset2].CUSTOMER_NBR, 
+    [Dorrie A Asset2].COMP_OWN_CD, 
+    [Dorrie A Asset2].COMPANY_NM, 
+    Count([Dorrie A Asset2].CONTRACT_ID) AS CountOfCONTRACT_ID, 
+    Sum([Dorrie A Asset2].CountOfASSET_NBR) AS SumOfCountOfASSET_NBR, 
+    Sum([Dorrie A Asset2].CONTRACT_BAL) AS SumOfCONTRACT_BAL, 
+    Sum([Dorrie A Asset2].TOTAL_RENT) AS SumOfTOTAL_RENT 
+INTO [Dorrie A Asset3]
+FROM [Dorrie A Asset2]
+GROUP BY 
+    [Dorrie A Asset2].CUSTOMER_NBR, 
+    [Dorrie A Asset2].COMP_OWN_CD, 
+    [Dorrie A Asset2].COMPANY_NM
+ORDER BY First([Dorrie A Asset2].ACCT_PLAN_ID);
+
+Db2 Equivalent:
+
+CREATE TABLE "Dorrie_A_Asset3" AS 
+(
+    SELECT 
+        MIN("ACCT_PLAN_ID") AS FirstOfACCT_PLAN_ID, 
+        "CUSTOMER_NBR", 
+        "COMP_OWN_CD", 
+        "COMPANY_NM", 
+        COUNT("CONTRACT_ID") AS CountOfCONTRACT_ID, 
+        SUM("CountOfASSET_NBR") AS SumOfCountOfASSET_NBR, 
+        SUM("CONTRACT_BAL") AS SumOfCONTRACT_BAL, 
+        SUM("TOTAL_RENT") AS SumOfTOTAL_RENT 
+    FROM "Dorrie_A_Asset2"
+    GROUP BY "CUSTOMER_NBR", "COMP_OWN_CD", "COMPANY_NM"
+) WITH NO DATA;
+
+INSERT INTO "Dorrie_A_Asset3" 
+SELECT 
+    MIN("ACCT_PLAN_ID"), 
+    "CUSTOMER_NBR", 
+    "COMP_OWN_CD", 
+    "COMPANY_NM", 
+    COUNT("CONTRACT_ID"), 
+    SUM("CountOfASSET_NBR"), 
+    SUM("CONTRACT_BAL"), 
+    SUM("TOTAL_RENT")
+FROM "Dorrie_A_Asset2"
+GROUP BY "CUSTOMER_NBR", "COMP_OWN_CD", "COMPANY_NM";
+
+
+---
+
+4️⃣ Updating Company Names
+
+MS Access Query:
+
+UPDATE [Dorrie A Asset3] 
+SET [COMPANY_NM] = "RICOH" 
+WHERE [COMP_OWN_CD] = "IKON";
+
+Db2 Equivalent:
+
+UPDATE "Dorrie_A_Asset3" 
+SET "COMPANY_NM" = 'RICOH' 
+WHERE "COMP_OWN_CD" = 'IKON';
+
+MS Access Query:
+
+UPDATE [Dorrie A Asset3] 
+SET [COMPANY_NM] = "WELLS FARGO" 
+WHERE [COMP_OWN_CD] = "IFS";
+
+Db2 Equivalent:
+
+UPDATE "Dorrie_A_Asset3" 
+SET "COMPANY_NM" = 'WELLS FARGO' 
+WHERE "COMP_OWN_CD" = 'IFS';
+
+
+---
+
+5️⃣ Inserting Final Aggregated Data
+
+MS Access Query:
+
+INSERT INTO Counts 
+    ([report ran], COMPANY_NM, FirstOfACCT_PLAN_ID, [# Customers], [# Contracts], [# Assets], [$ GRI])
+SELECT 
+    Now() AS [report ran], 
+    [Dorrie A Asset3].COMPANY_NM, 
+    [Dorrie A Asset3].FirstOfACCT_PLAN_ID, 
+    Count([Dorrie A Asset3].CUSTOMER_NBR) AS [# Customers], 
+    Sum([Dorrie A Asset3].CountOfCONTRACT_ID) AS [# Contracts], 
+    Sum([Dorrie A Asset3].SumOfCountOfASSET_NBR) AS [# Assets], 
+    Sum([Dorrie A Asset3].SumOfTOTAL_RENT) AS SumOfSumOfTOTAL_RENT
+FROM [Dorrie A Asset3]
+GROUP BY Now(), [Dorrie A Asset3].COMPANY_NM, [Dorrie A Asset3].FirstOfACCT_PLAN_ID
+ORDER BY [Dorrie A Asset3].COMPANY_NM, [Dorrie A Asset3].FirstOfACCT_PLAN_ID;
+
+Db2 Equivalent:
+
+INSERT INTO "Counts" 
+    ("report_ran", "COMPANY_NM", "FirstOfACCT_PLAN_ID", "# Customers", "# Contracts", "# Assets", "$ GRI")
+SELECT 
+    CURRENT_TIMESTAMP AS "report_ran", 
+    "COMPANY_NM", 
+    "FirstOfACCT_PLAN_ID", 
+    COUNT("CUSTOMER_NBR"), 
+    SUM("CountOfCONTRACT_ID"), 
+    SUM("SumOfCountOfASSET_NBR"), 
+    SUM("SumOfTOTAL_RENT")
+FROM "Dorrie_A_Asset3"
+GROUP BY CURRENT_TIMESTAMP, "COMPANY_NM", "FirstOfACCT_PLAN_ID";
+
+Would you like this in a Python script? 🚀
+
