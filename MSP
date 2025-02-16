@@ -563,3 +563,92 @@ Derived Tables (Subqueries) let you use the result directly in a SELECT statemen
 
 This should allow you to proceed without needing write access. Let me know if you need further modifications!
 
+
+
+
+Since you don't have write access, you can use Common Table Expressions (CTEs) or Derived Tables (Subqueries) instead of temporary tables to structure your query.
+
+Approach:
+
+1. Use a CTE (WITH statement) to create a temporary result set in memory.
+
+
+2. Use a subquery (SELECT ... FROM (...) AS subquery) if CTEs aren't supported in your environment.
+
+
+
+
+---
+
+Solution Using a CTE
+
+Try modifying your query to use a CTE instead of inserting into a table:
+
+WITH ASSET_DATA AS (
+    SELECT 
+        RIMTHAI_ASSET.CUSTOMER_NBR,
+        RIMTHAI_ASSET.CONTRACT_ID,
+        RIMTHAI_ASSET.ASSET_NBR,
+        RIMTHAI_COMPANY.COMPANY_NBR,
+        RIMTHAI_COMPANY.COMP_COMP_CD,
+        RIMTHAI_CONTRACT.ACCT_PLAN_ID,
+        RIMTHAI_CONTRACT.CONTRACT_BAL,
+        RIMTHAI_CONTRACT.TOTAL_RENT,
+        RIMTHAI_COMPANY.COST_CENTER_CD,
+        RIMTHAI_CONTRACT.BRANCH_CO_NBR
+    FROM 
+        RIMTHAI_CONTRACT
+    INNER JOIN RIMTHAI_COMPANY
+        ON RIMTHAI_CONTRACT.BRANCH_CO_NBR = RIMTHAI_COMPANY.COMPANY_NBR
+    INNER JOIN RIMTHAI_ASSET
+        ON RIMTHAI_CONTRACT.CONTRACT_ID = RIMTHAI_ASSET.CONTRACT_ID
+        AND RIMTHAI_CONTRACT.CUSTOMER_NBR = RIMTHAI_ASSET.CUSTOMER_NBR
+    WHERE 
+        RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A'
+        AND RIMTHAI_ASSET.ASSET_STATUS = 'A'
+)
+SELECT * FROM ASSET_DATA;
+
+
+---
+
+Alternative Using a Derived Table (Subquery)
+
+If CTEs are not supported, use a subquery instead:
+
+SELECT * FROM (
+    SELECT 
+        RIMTHAI_ASSET.CUSTOMER_NBR,
+        RIMTHAI_ASSET.CONTRACT_ID,
+        RIMTHAI_ASSET.ASSET_NBR,
+        RIMTHAI_COMPANY.COMPANY_NBR,
+        RIMTHAI_COMPANY.COMP_COMP_CD,
+        RIMTHAI_CONTRACT.ACCT_PLAN_ID,
+        RIMTHAI_CONTRACT.CONTRACT_BAL,
+        RIMTHAI_CONTRACT.TOTAL_RENT,
+        RIMTHAI_COMPANY.COST_CENTER_CD,
+        RIMTHAI_CONTRACT.BRANCH_CO_NBR
+    FROM 
+        RIMTHAI_CONTRACT
+    INNER JOIN RIMTHAI_COMPANY
+        ON RIMTHAI_CONTRACT.BRANCH_CO_NBR = RIMTHAI_COMPANY.COMPANY_NBR
+    INNER JOIN RIMTHAI_ASSET
+        ON RIMTHAI_CONTRACT.CONTRACT_ID = RIMTHAI_ASSET.CONTRACT_ID
+        AND RIMTHAI_CONTRACT.CUSTOMER_NBR = RIMTHAI_ASSET.CUSTOMER_NBR
+    WHERE 
+        RIMTHAI_CONTRACT.CONTRACT_STATUS = 'A'
+        AND RIMTHAI_ASSET.ASSET_STATUS = 'A'
+) AS ASSET_DATA;
+
+
+---
+
+Why This Works
+
+CTEs (WITH statement) allow you to store the query result in memory and use it multiple times in the main query.
+
+Derived Tables (Subqueries) let you use the result directly in a SELECT statement without creating a physical table.
+
+
+This should allow you to proceed without needing write access. Let me know if you need further modifications!
+
