@@ -1,0 +1,272 @@
+I'll provide Python code examples for each of the topics listed in the image.
+
+
+---
+
+1. What is Statistics?
+
+Statistics is the science of collecting, organizing, analyzing, and interpreting data. In Python, we can use libraries like numpy, pandas, and scipy.stats for statistical analysis.
+
+import numpy as np
+import pandas as pd
+from scipy import stats
+
+
+---
+
+2. Methods in Statistics – Descriptive vs Inferential
+
+Descriptive Statistics summarizes data (mean, median, mode), while Inferential Statistics makes predictions.
+
+data = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+# Descriptive Statistics
+mean_value = np.mean(data)
+median_value = np.median(data)
+mode_value = stats.mode(data)
+
+print("Mean:", mean_value)
+print("Median:", median_value)
+print("Mode:", mode_value.mode[0])
+
+# Inferential Statistics (t-test example)
+sample1 = np.random.normal(loc=50, scale=10, size=30)
+sample2 = np.random.normal(loc=55, scale=10, size=30)
+t_stat, p_value = stats.ttest_ind(sample1, sample2)
+print("T-statistic:", t_stat, "P-value:", p_value)
+
+
+---
+
+3. Types of Data – Qualitative vs Quantitative
+
+Qualitative (Categorical) data represents categories, while Quantitative (Numerical) data represents numbers.
+
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Gender': ['Female', 'Male', 'Male'],  # Qualitative
+    'Age': [25, 30, 35],  # Quantitative
+    'Salary': [50000, 60000, 70000]  # Quantitative
+})
+
+print(df)
+
+
+---
+
+4. Measures of Central Tendency
+
+Mean, Median, Mode measure the center of data.
+
+data = [1, 2, 3, 4, 5, 5, 6, 7, 8, 9, 10]
+
+mean = np.mean(data)
+median = np.median(data)
+mode = stats.mode(data)
+
+print("Mean:", mean)
+print("Median:", median)
+print("Mode:", mode.mode[0])
+
+
+---
+
+5. Measures of Dispersion
+
+Variance and Standard Deviation measure data spread.
+
+std_dev = np.std(data)
+variance = np.var(data)
+
+print("Standard Deviation:", std_dev)
+print("Variance:", variance)
+
+
+---
+
+6. Measures of Skewness and Kurtosis
+
+Skewness measures asymmetry, Kurtosis measures tail heaviness.
+
+skewness = stats.skew(data)
+kurtosis = stats.kurtosis(data)
+
+print("Skewness:", skewness)
+print("Kurtosis:", kurtosis)
+
+
+---
+
+7. Measures of Relationship
+
+Correlation and Covariance measure relationships.
+
+df = pd.DataFrame({
+    'X': [10, 20, 30, 40, 50],
+    'Y': [15, 25, 35, 45, 55]
+})
+
+correlation = df.corr()
+covariance = df.cov()
+
+print("Correlation:\n", correlation)
+print("Covariance:\n", covariance)
+
+
+---
+
+8. Feature Scaling – Standardization vs Normalization
+
+Standardization (Z-score) and Normalization (Min-Max Scaling).
+
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+scaler = StandardScaler()
+normalized_scaler = MinMaxScaler()
+
+data_scaled = scaler.fit_transform(np.array(data).reshape(-1, 1))
+data_normalized = normalized_scaler.fit_transform(np.array(data).reshape(-1, 1))
+
+print("Standardized Data:\n", data_scaled.flatten())
+print("Normalized Data:\n", data_normalized.flatten())
+
+
+---
+
+9. Feature Encoding
+
+Encoding categorical data into numerical form.
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+labels = ['Red', 'Blue', 'Green', 'Red', 'Green']
+label_encoder = LabelEncoder()
+encoded_labels = label_encoder.fit_transform(labels)
+
+print("Label Encoded:", encoded_labels)
+
+# One-Hot Encoding
+df = pd.DataFrame({'Color': labels})
+df_encoded = pd.get_dummies(df, columns=['Color'])
+
+print(df_encoded)
+
+
+---
+
+10. Statistical Inference – Parameter Estimation and Hypothesis Testing
+
+Example of Hypothesis Testing (T-test).
+
+sample1 = np.random.normal(100, 15, 50)
+sample2 = np.random.normal(110, 15, 50)
+
+t_stat, p_value = stats.ttest_ind(sample1, sample2)
+
+print("T-statistic:", t_stat)
+print("P-value:", p_value)
+
+
+---
+
+These codes cover fundamental statistical concepts applied in Data Science. Let me know if you need further explanations or modifications!
+
+
+
+
+
+Formula for Correlation Matrix
+
+The correlation matrix is calculated using Pearson’s correlation coefficient formula:
+
+r_{xy} = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2} \sqrt{\sum (y_i - \bar{y})^2}}
+
+Where:
+
+ is the correlation coefficient between variables  and .
+
+ are individual data points.
+
+ are the means of  and .
+
+The denominator is the product of the standard deviations of  and .
+
+
+In Python, we can compute the correlation matrix using pandas:
+
+import pandas as pd
+import numpy as np
+
+# Sample data
+data = {
+    'X1': [10, 20, 30, 40, 50],
+    'X2': [15, 25, 35, 45, 55],
+    'X3': [20, 30, 40, 50, 60]
+}
+
+df = pd.DataFrame(data)
+
+# Compute Correlation Matrix
+correlation_matrix = df.corr()
+print("Correlation Matrix:\n", correlation_matrix)
+
+
+---
+
+Variance Inflation Factor (VIF) to Detect Multicollinearity
+
+VIF Formula:
+
+VIF_i = \frac{1}{1 - R^2_i}
+
+Where:
+
+ is the coefficient of determination for the regression of variable  on all other predictors.
+
+
+A VIF > 10 suggests severe multicollinearity, meaning the predictor is highly correlated with other variables.
+
+Python Code to Compute VIF
+
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
+
+# Add constant for VIF calculation
+X = add_constant(df)
+
+# Compute VIF for each feature
+vif_data = pd.DataFrame()
+vif_data["Feature"] = X.columns
+vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+print("Variance Inflation Factor (VIF):\n", vif_data)
+
+
+---
+
+Interpreting VIF Values
+
+VIF < 5 → Low multicollinearity (Good)
+
+VIF between 5 and 10 → Moderate multicollinearity (Consider dropping variables)
+
+VIF > 10 → High multicollinearity (Strong correlation, needs fixing)
+
+
+If high VIF is detected, you can:
+
+1. Drop one of the correlated variables.
+
+
+2. Use Principal Component Analysis (PCA) for dimensionality reduction.
+
+
+3. Use Regularization (Lasso Regression) to penalize correlated features.
+
+
+
+Let me know if you need further analysis!
+
+
+
+
