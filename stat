@@ -270,3 +270,94 @@ Let me know if you need further analysis!
 
 
 
+Below is a self-contained Python script that demonstrates how to:
+
+1. Generate some sample data.
+
+
+2. Compute the correlation and covariance matrices.
+
+
+3. Create heatmap charts of these matrices using Seaborn.
+
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# --------------------------
+# 1. Generate Sample Data
+# --------------------------
+np.random.seed(42)
+data = {
+    'X1': np.random.randint(10, 100, 10),
+    'X2': np.random.randint(20, 110, 10),
+    'X3': np.random.randint(30, 120, 10),
+    'X4': np.random.randint(40, 130, 10)
+}
+df = pd.DataFrame(data)
+
+# --------------------------
+# 2. Compute Matrices
+# --------------------------
+# Correlation Matrix
+correlation_matrix = df.corr()
+
+# Covariance Matrix
+covariance_matrix = df.cov()
+
+# --------------------------
+# 3. Create Heatmap Charts
+# --------------------------
+# Plot Correlation Matrix
+plt.figure(figsize=(10, 4))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Correlation Matrix")
+plt.show()
+
+# Plot Covariance Matrix
+plt.figure(figsize=(10, 4))
+sns.heatmap(covariance_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Covariance Matrix")
+plt.show()
+
+Explanation:
+
+1. Data Creation: We use np.random.seed(42) for reproducible results and generate random integers to simulate four features (X1, X2, X3, and X4).
+
+
+2. Correlation Matrix:
+
+We calculate pairwise correlations with df.corr().
+
+Correlation values range from -1 (perfect negative correlation) to 1 (perfect positive correlation).
+
+
+
+3. Covariance Matrix:
+
+We calculate pairwise covariances with df.cov().
+
+Covariance indicates how two variables move together but is scale-dependent.
+
+
+
+4. Heatmaps:
+
+We use seaborn.heatmap() to create visually appealing heatmaps for both matrices.
+
+annot=True displays the numeric values on each cell.
+
+cmap='coolwarm' defines the color scale.
+
+fmt=".2f" ensures values are formatted to two decimal places.
+
+
+
+
+Run this script, and you will see two plots: one for the Correlation Matrix and another for the Covariance Matrix.
+
+
+
