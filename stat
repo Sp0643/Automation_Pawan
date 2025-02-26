@@ -361,3 +361,242 @@ Run this script, and you will see two plots: one for the Correlation Matrix and 
 
 
 
+Below are six separate code examples demonstrating how to:
+
+1. Compute and display skewness and kurtosis
+
+
+2. Show value counts for all categorical columns
+
+
+3. Create a pair plot
+
+
+4. Perform PCA
+
+
+5. Visualize PCA results
+
+
+6. Show feature importance
+
+
+
+Feel free to mix and match or modify these code snippets as needed for your specific dataset.
+
+
+---
+
+1. Code for Showing Skewness and Kurtosis
+
+import pandas as pd
+import numpy as np
+from scipy.stats import skew, kurtosis
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': np.random.normal(50, 10, 100),
+    'B': np.random.gamma(shape=2, scale=1.5, size=100),
+    'C': np.random.uniform(0, 100, 100)
+})
+
+# Calculate and display skewness & kurtosis for numeric columns
+numeric_cols = df.select_dtypes(include=[np.number]).columns
+
+for col in numeric_cols:
+    col_skew = skew(df[col])
+    col_kurt = kurtosis(df[col])
+    print(f"Column: {col}")
+    print(f"  Skewness: {col_skew:.4f}")
+    print(f"  Kurtosis: {col_kurt:.4f}\n")
+
+Explanation:
+
+We use scipy.stats.skew and scipy.stats.kurtosis to calculate skewness and kurtosis for each numeric column in the DataFrame.
+
+
+
+---
+
+2. Code for Value Counts of All Categorical Columns
+
+import pandas as pd
+
+# Sample DataFrame with categorical columns
+df = pd.DataFrame({
+    'Color': ['Red', 'Blue', 'Red', 'Green', 'Blue', 'Green', 'Red'],
+    'Shape': ['Circle', 'Square', 'Circle', 'Triangle', 'Square', 'Circle', 'Square'],
+    'Numeric': [10, 20, 30, 40, 50, 60, 70]  # Numeric column
+})
+
+# Select only categorical columns (object or category dtype)
+categorical_cols = df.select_dtypes(include=['object', 'category']).columns
+
+for col in categorical_cols:
+    print(f"Value counts for column '{col}':")
+    print(df[col].value_counts())
+    print("-----")
+
+Explanation:
+
+We select columns of type object or category.
+
+We then call value_counts() on each of these columns to see how many times each category appears.
+
+
+
+---
+
+3. Code for Pair Plot
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': np.random.normal(50, 10, 100),
+    'B': np.random.normal(60, 5, 100),
+    'C': np.random.normal(70, 15, 100),
+    'Category': np.random.choice(['Type1', 'Type2'], 100)  # Categorical column
+})
+
+# Create a pair plot
+sns.pairplot(df, hue='Category')  # 'hue' uses the categorical column for color
+plt.show()
+
+Explanation:
+
+sns.pairplot automatically creates pairwise scatter plots (and histograms on the diagonal) for all numeric columns.
+
+If you have a categorical column (like 'Category'), you can specify it in the hue parameter to color the data points accordingly.
+
+
+
+---
+
+4. Code for PCA
+
+import pandas as pd
+import numpy as np
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'A': np.random.normal(50, 10, 100),
+    'B': np.random.normal(60, 5, 100),
+    'C': np.random.normal(70, 15, 100),
+    'D': np.random.normal(80, 20, 100)
+})
+
+# 1. Select numeric columns and drop rows with missing values
+X = df.select_dtypes(include=[np.number]).dropna()
+
+# 2. Standardize the data (often recommended before PCA)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 3. Perform PCA (let's keep 2 components for visualization)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# 4. Print explained variance ratio
+print("Explained Variance Ratio of each principal component:")
+print(pca.explained_variance_ratio_)
+
+Explanation:
+
+StandardScaler is used to standardize features before PCA (especially important when variables are on different scales).
+
+PCA(n_components=2) reduces the data to 2 principal components.
+
+
+
+---
+
+5. Code for Showing PCA Results in Charts
+
+import matplotlib.pyplot as plt
+
+# Assuming you have X_pca from the previous code
+# Let's create a scatter plot of the first two principal components
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c='blue', alpha=0.7)
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('PCA - First 2 Principal Components')
+plt.show()
+
+Explanation:
+
+We scatter-plot the first component (X-axis) against the second component (Y-axis).
+
+Color and alpha settings are optional but help visualize the data.
+
+
+
+---
+
+6. Code Showing Feature Importance
+
+Below is an example using a Random Forest classifier. If you have a regression problem, you can use RandomForestRegressor similarly.
+
+import pandas as pd
+import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'Feature1': np.random.normal(50, 10, 100),
+    'Feature2': np.random.normal(60, 5, 100),
+    'Feature3': np.random.normal(70, 15, 100),
+    'Label': np.random.choice([0, 1], 100)
+})
+
+# Split into features (X) and target (y)
+X = df.drop('Label', axis=1)
+y = df['Label']
+
+# Train/Test Split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create and fit the RandomForest model
+rf = RandomForestClassifier(random_state=42)
+rf.fit(X_train, y_train)
+
+# Feature importance
+importances = rf.feature_importances_
+
+# Print feature importances
+for feature_name, importance_value in zip(X.columns, importances):
+    print(f"{feature_name}: {importance_value:.4f}")
+
+# (Optional) Plot the feature importances
+import matplotlib.pyplot as plt
+
+plt.bar(x=X.columns, height=importances, color='green')
+plt.xlabel('Features')
+plt.ylabel('Importance')
+plt.title('Random Forest Feature Importances')
+plt.show()
+
+Explanation:
+
+RandomForestClassifier provides an attribute feature_importances_ after fitting, which shows the relative importance of each feature in predicting the target.
+
+We optionally visualize them using a bar chart.
+
+
+
+---
+
+Putting It All Together
+
+You can combine or adapt any of these snippets depending on your use case and dataset. If you have any questions or need further customization, just let me know!
+
+
+
