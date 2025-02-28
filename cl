@@ -1128,3 +1128,217 @@ Comparison Plot: A barplot to visualize model performance.
 
 This will allow you to compare the performance of bagging and boosting models efficiently. Let me know if you need modifications!
 
+Here are separate code blocks for each model: AdaBoost, Gradient Boosting (GBM), CatBoost, LightGBM, and XGBoost, implementing:
+
+Base Model Training
+
+Grid Search
+
+Random Search
+
+Performance Evaluation
+
+
+
+---
+
+1️⃣ AdaBoost
+
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+
+# Define model
+adaboost = AdaBoostClassifier()
+
+# Define hyperparameter grid
+param_grid = {
+    "n_estimators": [50, 100, 150],
+    "learning_rate": [0.01, 0.1, 1]
+}
+
+# Base Model Training
+adaboost.fit(X_train, y_train)
+y_pred = adaboost.predict(X_test)
+y_pred_proba = adaboost.predict_proba(X_test)[:, 1]
+
+# Grid Search
+grid_search = GridSearchCV(adaboost, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+grid_search.fit(X_train, y_train)
+best_adaboost_grid = grid_search.best_estimator_
+
+# Random Search
+random_search = RandomizedSearchCV(adaboost, param_grid, n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+random_search.fit(X_train, y_train)
+best_adaboost_random = random_search.best_estimator_
+
+# Evaluate
+print("AdaBoost Base Accuracy:", accuracy_score(y_test, y_pred))
+print("AdaBoost Grid Search Best Params:", grid_search.best_params_)
+print("AdaBoost Random Search Best Params:", random_search.best_params_)
+
+
+---
+
+2️⃣ Gradient Boosting (GBM)
+
+from sklearn.ensemble import GradientBoostingClassifier
+
+# Define model
+gbm = GradientBoostingClassifier()
+
+# Define hyperparameter grid
+param_grid = {
+    "n_estimators": [50, 100, 150],
+    "learning_rate": [0.01, 0.1, 0.2],
+    "max_depth": [3, 5, 7]
+}
+
+# Base Model Training
+gbm.fit(X_train, y_train)
+y_pred = gbm.predict(X_test)
+y_pred_proba = gbm.predict_proba(X_test)[:, 1]
+
+# Grid Search
+grid_search = GridSearchCV(gbm, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+grid_search.fit(X_train, y_train)
+best_gbm_grid = grid_search.best_estimator_
+
+# Random Search
+random_search = RandomizedSearchCV(gbm, param_grid, n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+random_search.fit(X_train, y_train)
+best_gbm_random = random_search.best_estimator_
+
+# Evaluate
+print("GBM Base Accuracy:", accuracy_score(y_test, y_pred))
+print("GBM Grid Search Best Params:", grid_search.best_params_)
+print("GBM Random Search Best Params:", random_search.best_params_)
+
+
+---
+
+3️⃣ CatBoost
+
+from catboost import CatBoostClassifier
+
+# Define model
+catboost = CatBoostClassifier(verbose=0)
+
+# Define hyperparameter grid
+param_grid = {
+    "iterations": [50, 100, 200],
+    "learning_rate": [0.01, 0.1, 0.2],
+    "depth": [3, 5, 7]
+}
+
+# Base Model Training
+catboost.fit(X_train, y_train)
+y_pred = catboost.predict(X_test)
+y_pred_proba = catboost.predict_proba(X_test)[:, 1]
+
+# Grid Search
+grid_search = GridSearchCV(catboost, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+grid_search.fit(X_train, y_train)
+best_catboost_grid = grid_search.best_estimator_
+
+# Random Search
+random_search = RandomizedSearchCV(catboost, param_grid, n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+random_search.fit(X_train, y_train)
+best_catboost_random = random_search.best_estimator_
+
+# Evaluate
+print("CatBoost Base Accuracy:", accuracy_score(y_test, y_pred))
+print("CatBoost Grid Search Best Params:", grid_search.best_params_)
+print("CatBoost Random Search Best Params:", random_search.best_params_)
+
+
+---
+
+4️⃣ LightGBM
+
+import lightgbm as lgb
+
+# Define model
+lgbm = lgb.LGBMClassifier()
+
+# Define hyperparameter grid
+param_grid = {
+    "n_estimators": [50, 100, 150],
+    "learning_rate": [0.01, 0.1, 0.2],
+    "max_depth": [-1, 10, 20]
+}
+
+# Base Model Training
+lgbm.fit(X_train, y_train)
+y_pred = lgbm.predict(X_test)
+y_pred_proba = lgbm.predict_proba(X_test)[:, 1]
+
+# Grid Search
+grid_search = GridSearchCV(lgbm, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+grid_search.fit(X_train, y_train)
+best_lgbm_grid = grid_search.best_estimator_
+
+# Random Search
+random_search = RandomizedSearchCV(lgbm, param_grid, n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+random_search.fit(X_train, y_train)
+best_lgbm_random = random_search.best_estimator_
+
+# Evaluate
+print("LightGBM Base Accuracy:", accuracy_score(y_test, y_pred))
+print("LightGBM Grid Search Best Params:", grid_search.best_params_)
+print("LightGBM Random Search Best Params:", random_search.best_params_)
+
+
+---
+
+5️⃣ XGBoost
+
+import xgboost as xgb
+
+# Define model
+xgboost = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss')
+
+# Define hyperparameter grid
+param_grid = {
+    "n_estimators": [50, 100, 150],
+    "learning_rate": [0.01, 0.1, 0.2],
+    "max_depth": [3, 5, 7]
+}
+
+# Base Model Training
+xgboost.fit(X_train, y_train)
+y_pred = xgboost.predict(X_test)
+y_pred_proba = xgboost.predict_proba(X_test)[:, 1]
+
+# Grid Search
+grid_search = GridSearchCV(xgboost, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+grid_search.fit(X_train, y_train)
+best_xgboost_grid = grid_search.best_estimator_
+
+# Random Search
+random_search = RandomizedSearchCV(xgboost, param_grid, n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+random_search.fit(X_train, y_train)
+best_xgboost_random = random_search.best_estimator_
+
+# Evaluate
+print("XGBoost Base Accuracy:", accuracy_score(y_test, y_pred))
+print("XGBoost Grid Search Best Params:", grid_search.best_params_)
+print("XGBoost Random Search Best Params:", random_search.best_params_)
+
+
+---
+
+Key Features of This Code
+
+Separate Code Blocks for Each Model
+
+Base Model Training
+
+Grid Search & Random Search for Hyperparameter Tuning
+
+Evaluation with Accuracy & Best Parameters
+
+
+You can run each block separately depending on which model you want to evaluate.
+
+Let me know if you need modifications!
+
