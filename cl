@@ -1342,3 +1342,119 @@ You can run each block separately depending on which model you want to evaluate.
 
 Let me know if you need modifications!
 
+
+
+
+
+Here are the detailed hypothesis statements, reasoning, and interpretations for the hypothesis tests performed on the loan dataset:
+
+
+---
+
+1. Applicant Income vs. Education Level (Graduate vs. Non-Graduate)
+
+Null Hypothesis ():
+
+There is no significant difference in applicant income between graduates and non-graduates.
+
+Alternative Hypothesis ():
+
+There is a significant difference in applicant income between graduates and non-graduates.
+
+Reasoning:
+
+Education level is often linked to job opportunities and income levels. We want to check if graduate applicants earn significantly more than non-graduates.
+
+Interpretation:
+
+If p-value < 0.05, we reject , indicating that graduates and non-graduates have significantly different incomes.
+
+If p-value ≥ 0.05, we fail to reject , meaning we do not have enough evidence to claim a difference.
+
+
+
+---
+
+2. Loan Amount vs. Property Area (Urban vs. Rural)
+
+Null Hypothesis ():
+
+The average loan amount does not differ between applicants from urban and rural areas.
+
+Alternative Hypothesis ():
+
+The average loan amount is significantly different between urban and rural applicants.
+
+Reasoning:
+
+Property prices in urban areas tend to be higher than in rural areas. Therefore, loan amounts could be higher in urban areas. We are testing if there is a statistically significant difference.
+
+Interpretation:
+
+If p-value < 0.05, we reject , meaning loan amounts significantly differ between urban and rural applicants.
+
+If p-value ≥ 0.05, we fail to reject , meaning loan amounts are not significantly different across these groups.
+
+
+
+---
+
+3. Coapplicant Income vs. Employment Type (Self-Employed vs. Non-Self-Employed)
+
+Null Hypothesis ():
+
+There is no significant difference in coapplicant income between self-employed and non-self-employed applicants.
+
+Alternative Hypothesis ():
+
+There is a significant difference in coapplicant income between self-employed and non-self-employed applicants.
+
+Reasoning:
+
+Self-employed individuals may have variable incomes compared to salaried employees. We are testing if this variability significantly affects coapplicant income.
+
+Interpretation:
+
+If p-value < 0.05, we reject , meaning that self-employed and non-self-employed applicants have significantly different coapplicant incomes.
+
+If p-value ≥ 0.05, we fail to reject , meaning no significant difference is found.
+
+
+
+---
+
+4. Loan Amount Term vs. Marital Status (Married vs. Single)
+
+Null Hypothesis ():
+
+There is no significant difference in loan amount term between married and single applicants.
+
+Alternative Hypothesis ():
+
+There is a significant difference in loan amount term between married and single applicants.
+
+Reasoning:
+
+Married individuals may opt for longer loan terms due to financial stability and shared responsibilities, while single applicants may take shorter-term loans. We are testing if there is a significant difference in loan term duration.
+
+Interpretation:
+
+If p-value < 0.05, we reject , meaning loan terms significantly differ between married and single applicants.
+
+If p-value ≥ 0.05, we fail to reject , meaning no significant difference is found.
+
+
+Special Case:
+
+If the dataset contains no variation in loan term values within groups, the t-test cannot be performed (it results in NaN values). In such cases, we should check whether a non-parametric test (like the Mann-Whitney U test) is more appropriate.
+
+
+---
+
+Final Summary Table
+
+
+---
+
+Let me know if you need additional hypothesis tests or further explanations!
+
