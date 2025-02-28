@@ -742,3 +742,83 @@ Comparison Plot: A barplot to visualize model performance.
 
 This will allow you to compare the performance of bagging and boosting models efficiently. Let me know if you need modifications!
 
+
+
+
+
+Here is the Python code for performing hypothesis testing on the loan dataset. This script includes hypothesis tests for various financial and demographic factors.
+
+import pandas as pd
+import scipy.stats as stats
+
+# Load the dataset
+file_path = "loan-test.csv"  # Make sure this file is in the same directory
+df = pd.read_csv(file_path)
+
+# Handle missing values
+df_clean = df.dropna(subset=['Credit_History'])  # Remove rows where Credit_History is missing
+df_clean['LoanAmount'].fillna(df_clean['LoanAmount'].median(), inplace=True)  # Fill missing LoanAmount with median
+
+# Convert categorical columns to numeric
+label_cols = ['Gender', 'Married', 'Education', 'Self_Employed', 'Property_Area']
+df_clean[label_cols] = df_clean[label_cols].astype('category').apply(lambda x: x.cat.codes)
+
+# Convert Dependents to numeric
+df_clean['Dependents'].replace({'3+': 3}, inplace=True)
+df_clean['Dependents'] = df_clean['Dependents'].astype(float)
+
+# 1. Checking if Applicant Income differs based on Education Level (Graduate vs. Not Graduate)
+edu_grad = df_clean[df_clean['Education'] == 1]['ApplicantIncome']
+edu_non_grad = df_clean[df_clean['Education'] == 0]['ApplicantIncome']
+t_stat_income, p_value_income = stats.ttest_ind(edu_grad, edu_non_grad, equal_var=False)
+print(f"Applicant Income (Graduate vs Non-Graduate): t-stat={t_stat_income:.3f}, p-value={p_value_income:.5f}")
+
+# 2. Checking if Loan Amount differs based on Property Area (Urban vs. Rural)
+urban_loan = df_clean[df_clean['Property_Area'] == 2]['LoanAmount']
+rural_loan = df_clean[df_clean['Property_Area'] == 0]['LoanAmount']
+t_stat_loan_area, p_value_loan_area = stats.ttest_ind(urban_loan, rural_loan, equal_var=False)
+print(f"Loan Amount (Urban vs Rural): t-stat={t_stat_loan_area:.3f}, p-value={p_value_loan_area:.5f}")
+
+# 3. Checking if Coapplicant Income is significantly different for Self-Employed vs. Non-Self-Employed applicants
+self_emp_co_income = df_clean[df_clean['Self_Employed'] == 1]['CoapplicantIncome']
+non_self_emp_co_income = df_clean[df_clean['Self_Employed'] == 0]['CoapplicantIncome']
+t_stat_co_income, p_value_co_income = stats.ttest_ind(self_emp_co_income, non_self_emp_co_income, equal_var=False)
+print(f"Coapplicant Income (Self-Employed vs Non-Self-Employed): t-stat={t_stat_co_income:.3f}, p-value={p_value_co_income:.5f}")
+
+# 4. Checking if Loan Amount Term differs based on Marital Status (Married vs. Single)
+married_loan_term = df_clean[df_clean['Married'] == 1]['Loan_Amount_Term']
+single_loan_term = df_clean[df_clean['Married'] == 0]['Loan_Amount_Term']
+
+# Ensure there are variations in Loan Term
+if married_loan_term.nunique() > 1 and single_loan_term.nunique() > 1:
+    t_stat_loan_term, p_value_loan_term = stats.ttest_ind(married_loan_term, single_loan_term, equal_var=False)
+    print(f"Loan Amount Term (Married vs Single): t-stat={t_stat_loan_term:.3f}, p-value={p_value_loan_term:.5f}")
+else:
+    print("Loan Amount Term (Married vs Single): No variation in loan terms, unable to conduct t-test.")
+
+How This Works:
+
+1. Handles missing values: Drops rows with missing Credit_History and fills missing LoanAmount with the median.
+
+
+2. Encodes categorical variables: Converts them into numeric values.
+
+
+3. Performs hypothesis testing:
+
+T-test for Applicant Income: Compares income levels between graduates and non-graduates.
+
+T-test for Loan Amount by Property Area: Compares loan amounts for urban vs. rural applicants.
+
+T-test for Coapplicant Income: Compares income levels for self-employed vs. non-self-employed applicants.
+
+T-test for Loan Term by Marital Status: Checks if loan terms differ between married and single applicants.
+
+
+
+4. Handles potential issues: The script checks whether there is variation in loan terms before running the t-test.
+
+
+
+Would you like this script in a downloadable .py file?
+
