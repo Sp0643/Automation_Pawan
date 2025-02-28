@@ -822,3 +822,52 @@ T-test for Loan Term by Marital Status: Checks if loan terms differ between marr
 
 Would you like this script in a downloadable .py file?
 
+
+
+
+Hypothesis Testing Results:
+
+1. Applicant Income (Graduate vs Non-Graduate)
+
+t-statistic: -3.839
+
+p-value: 0.00015
+
+Interpretation: Since the p-value is less than 0.05, we reject the null hypothesis. This means that graduate and non-graduate applicants have significantly different income levels.
+
+
+
+2. Loan Amount (Urban vs Rural)
+
+t-statistic: -0.524
+
+p-value: 0.601
+
+Interpretation: Since the p-value is greater than 0.05, we fail to reject the null hypothesis. This suggests no significant difference in loan amounts between urban and rural applicants.
+
+
+
+3. Coapplicant Income (Self-Employed vs Non-Self-Employed)
+
+t-statistic: -0.485
+
+p-value: 0.630
+
+Interpretation: The p-value is greater than 0.05, so we fail to reject the null hypothesis. This indicates that coapplicant income is not significantly different between self-employed and non-self-employed applicants.
+
+
+
+4. Loan Amount Term (Married vs Single)
+
+t-statistic: NaN
+
+p-value: NaN
+
+Possible Issue: This suggests that the sample variance might be too low (i.e., loan terms may be identical or nearly identical in both groups). We may need to check and clean the data further to properly analyze this.
+
+
+
+
+Would you like me to further investigate the Loan Amount Term issue, or apply hypothesis testing to additional variables?
+
+
