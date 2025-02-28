@@ -593,3 +593,152 @@ Explanation:
 Let me know if you want modifications!
 
 
+
+
+
+
+I'll write a Python script that compares the base model, GridSearchCV, and RandomizedSearchCV for all bagging and boosting models. This script will evaluate models using accuracy, precision, recall, F1-score, and ROC-AUC.
+
+Here’s how the script is structured:
+
+1. Base Models: Train and evaluate AdaBoost, GradientBoosting, RandomForest, and ExtraTrees.
+
+
+2. Grid Search: Hyperparameter tuning using GridSearchCV.
+
+
+3. Random Search: Hyperparameter tuning using RandomizedSearchCV.
+
+
+4. Comparison Table: Store results in a DataFrame for easy comparison.
+
+
+
+
+---
+
+Python Script
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import AdaBoostClassifier, GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier
+from sklearn.model_selection import train_test_split, GridSearchCV, RandomizedSearchCV
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier
+
+# Load dataset (Replace with your dataset)
+# df = pd.read_csv("your_data.csv")  # Uncomment if using CSV
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Define models
+models = {
+    "AdaBoost": AdaBoostClassifier(),
+    "GradientBoosting": GradientBoostingClassifier(),
+    "RandomForest": RandomForestClassifier(),
+    "ExtraTrees": ExtraTreesClassifier()
+}
+
+# Hyperparameter grids
+param_grids = {
+    "AdaBoost": {"n_estimators": [50, 100, 150], "learning_rate": [0.01, 0.1, 1]},
+    "GradientBoosting": {"n_estimators": [50, 100, 150], "learning_rate": [0.01, 0.1, 0.2]},
+    "RandomForest": {"n_estimators": [50, 100, 150], "max_depth": [None, 10, 20]},
+    "ExtraTrees": {"n_estimators": [50, 100, 150], "max_depth": [None, 10, 20]}
+}
+
+# Random search parameters
+random_search_params = {key: {k: v for k, v in param_grids[key].items()} for key in models}
+
+# Results storage
+results = []
+
+# Train and evaluate models
+for model_name, model in models.items():
+    print(f"Training {model_name}...")
+
+    # Base Model Training
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)[:, 1] if hasattr(model, "predict_proba") else None
+
+    # Metrics
+    metrics = {
+        "Model": model_name,
+        "Type": "Base",
+        "Accuracy": accuracy_score(y_test, y_pred),
+        "Precision": precision_score(y_test, y_pred),
+        "Recall": recall_score(y_test, y_pred),
+        "F1-Score": f1_score(y_test, y_pred),
+        "ROC-AUC": roc_auc_score(y_test, y_pred_proba) if y_pred_proba is not None else None
+    }
+    results.append(metrics)
+
+    # Grid Search
+    grid_search = GridSearchCV(model, param_grids[model_name], cv=5, scoring="accuracy", n_jobs=-1)
+    grid_search.fit(X_train, y_train)
+    best_grid_model = grid_search.best_estimator_
+    y_pred_grid = best_grid_model.predict(X_test)
+    y_pred_proba_grid = best_grid_model.predict_proba(X_test)[:, 1] if hasattr(best_grid_model, "predict_proba") else None
+
+    metrics_grid = {
+        "Model": model_name,
+        "Type": "GridSearch",
+        "Accuracy": accuracy_score(y_test, y_pred_grid),
+        "Precision": precision_score(y_test, y_pred_grid),
+        "Recall": recall_score(y_test, y_pred_grid),
+        "F1-Score": f1_score(y_test, y_pred_grid),
+        "ROC-AUC": roc_auc_score(y_test, y_pred_proba_grid) if y_pred_proba_grid is not None else None
+    }
+    results.append(metrics_grid)
+
+    # Random Search
+    random_search = RandomizedSearchCV(model, random_search_params[model_name], n_iter=10, cv=5, scoring="accuracy", n_jobs=-1, random_state=42)
+    random_search.fit(X_train, y_train)
+    best_random_model = random_search.best_estimator_
+    y_pred_random = best_random_model.predict(X_test)
+    y_pred_proba_random = best_random_model.predict_proba(X_test)[:, 1] if hasattr(best_random_model, "predict_proba") else None
+
+    metrics_random = {
+        "Model": model_name,
+        "Type": "RandomSearch",
+        "Accuracy": accuracy_score(y_test, y_pred_random),
+        "Precision": precision_score(y_test, y_pred_random),
+        "Recall": recall_score(y_test, y_pred_random),
+        "F1-Score": f1_score(y_test, y_pred_random),
+        "ROC-AUC": roc_auc_score(y_test, y_pred_proba_random) if y_pred_proba_random is not None else None
+    }
+    results.append(metrics_random)
+
+# Convert results to DataFrame
+df_results = pd.DataFrame(results)
+
+# Display results
+import ace_tools as tools
+tools.display_dataframe_to_user(name="Model Comparison Results", dataframe=df_results)
+
+# Plot comparison
+plt.figure(figsize=(10, 5))
+sns.barplot(data=df_results, x="Model", y="Accuracy", hue="Type")
+plt.title("Model Performance Comparison")
+plt.ylabel("Accuracy Score")
+plt.xticks(rotation=45)
+plt.legend(title="Model Type")
+plt.show()
+
+Explanation:
+
+Base Model: Trains each model without hyperparameter tuning.
+
+Grid Search: Finds the best hyperparameters using exhaustive search.
+
+Random Search: Finds hyperparameters with a randomized approach.
+
+Evaluation Metrics: Includes accuracy, precision, recall, F1-score, and ROC-AUC.
+
+Comparison Plot: A barplot to visualize model performance.
+
+
+This will allow you to compare the performance of bagging and boosting models efficiently. Let me know if you need modifications!
+
