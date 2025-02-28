@@ -520,3 +520,76 @@ roc_auc_score can be used with average='macro' or 'weighted' for multi-class, bu
 
 That’s it! With these metrics and plots, you can thoroughly evaluate your model’s performance and compare different classifiers.
 
+
+
+
+Here's a Python script that:
+
+Reads a dataset (CSV file) into a Pandas DataFrame.
+
+Identifies numerical columns.
+
+Plots normal distributions for each numerical column.
+
+Computes and displays the skewness and kurtosis of each numerical column.
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+# Load dataset
+file_path = "your_dataset.csv"  # Update this with your dataset path
+df = pd.read_csv(file_path)
+
+# Identify numerical columns
+numerical_cols = df.select_dtypes(include=[np.number]).columns
+
+# Compute skewness and kurtosis
+stats_df = pd.DataFrame({
+    "Column": numerical_cols,
+    "Skewness": [df[col].skew() for col in numerical_cols],
+    "Kurtosis": [df[col].kurtosis() for col in numerical_cols]
+})
+
+# Display statistics
+import ace_tools as tools
+tools.display_dataframe_to_user(name="Skewness and Kurtosis", dataframe=stats_df)
+
+# Plot normal distribution
+for col in numerical_cols:
+    plt.figure(figsize=(8, 5))
+    plt.hist(df[col].dropna(), bins=30, density=True, alpha=0.6, color='g')
+
+    # Plot normal distribution curve
+    mu, std = df[col].mean(), df[col].std()
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = stats.norm.pdf(x, mu, std)
+    plt.plot(x, p, 'k', linewidth=2)
+
+    plt.title(f'Normal Distribution: {col}')
+    plt.xlabel(col)
+    plt.ylabel('Density')
+    plt.grid(True)
+    plt.show()
+
+Explanation:
+
+1. Loads the dataset – Ensure to update the file path.
+
+
+2. Identifies numerical columns – Selects only numeric data for analysis.
+
+
+3. Computes Skewness and Kurtosis – Displays the results in a table.
+
+
+4. Plots Normal Distribution – Uses histograms overlaid with a normal distribution curve.
+
+
+
+Let me know if you want modifications!
+
+
