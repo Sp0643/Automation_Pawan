@@ -268,3 +268,85 @@ If p-value ≥ 0.05, we fail to reject the null hypothesis (no significant diffe
 
 Let me know if you need any modifications or explanations!
 
+
+
+To calculate measures of dispersion for the loan dataset, follow these steps:
+
+1. Load the Dataset: Read the CSV file into a pandas DataFrame.
+
+
+2. Inspect and Clean the Data: Handle missing values and ensure data types are appropriate.
+
+
+3. Calculate Measures of Dispersion: Compute range, variance, standard deviation, and interquartile range for relevant numerical columns.
+
+
+
+Here's the complete Python code:
+
+import pandas as pd
+import numpy as np
+
+# Load the dataset
+url = 'https://raw.githubusercontent.com/shrikant-temburwar/Loan-Prediction-Dataset/master/train.csv'
+data = pd.read_csv(url)
+
+# Display basic information about the dataset
+print("Dataset Information:")
+print(data.info())
+print("\nFirst 5 Rows of the Dataset:")
+print(data.head())
+
+# Handle missing values
+# For simplicity, we'll fill missing numerical values with the mean and categorical with the mode
+numerical_cols = data.select_dtypes(include=[np.number]).columns.tolist()
+categorical_cols = data.select_dtypes(include=[object]).columns.tolist()
+
+for col in numerical_cols:
+    data[col].fillna(data[col].mean(), inplace=True)
+
+for col in categorical_cols:
+    data[col].fillna(data[col].mode()[0], inplace=True)
+
+# Verify that there are no missing values
+print("\nMissing Values After Imputation:")
+print(data.isnull().sum())
+
+# Calculate measures of dispersion for numerical columns
+dispersion_measures = pd.DataFrame(index=numerical_cols, columns=['Range', 'Variance', 'Standard Deviation', 'IQR'])
+
+for col in numerical_cols:
+    col_range = data[col].max() - data[col].min()
+    col_variance = data[col].var()
+    col_std_dev = data[col].std()
+    col_iqr = data[col].quantile(0.75) - data[col].quantile(0.25)
+    
+    dispersion_measures.loc[col] = [col_range, col_variance, col_std_dev, col_iqr]
+
+print("\nMeasures of Dispersion:")
+print(dispersion_measures)
+
+Explanation:
+
+Loading the Dataset: The dataset is loaded directly from the provided URL into a pandas DataFrame.
+
+Inspecting the Data: data.info() provides an overview of the dataset, including data types and non-null counts. data.head() displays the first five rows.
+
+Handling Missing Values: Numerical missing values are filled with the mean of their respective columns, while categorical missing values are filled with the mode.
+
+Calculating Measures of Dispersion:
+
+Range: Difference between the maximum and minimum values.
+
+Variance: Average of the squared differences from the mean.
+
+Standard Deviation: Square root of the variance, indicating average dispersion around the mean.
+
+Interquartile Range (IQR): Difference between the 75th and 25th percentiles, measuring the spread of the middle 50% of the data.
+
+
+
+Note: Ensure that the necessary libraries (pandas and numpy) are installed in your Python environment.
+
+This code provides a comprehensive analysis of the dispersion for each numerical column in the loan dataset, offering insights into the variability and distribution of the data.
+
