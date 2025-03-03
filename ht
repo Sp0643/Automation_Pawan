@@ -350,3 +350,68 @@ Note: Ensure that the necessary libraries (pandas and numpy) are installed in yo
 
 This code provides a comprehensive analysis of the dispersion for each numerical column in the loan dataset, offering insights into the variability and distribution of the data.
 
+
+
+
+To determine if there is a relationship between applicant gender and loan approval, we can use a Chi-Square Test for Independence. This test helps determine whether two categorical variables are independent or related.
+
+Hypotheses:
+
+Null Hypothesis (H₀): There is no relationship between applicant gender and loan approval. (Gender does not affect loan approval.)
+
+Alternative Hypothesis (H₁): There is a relationship between applicant gender and loan approval. (Gender affects loan approval.)
+
+
+
+---
+
+Python Code for Chi-Square Test
+
+import pandas as pd
+import numpy as np
+from scipy.stats import chi2_contingency
+
+# Load the dataset
+url = "https://raw.githubusercontent.com/shrikant-temburwar/Loan-Prediction-Dataset/master/train.csv"
+data = pd.read_csv(url)
+
+# Handle missing values in Gender and Loan_Status columns
+data['Gender'].fillna(data['Gender'].mode()[0], inplace=True)
+data['Loan_Status'].fillna(data['Loan_Status'].mode()[0], inplace=True)
+
+# Create a contingency table for Gender and Loan_Status
+contingency_table = pd.crosstab(data['Gender'], data['Loan_Status'])
+
+# Perform Chi-Square Test
+stat, p, dof, expected = chi2_contingency(contingency_table)
+
+# Display results
+print("Contingency Table:")
+print(contingency_table)
+print("\nChi-Square Test Results:")
+print(f"Chi-Square Statistic: {stat:.4f}")
+print(f"P-value: {p:.4f}")
+print(f"Degrees of Freedom: {dof}")
+print("\nExpected Frequencies:")
+print(pd.DataFrame(expected, index=contingency_table.index, columns=contingency_table.columns))
+
+# Conclusion
+alpha = 0.05
+if p < alpha:
+    print("\nResult: Reject the Null Hypothesis (H₀). There is a significant relationship between Gender and Loan Approval.")
+else:
+    print("\nResult: Fail to Reject the Null Hypothesis (H₀). There is no significant relationship between Gender and Loan Approval.")
+
+
+---
+
+Interpretation of Results:
+
+P-value < 0.05: Reject the null hypothesis, indicating that there is a relationship between gender and loan approval.
+
+P-value ≥ 0.05: Fail to reject the null hypothesis, indicating that there is no relationship between gender and loan approval.
+
+
+Let me know if you need modifications or explanations!
+
+
