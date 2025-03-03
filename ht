@@ -1,0 +1,145 @@
+To perform hypothesis testing on the loan prediction dataset, you can follow these steps. I'll write code using the pandas, numpy, scipy, and statsmodels libraries to test for various hypotheses based on the columns in the dataset.
+
+First, you will need to load the dataset and clean it up. Here's the full code including data loading and hypothesis testing for various scenarios:
+
+Step 1: Load and Clean the Data
+
+import pandas as pd
+
+# Load the dataset
+url = "https://raw.githubusercontent.com/shrikant-temburwar/Loan-Prediction-Dataset/master/train.csv"
+data = pd.read_csv(url)
+
+# Inspect the first few rows of the dataset
+print(data.head())
+
+# Check for missing values
+print(data.isnull().sum())
+
+# Fill missing values or drop rows with missing values (as needed)
+data['Gender'].fillna(data['Gender'].mode()[0], inplace=True)
+data['Married'].fillna(data['Married'].mode()[0], inplace=True)
+data['Dependents'].fillna(data['Dependents'].mode()[0], inplace=True)
+data['Self_Employed'].fillna(data['Self_Employed'].mode()[0], inplace=True)
+data['LoanAmount'].fillna(data['LoanAmount'].mean(), inplace=True)
+data['Loan_Amount_Term'].fillna(data['Loan_Amount_Term'].mode()[0], inplace=True)
+data['Credit_History'].fillna(data['Credit_History'].mode()[0], inplace=True)
+data['Property_Area'].fillna(data['Property_Area'].mode()[0], inplace=True)
+data['Loan_Status'].fillna(data['Loan_Status'].mode()[0], inplace=True)
+
+# Check data types and ensure correct types
+print(data.dtypes)
+
+Step 2: Hypothesis Testing Examples
+
+Now let's move on to various hypothesis testing examples using this data.
+
+
+---
+
+1. Test of Proportions (One Sample)
+
+Testing if the proportion of loan approvals (Loan_Status) is 50%.
+
+import numpy as np
+from statsmodels.stats.proportion import proportions_ztest
+
+# Sample size and number of loan approvals
+loan_approvals = data[data['Loan_Status'] == 'Y'].shape[0]
+sample_size = data.shape[0]
+p0 = 0.5  # Null hypothesis: Proportion of approvals is 50%
+
+# Proportion test
+stat, p_value = proportions_ztest(loan_approvals, sample_size, p0)
+print(f"Proportion Test (Loan Approval Proportion): Z-stat={stat:.4f}, P-value={p_value:.4f}")
+
+
+---
+
+2. Chi-Square Test (Two Categorical Variables)
+
+Testing the relationship between Gender and Loan_Status.
+
+from scipy.stats import chi2_contingency
+
+# Create contingency table for Gender and Loan_Status
+gender_loan_table = pd.crosstab(data['Gender'], data['Loan_Status'])
+
+# Chi-square test
+stat, p, dof, expected = chi2_contingency(gender_loan_table)
+print(f"Chi-Square Test (Gender vs Loan Status): Chi2-stat={stat:.4f}, P-value={p:.4f}")
+
+
+---
+
+3. T-Test (One Sample)
+
+Testing if the mean loan amount (LoanAmount) is different from a hypothesized value (e.g., 100,000).
+
+from scipy.stats import ttest_1samp
+
+# One-sample t-test: Is the average LoanAmount equal to 100,000?
+loan_amount = data['LoanAmount'].dropna()
+population_mean = 100000
+stat, p_value = ttest_1samp(loan_amount, population_mean)
+print(f"One-Sample T-Test (Loan Amount vs 100000): T-stat={stat:.4f}, P-value={p_value:.4f}")
+
+
+---
+
+4. T-Test (Two Sample)
+
+Testing if there is a difference in the loan amounts between married and unmarried individuals.
+
+from scipy.stats import ttest_ind
+
+# Two-sample t-test: Comparing loan amounts between married and unmarried individuals
+married_loan_amount = data[data['Married'] == 'Married']['LoanAmount'].dropna()
+unmarried_loan_amount = data[data['Married'] == 'Not Married']['LoanAmount'].dropna()
+
+stat, p_value = ttest_ind(married_loan_amount, unmarried_loan_amount, equal_var=False)
+print(f"Two-Sample T-Test (Married vs Unmarried Loan Amounts): T-stat={stat:.4f}, P-value={p_value:.4f}")
+
+
+---
+
+5. ANOVA (F-Test for Multiple Groups)
+
+Testing if there is a significant difference in loan amounts across different property areas (Property_Area).
+
+from scipy.stats import f_oneway
+
+# Group data by Property_Area and perform ANOVA test
+urban_loan_amount = data[data['Property_Area'] == 'Urban']['LoanAmount'].dropna()
+rural_loan_amount = data[data['Property_Area'] == 'Rural']['LoanAmount'].dropna()
+semiurban_loan_amount = data[data['Property_Area'] == 'Semiurban']['LoanAmount'].dropna()
+
+stat, p_value = f_oneway(urban_loan_amount, rural_loan_amount, semiurban_loan_amount)
+print(f"ANOVA Test (Loan Amount Across Property Areas): F-stat={stat:.4f}, P-value={p_value:.4f}")
+
+
+---
+
+Interpretation of Results:
+
+1. Proportion Test: If p-value < 0.05, we reject the null hypothesis that the proportion of loan approvals is 50%.
+
+
+2. Chi-Square Test: If p-value < 0.05, we conclude that there is a significant relationship between gender and loan approval status.
+
+
+3. T-Test (One Sample): If p-value < 0.05, we conclude that the average loan amount is significantly different from 100,000.
+
+
+4. T-Test (Two Sample): If p-value < 0.05, we conclude that married and unmarried individuals have significantly different loan amounts.
+
+
+5. ANOVA: If p-value < 0.05, we conclude that there are significant differences in loan amounts across property areas.
+
+
+
+
+---
+
+Let me know if you'd like to explore more tests or need further assistance!
+
