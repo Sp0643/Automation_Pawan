@@ -676,3 +676,117 @@ Performing a One-Way ANOVA if more education levels exist?
 Let me know how you'd like to proceed!
 
 
+Covariance and Correlation Analysis Using Loan Dataset
+
+We'll explore Covariance and Correlation in your dataset by selecting meaningful numerical attributes for analysis.
+
+
+---
+
+1. Covariance: Measuring the Direction of Relationship
+
+Covariance measures how two variables move together. It only tells us the direction (positive, negative, or none), but not the strength.
+
+Example Hypothesis
+
+Does ApplicantIncome and LoanAmount increase together?
+
+If positive → Higher income leads to larger loan amounts.
+
+If negative → Higher income leads to smaller loans (unlikely in this case).
+
+If near zero → No relationship.
+
+
+
+Python Code for Covariance
+
+import pandas as pd
+import numpy as np
+
+# Load dataset
+file_path = "/mnt/data/file-7R8twDz95L3AoZccAWNpS1"
+loan_df = pd.read_csv(file_path)
+
+# Select numeric columns
+loan_df = loan_df[['ApplicantIncome', 'CoapplicantIncome', 'LoanAmount']].dropna()
+
+# Compute Covariance Matrix
+cov_matrix = loan_df.cov()
+
+# Display Covariance Matrix
+import ace_tools as tools
+tools.display_dataframe_to_user(name="Covariance Matrix", dataframe=cov_matrix)
+
+# Interpretation
+print("\nCovariance Interpretation:")
+if cov_matrix.loc['ApplicantIncome', 'LoanAmount'] > 0:
+    print("Applicant Income and Loan Amount have a positive covariance → Higher income applicants tend to take higher loan amounts.")
+elif cov_matrix.loc['ApplicantIncome', 'LoanAmount'] < 0:
+    print("Applicant Income and Loan Amount have a negative covariance → Higher income applicants tend to take lower loan amounts.")
+else:
+    print("No relationship between Applicant Income and Loan Amount.")
+
+
+---
+
+2. Correlation: Strength & Direction of Relationship
+
+Correlation normalizes covariance, giving a value between -1 to 1.
+
+1 → Strong Positive Correlation (Increase together)
+
+-1 → Strong Negative Correlation (One increases, the other decreases)
+
+0 → No correlation
+
+
+Example Hypothesis
+
+Does ApplicantIncome strongly correlate with LoanAmount?
+
+Do CoapplicantIncome and LoanAmount have a weak relationship?
+
+
+Python Code for Correlation
+
+# Compute Correlation Matrix
+corr_matrix = loan_df.corr()
+
+# Display Correlation Matrix
+tools.display_dataframe_to_user(name="Correlation Matrix", dataframe=corr_matrix)
+
+# Interpretation
+print("\nCorrelation Interpretation:")
+if corr_matrix.loc['ApplicantIncome', 'LoanAmount'] > 0.7:
+    print("Strong positive correlation → Higher incomes strongly influence higher loan amounts.")
+elif 0.3 < corr_matrix.loc['ApplicantIncome', 'LoanAmount'] <= 0.7:
+    print("Moderate correlation → Higher incomes somewhat influence loan amounts.")
+elif -0.3 < corr_matrix.loc['ApplicantIncome', 'LoanAmount'] <= 0.3:
+    print("Weak or no correlation → Loan amount is independent of applicant income.")
+else:
+    print("Negative correlation → Unlikely in this scenario.")
+
+# Optional: Visualization (scatter plot)
+import matplotlib.pyplot as plt
+
+plt.scatter(loan_df['ApplicantIncome'], loan_df['LoanAmount'], alpha=0.5)
+plt.xlabel("Applicant Income")
+plt.ylabel("Loan Amount")
+plt.title("Applicant Income vs Loan Amount (Correlation)")
+plt.show()
+
+
+---
+
+Next Steps
+
+Would you like to:
+
+Run these tests on other numeric attributes (e.g., Loan Term, Credit History)?
+
+Visualize correlation using a heatmap for better insights?
+
+
+Let me know how you want to explore further!
+
