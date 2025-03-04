@@ -610,3 +610,69 @@ Apply ANOVA on another numeric variable like ApplicantIncome?
 
 Let me know how you'd like to proceed!
 
+
+
+
+The test being performed in your screenshot is a Two-Sample T-Test (Independent T-Test), which is the 4th test among the five you asked about.
+
+
+---
+
+Which Test is This?
+
+This test compares the mean ApplicantIncome between Graduates and Non-Graduates to determine whether there is a significant difference between the two groups.
+
+Hypothesis Statement:
+
+Null Hypothesis (): There is no significant difference in the mean income of graduates and non-graduates.
+
+Alternative Hypothesis (): The mean income of graduates and non-graduates is significantly different.
+
+
+Key Features of This Test:
+
+Two groups (Graduate vs. Non-Graduate)
+
+Numeric variable (ApplicantIncome)
+
+Comparing means → Independent (Unpaired) T-Test
+
+
+
+---
+
+How This Maps to the Tests You Asked:
+
+This test falls under Test 4 (Two-Sample T-Test) because it compares two means (Graduate vs. Non-Graduate ApplicantIncome).
+
+
+---
+
+Interpretation of Output
+
+Mean Income of Graduates: 5857.43
+
+Mean Income of Non-Graduates: 3777.28
+
+T-statistic: 5.725 (Measures difference in means relative to variance)
+
+P-value: 1.63e-08 (0.0000000163)
+→ Since the p-value is much smaller than 0.05, we reject the null hypothesis, meaning graduates have significantly higher income than non-graduates.
+
+
+
+---
+
+Would you like to extend this analysis further?
+For example:
+
+Visualizing Income Distributions with Boxplots?
+
+Checking if income variance is equal before applying the test?
+
+Performing a One-Way ANOVA if more education levels exist?
+
+
+Let me know how you'd like to proceed!
+
+
