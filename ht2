@@ -895,3 +895,132 @@ Covariance analysis for other attributes?
 Let me know how you'd like to proceed!
 
 
+Great! Below is the complete Python code for computing Covariance and Correlation, along with heatmaps for visualization.
+
+
+---
+
+Covariance & Correlation Analysis with Heatmaps
+
+We will:
+
+1. Compute the Covariance Matrix – Shows how two variables move together.
+
+
+2. Compute the Correlation Matrix – Normalized version of covariance, giving values between -1 and 1.
+
+
+3. Visualize both using heatmaps.
+
+
+
+
+---
+
+Python Code for Covariance & Correlation with Heatmaps
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset
+file_path = "/mnt/data/file-7R8twDz95L3AoZccAWNpS1"
+loan_df = pd.read_csv(file_path)
+
+# Select relevant numeric columns and drop NaN values
+loan_df = loan_df[['ApplicantIncome', 'CoapplicantIncome', 'LoanAmount']].dropna()
+
+### **1. Compute Covariance Matrix**
+cov_matrix = loan_df.cov()
+print("Covariance Matrix:\n", cov_matrix)
+
+### **2. Compute Correlation Matrix**
+corr_matrix = loan_df.corr()
+print("\nCorrelation Matrix:\n", corr_matrix)
+
+### **3. Heatmap for Covariance Matrix**
+plt.figure(figsize=(8,6))
+sns.heatmap(cov_matrix, annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Covariance Heatmap")
+plt.show()
+
+### **4. Heatmap for Correlation Matrix**
+plt.figure(figsize=(8,6))
+sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt=".2f", vmin=-1, vmax=1)
+plt.title("Correlation Heatmap")
+plt.show()
+
+### **5. Interpretation**
+print("\nInterpretation:")
+
+# Covariance Interpretation
+cov_value = cov_matrix.loc['ApplicantIncome', 'LoanAmount']
+if cov_value > 0:
+    print("Applicant Income and Loan Amount have a **positive covariance** → Higher income applicants tend to take higher loan amounts.")
+elif cov_value < 0:
+    print("Applicant Income and Loan Amount have a **negative covariance** → Higher income applicants tend to take lower loan amounts.")
+else:
+    print("No relationship between Applicant Income and Loan Amount.")
+
+# Correlation Interpretation
+corr_value = corr_matrix.loc['ApplicantIncome', 'LoanAmount']
+if corr_value > 0.7:
+    print("Strong positive correlation → Higher incomes strongly influence higher loan amounts.")
+elif 0.3 < corr_value <= 0.7:
+    print("Moderate correlation → Higher incomes somewhat influence loan amounts.")
+elif -0.3 < corr_value <= 0.3:
+    print("Weak or no correlation → Loan amount is independent of applicant income.")
+else:
+    print("Negative correlation → Unlikely in this scenario.")
+
+
+---
+
+Explanation
+
+1. Data Preparation
+
+Selects ApplicantIncome, CoapplicantIncome, and LoanAmount.
+
+Drops missing values.
+
+
+
+2. Covariance & Correlation Computation
+
+Covariance (.cov()) → Measures direction of relationship.
+
+Correlation (.corr()) → Standardized measure of strength (between -1 and 1).
+
+
+
+3. Heatmap Visualizations
+
+Uses Seaborn heatmaps to visualize covariance and correlation.
+
+
+
+4. Interpretation
+
+If covariance > 0, both variables increase together.
+
+If correlation > 0.7, strong relationship.
+
+If correlation between -0.3 and 0.3, weak or no relationship.
+
+
+
+
+
+---
+
+Next Steps
+
+Would you like scatter plots for individual relationships?
+
+Would you like to check correlation for other variables (e.g., Credit_History vs LoanAmount)?
+
+
+Let me know how you'd like to proceed! 🚀
+
