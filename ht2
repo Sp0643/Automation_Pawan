@@ -790,3 +790,108 @@ Visualize correlation using a heatmap for better insights?
 
 Let me know how you want to explore further!
 
+
+
+
+Sure! Below is the corrected Python code for calculating the Covariance Matrix without using ace_tools.
+
+
+---
+
+Covariance Analysis: Measuring Direction of Relationship
+
+Covariance tells us if two variables move together (positive), opposite (negative), or have no relation.
+
+Example Hypothesis
+
+Does ApplicantIncome and LoanAmount increase together?
+
+If positive → Higher income leads to larger loan amounts.
+
+If negative → Higher income leads to smaller loans.
+
+If near zero → No relationship.
+
+
+
+
+---
+
+Python Code for Covariance
+
+import pandas as pd
+import numpy as np
+
+# Load dataset
+file_path = "/mnt/data/file-7R8twDz95L3AoZccAWNpS1"
+loan_df = pd.read_csv(file_path)
+
+# Select relevant numeric columns and drop NaN values
+loan_df = loan_df[['ApplicantIncome', 'CoapplicantIncome', 'LoanAmount']].dropna()
+
+# Compute Covariance Matrix
+cov_matrix = loan_df.cov()
+
+# Display Covariance Matrix
+print("Covariance Matrix:\n", cov_matrix)
+
+# Interpretation
+print("\nCovariance Interpretation:")
+cov_value = cov_matrix.loc['ApplicantIncome', 'LoanAmount']
+
+if cov_value > 0:
+    print("Applicant Income and Loan Amount have a **positive covariance** → Higher income applicants tend to take higher loan amounts.")
+elif cov_value < 0:
+    print("Applicant Income and Loan Amount have a **negative covariance** → Higher income applicants tend to take lower loan amounts.")
+else:
+    print("No relationship between Applicant Income and Loan Amount.")
+
+
+---
+
+Explanation
+
+1. Data Preparation
+
+Loads the dataset.
+
+Selects ApplicantIncome, CoapplicantIncome, and LoanAmount.
+
+Drops any missing values.
+
+
+
+2. Computing Covariance
+
+loan_df.cov() calculates the covariance matrix.
+
+
+
+3. Interpretation
+
+If covariance is positive, both values increase together.
+
+If negative, one increases while the other decreases.
+
+If near zero, they are not related.
+
+
+
+
+
+---
+
+Next Steps
+
+Would you like:
+
+A visualization of these relationships (scatter plots)?
+
+A correlation matrix to check strength of relationships?
+
+Covariance analysis for other attributes?
+
+
+Let me know how you'd like to proceed!
+
+
