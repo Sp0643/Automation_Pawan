@@ -1,4 +1,4 @@
-Great! Let's create a Z-test for proportions using your loan dataset. We'll follow a similar example to the one you provided:
+niGreat! Let's create a Z-test for proportions using your loan dataset. We'll follow a similar example to the one you provided:
 
 Hypothesis Statement
 
@@ -1023,4 +1023,118 @@ Would you like to check correlation for other variables (e.g., Credit_History vs
 
 
 Let me know how you'd like to proceed! 🚀
+
+Here is the content of the PowerPoint presentation in text format that you can use as a prompt or modify as needed:
+
+
+---
+
+Slide 1: Title Slide
+
+Title: Introduction to Statistics
+Subtitle: Understanding Data, Sampling, and Probability Distributions
+
+
+---
+
+Slide 2: What is Data?
+
+Data is a collection of facts, figures, or information used for analysis.
+
+It helps in making decisions, predictions, and understanding trends.
+
+Example: Sales records, survey responses, and website traffic.
+
+
+
+---
+
+Slide 3: Types of Data
+
+Qualitative Data: Categorical (e.g., colors, gender, names)
+
+Quantitative Data: Numerical (e.g., age, income, height)
+
+Nominal: Categories without order (e.g., hair color)
+
+Ordinal: Ordered categories (e.g., satisfaction level)
+
+Interval: Numeric without true zero (e.g., temperature in Celsius)
+
+Ratio: Numeric with true zero (e.g., weight, age)
+
+
+
+---
+
+Slide 4: Data Collection Methods
+
+Primary Data: Collected firsthand (e.g., surveys, experiments)
+
+Secondary Data: Collected by others (e.g., government reports, online databases)
+
+Methods:
+
+Surveys & Questionnaires
+
+Observations
+
+Experiments
+
+Administrative Data
+
+
+
+
+---
+
+Slide 5: Sampling Methods
+
+Probability Sampling:
+
+Simple Random: Every individual has equal chance
+
+Stratified: Divides population into subgroups
+
+Cluster: Randomly selects entire groups
+
+Systematic: Selects every nth member
+
+
+Non-Probability Sampling:
+
+Convenience: Based on ease of access
+
+Judgmental: Based on expert decision
+
+Quota: Ensures representation of certain groups
+
+Snowball: Uses referrals from initial subjects
+
+
+
+
+---
+
+Slide 6: Probability Distributions
+
+Discrete Distributions:
+
+Binomial: Success/failure trials (e.g., coin tosses)
+
+Poisson: Counts of rare events (e.g., number of calls in an hour)
+
+
+Continuous Distributions:
+
+Normal: Bell-shaped curve (e.g., IQ scores, heights)
+
+Exponential: Time until next event occurs (e.g., machine failure times)
+
+
+
+
+---
+
+Let me know if you need any modifications or additions!
 
