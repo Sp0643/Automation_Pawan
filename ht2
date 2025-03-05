@@ -1138,3 +1138,68 @@ Exponential: Time until next event occurs (e.g., machine failure times)
 
 Let me know if you need any modifications or additions!
 
+
+
+
+Here is a Python script to mimic the hypothesis testing experiment for a biased coin:
+
+import numpy as np
+import scipy.stats as stats
+
+# Experiment setup
+n_flips = 100  # Number of flips
+p_fair = 0.5  # Probability of heads for a fair coin
+
+# Simulate coin flips (1 represents heads, 0 represents tails)
+np.random.seed(42)  # Set seed for reproducibility
+flips = np.random.choice([0, 1], size=n_flips, p=[1 - p_fair, p_fair])
+
+# Count number of heads
+observed_heads = np.sum(flips)
+expected_heads = n_flips * p_fair  # Expected number of heads under H0
+std_dev = np.sqrt(n_flips * p_fair * (1 - p_fair))  # Standard deviation
+
+# Compute test statistic (Z-score)
+z_score = (observed_heads - expected_heads) / std_dev
+
+# Compute p-value (two-tailed test)
+p_value = 2 * (1 - stats.norm.cdf(abs(z_score)))
+
+# Significance level
+alpha = 0.05
+
+# Display results
+print(f"Observed heads: {observed_heads}")
+print(f"Expected heads: {expected_heads}")
+print(f"Z-score: {z_score:.2f}")
+print(f"P-value: {p_value:.4f}")
+
+# Hypothesis testing decision
+if p_value < alpha:
+    print("Reject the null hypothesis: The coin is likely biased.")
+else:
+    print("Fail to reject the null hypothesis: No strong evidence that the coin is biased.")
+
+Explanation:
+
+1. Simulates flipping a fair coin 100 times.
+
+
+2. Counts the number of heads observed.
+
+
+3. Computes the Z-score to measure how extreme the result is.
+
+
+4. Calculates the p-value to determine if the result is statistically significant.
+
+
+5. Compares the p-value to the significance level (α = 0.05).
+
+
+6. If the p-value < 0.05, we reject the null hypothesis and conclude the coin may be biased.
+
+
+
+Run this script, and it will mimic the hypothesis testing example from the slide. Let me know if you need modifications!
+
