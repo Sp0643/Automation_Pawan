@@ -1,0 +1,42 @@
+In Alteryx, you can achieve this using a Formula Tool. Here’s how you can create a column that captures which of the three columns have data:
+
+Formula Logic in Alteryx
+
+1. Add a Formula Tool after your input data.
+
+
+2. Create a new column (e.g., DataPresence).
+
+
+3. Use the following formula:
+
+
+
+Trim(
+    IIF(ISNULL([ColumnA]) OR [ColumnA] = "", "", "Column A has data, ") +
+    IIF(ISNULL([ColumnB]) OR [ColumnB] = "", "", "Column B has data, ") +
+    IIF(ISNULL([ColumnC]) OR [ColumnC] = "", "", "Column C has data, "),
+    ", "
+)
+
+Explanation:
+
+1. ISNULL([ColumnA]) OR [ColumnA] = "" → Checks if ColumnA is blank or null.
+
+
+2. If ColumnA has data, it adds "Column A has data, " to the output.
+
+
+3. Repeats the process for ColumnB and ColumnC.
+
+
+4. Trim(..., ", ") removes the trailing comma and space at the end.
+
+
+
+Example Output:
+
+This will dynamically generate a text column specifying which columns contain data while skipping blanks.
+
+Would you like to add this logic inside a Multi-Field Formula Tool to apply it to multiple columns dynamically?
+
