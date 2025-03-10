@@ -1,0 +1,127 @@
+Review of the Notes — Accuracy and Explanation
+
+The provided notes contain key points about major statistical tests. Let's analyze each point for accuracy and clarity:
+
+
+---
+
+1. Z-Test
+
+✅ Correct Information:
+
+Used when sample size ≥ 30.
+
+Requires population standard deviation (σ) to be known.
+
+Suitable for testing population means or proportions in large sample sizes.
+
+
+✅ Example Use Case:
+
+Testing if the average salary in a city differs from the national average when σ is known.
+
+
+
+---
+
+2. T-Test
+
+✅ Correct Information (with clarification):
+
+Used when sample size < 30 or ≥ 30, but the population standard deviation (σ) is NOT known.
+
+Suitable for comparing means of one or two groups.
+
+
+💡 Additional Clarification:
+
+One-Sample T-Test → Tests if the sample mean differs from a known value.
+
+Two-Sample T-Test → Compares means between two groups.
+
+Paired T-Test → Compares means in matched or dependent samples.
+
+
+✅ Example Use Case:
+
+Testing if a new teaching method improves test scores using data from a small class.
+
+
+
+---
+
+3. F-Test
+
+✅ Correct Information:
+
+Used to compare two variances.
+
+Often conducted before a two-sample T-test to check if variances are equal.
+
+
+💡 Additional Insight:
+
+F-Test is rarely used alone; it's primarily a supporting test for ANOVA and regression analysis.
+
+
+✅ Example Use Case:
+
+Comparing the variability of monthly sales between two store branches.
+
+
+
+---
+
+4. Chi-Square Test
+
+✅ Correct Information:
+
+Used to test for independence or association between two categorical variables.
+
+Also used for goodness-of-fit tests to assess how well sample data matches expected distribution.
+
+
+✅ Example Use Case:
+
+Testing if gender and voting preference are independent.
+
+
+
+---
+
+5. ANOVA (Analysis of Variance)
+
+✅ Correct Information:
+
+ANOVA is an application of the F-distribution.
+
+Used to compare means of more than two groups.
+
+Requires assumptions of normality and equal variances (homogeneity of variance).
+
+
+✅ Example Use Case:
+
+Comparing average test scores among students from three different schools.
+
+
+
+---
+
+Conclusion:
+
+✅ The notes are correct but can benefit from minor clarifications:
+
+Z-Test → Best for large samples where σ is known.
+
+T-Test → Best for small samples or when σ is unknown.
+
+F-Test → Often paired with ANOVA for variance checks.
+
+Chi-Square → For categorical data relationships.
+
+ANOVA → For comparing multiple group means.
+
+
+Would you like practical examples or Python code for any of these tests?
+
