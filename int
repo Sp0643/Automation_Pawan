@@ -1,0 +1,833 @@
+Here are 25 relevant technical interview questions based on the candidate’s resume, specifically designed to assess their knowledge and practical skills in Python, SQL, Power BI/Tableau, Machine Learning, and NLP:
+
+Python
+
+1. Can you explain the process and functions you would use in Python (Pandas) to clean a dataset?
+
+
+2. Describe how you would handle missing values and duplicates in Python.
+
+
+3. How can you use NumPy for efficient numerical computations? Provide examples of some operations.
+
+
+4. What is Matplotlib, and how can you create a visualization using it?
+
+
+5. How do you read data from an Excel file or database into a Pandas DataFrame?
+
+
+
+SQL
+
+6. Write an SQL query to identify duplicate rows in a table.
+
+
+7. Can you explain the difference between INNER JOIN and LEFT JOIN in SQL with examples?
+
+
+8. Write a query to find the total sales by month from a sales table with transaction dates.
+
+
+9. What steps would you follow to optimize a slow-running SQL query?
+
+
+10. How can you find and handle NULL values in an SQL database?
+
+
+
+Power BI/Tableau
+
+11. Explain the steps to connect Power BI to a SQL database.
+
+
+12. How do you create calculated measures and columns in Power BI?
+
+
+13. Describe a scenario where you have used DAX functions to solve a business problem.
+
+
+14. How would you visualize sales trends and identify peak performance periods using Power BI?
+
+
+15. What is the difference between Power BI Desktop and Power BI Service?
+
+
+
+Machine Learning
+
+16. Explain the difference between supervised and unsupervised learning with practical examples.
+
+
+17. How would you evaluate the performance of a predictive model?
+
+
+18. Describe the process of building a predictive model for student dropout rates using Python.
+
+
+19. Can you explain the concept of overfitting and how you can prevent it in machine learning models?
+
+
+20. What steps would you take to ensure your data is ready for training a machine learning model?
+
+
+
+NLP (Natural Language Processing)
+
+21. What is NLP, and what are some common use-cases or applications?
+
+
+22. How would you preprocess text data for an NLP project in Python?
+
+
+23. Can you explain the difference between stemming and lemmatization?
+
+
+24. Describe a scenario where sentiment analysis could be valuable to an educational technology company.
+
+
+25. What Python libraries would you use for an NLP project, and why?
+
+
+
+These questions will help to evaluate the candidate's technical depth, problem-solving capabilities, and practical understanding of essential tools and concepts listed in the resume.
+
+
+
+Here are 20 specific interview questions created directly from the candidate's resume shared in the photos provided. These questions will help assess the candidate’s practical knowledge and experiences mentioned clearly in their profile:
+
+General and Project-Based Questions:
+
+1. Describe how you developed detailed sales trend reports in Power BI. What was your data source, and how did your reports influence management decisions?
+
+
+2. Explain your approach in analyzing student engagement data using SQL and Python. How did you identify drop-off points?
+
+
+3. How did your visualizations help stakeholders in improving course content at Metacourse?
+
+
+
+Python:
+
+4. Can you describe your process for cleaning data using Python’s Pandas library, specifically referring to your experience at Teachnook?
+
+
+5. How did Python help you improve data accuracy when working with Learning Management Systems (LMS)?
+
+
+6. Give an example of a challenge you faced while handling missing data in Python and how you resolved it.
+
+
+
+SQL:
+
+7. What types of SQL queries did you use for analyzing customer purchase patterns at General Procurement Inc.?
+
+
+8. Explain how you used SQL to recommend related products or cross-sell strategies.
+
+
+9. How do you optimize SQL queries when handling large datasets?
+
+
+
+Power BI:
+
+10. Can you detail the steps involved in creating an interactive Power BI dashboard that visualizes customer segments and purchase behavior?
+
+
+11. What specific KPIs did you track using Power BI during your role as a Business Development Analyst, and why?
+
+
+12. Discuss a complex DAX calculation you have created for your dashboards and its business impact.
+
+
+
+Machine Learning & Predictive Modeling:
+
+13. Explain the predictive modeling techniques you employed to forecast student outcomes and dropout rates at Teachnook. Which algorithms did you use?
+
+
+14. How did you validate your predictive models to ensure accuracy and reliability?
+
+
+15. Describe a time when your predictive analysis directly influenced business decisions or improved retention rates.
+
+
+
+NLP (If Applicable based on candidate's exposure):
+
+(Note: The provided resume images don’t explicitly mention NLP experience; however, general analytical skill can be assessed.) 16. Have you ever used NLP techniques in your projects? If yes, can you describe the project and outcome? 17. How could NLP be useful in analyzing student feedback or reviews in an educational setting?
+
+Data Analysis & Visualization Tools:
+
+18. Why do you prefer using Power BI over Excel for data visualization, or vice versa?
+
+
+19. Can you explain how you've applied hypothesis testing or A/B testing in your role to evaluate student or customer engagement?
+
+
+20. In your experience, what are the critical elements that make a dashboard effective for stakeholders?
+
+
+
+These tailored questions will ensure you adequately evaluate the candidate based on their stated experiences and competencies listed in their resume.
+
+
+
+
+Below are 50 interview questions split into two categories of 25 questions each. The first category focuses on Python, SQL, Power BI, and Tableau, while the second category covers Machine Learning, OCR, NLP, and Deep Learning. Each question is inspired by the resume details you shared, ensuring relevance to the candidate’s stated experience.
+
+
+---
+
+Category 1: Python, SQL, Power BI, and Tableau (25 Questions)
+
+Python (6 Questions)
+
+1. Data Wrangling: Could you walk us through how you typically clean and transform shipping or transaction data using Python libraries (e.g., Pandas)?
+
+
+2. Automation: In your experience automating tasks at Velocify, what Python tools or scripts did you create to reduce manual work in data pipelines?
+
+
+3. AB Testing: How would you set up an AB testing framework in Python to analyze user behavior (e.g., for shipping aggregator or fintech solutions)?
+
+
+4. Error Handling: Describe a challenging bug or exception you encountered in a Python data processing script. How did you debug and resolve it?
+
+
+5. Performance Tuning: What methods (e.g., vectorization, multiprocessing) do you use to optimize Python scripts dealing with large datasets?
+
+
+6. Package Management: How do you manage different Python environments and dependencies for multiple data or ML projects?
+
+
+
+SQL (6 Questions)
+
+7. Complex Joins: Could you provide an example of how you’ve used advanced SQL joins (e.g., self-joins or window functions) to analyze shipping or customer data?
+
+
+8. Data Modeling: Describe a scenario where you had to design or optimize a database schema for storing transaction records or user interactions.
+
+
+9. Query Optimization: What strategies do you use to diagnose and improve slow-running queries when dealing with millions of rows in a shipping or finance database?
+
+
+10. Aggregations & Grouping: How would you write a query to perform cohort analysis for customers based on their first transaction date and subsequent behavior?
+
+
+11. Stored Procedures/Functions: Have you created any stored procedures to handle repetitive tasks in your projects? If so, could you share an example use case?
+
+
+12. Security & Access Control: What best practices do you follow to ensure data integrity and security within an SQL environment?
+
+
+
+Power BI (6 Questions)
+
+13. Dashboard Design: How do you determine which visualizations or KPIs to include in a Power BI dashboard for executive-level shipping and finance analytics?
+
+
+14. Data Modeling in Power BI: Could you walk us through how you structure relationships and data models within Power BI to handle multi-table scenarios?
+
+
+15. DAX Calculations: Provide an example of a complex DAX formula you’ve used to track metrics such as average handling time or churn rates.
+
+
+16. Row-Level Security: Have you implemented row-level security (RLS) in Power BI to restrict data access for different stakeholders? Describe the process.
+
+
+17. Incremental Refresh: When working with large datasets, have you configured incremental refresh in Power BI? What challenges did you face?
+
+
+18. Performance Optimization: What techniques do you use (e.g., query folding, data reduction) to improve Power BI dashboard performance?
+
+
+
+Tableau (7 Questions)
+
+19. Storytelling with Data: Can you describe a scenario where you used Tableau’s storytelling feature to highlight insights from AB testing or user journey data?
+
+
+20. Calculations & Table Calculations: What is a table calculation you frequently use in Tableau, and how does it help in advanced analytics?
+
+
+21. Data Blending vs. Joins: When would you opt for data blending in Tableau instead of creating direct joins or using a single data source?
+
+
+22. Parameter Usage: Can you share an example of using parameters to allow end-users to dynamically filter or compare different KPIs?
+
+
+23. Dashboard Actions: How have you leveraged dashboard actions (filters, highlights, URL actions) to improve user interactivity?
+
+
+24. Advanced Visualizations: Tell us about a custom or advanced visualization (e.g., Sankey chart, radial chart) you’ve built in Tableau and why.
+
+
+25. Publishing & Sharing: What are some best practices for publishing workbooks to Tableau Server or Tableau Online for large audiences?
+
+
+
+
+---
+
+Category 2: Machine Learning, OCR, NLP, and Deep Learning (25 Questions)
+
+Machine Learning (8 Questions)
+
+1. Churn Prediction: In your resume, you mention developing a customer churn-prediction model. What steps did you follow (data preparation, feature engineering, algorithm choice, etc.)?
+
+
+2. AB Testing & ML: How do you combine AB testing insights with predictive modeling to refine shipping or fintech products?
+
+
+3. Model Deployment: Can you describe a time when you deployed an ML model into a production environment (e.g., using Flask, FastAPI, or a cloud service)?
+
+
+4. Explainability: Have you used tools like SHAP or LIME to explain model predictions to stakeholders? Please provide an example.
+
+
+5. Hyperparameter Tuning: What techniques (e.g., grid search, random search, Bayesian optimization) have you used to optimize models such as XGBoost or LightGBM?
+
+
+6. Handling Imbalanced Data: How do you deal with imbalanced datasets in fraud detection or risk management tasks?
+
+
+7. Evaluation Metrics: Which metrics do you rely on for classification vs. regression tasks, and why?
+
+
+8. Real-Time Predictions: Have you integrated ML models into real-time systems, such as recommendation engines or risk scoring? How?
+
+
+
+OCR (5 Questions)
+
+9. OCR Pipeline: Describe the end-to-end OCR process you implemented for scanning invoices or shipping documents. Which libraries or services did you use?
+
+
+10. Preprocessing for OCR: How do you handle image noise, skew, or poor resolution before feeding documents into an OCR system?
+
+
+11. Text Extraction Accuracy: What techniques do you use to measure and improve OCR accuracy when dealing with diverse document formats?
+
+
+12. Post-OCR Processing: Once text is extracted, how do you structure it (e.g., JSON, database records) and validate it for downstream analytics?
+
+
+13. Scaling OCR: Have you dealt with high-volume document processing? How did you ensure efficiency and scalability?
+
+
+
+NLP (6 Questions)
+
+14. NLP Projects: You’ve mentioned advanced NLP techniques for user preference modeling. Could you describe your approach, from data gathering to model deployment?
+
+
+15. Text Classification: How have you built text classification systems (e.g., for complaint handling) and ensured high accuracy or recall?
+
+
+16. Tokenization & Embeddings: Which libraries (e.g., NLTK, spaCy, Hugging Face) do you prefer for tokenization and embedding generation, and why?
+
+
+17. Sentiment Analysis: Have you implemented sentiment analysis for NPS improvement? What steps did you take to interpret the results for business impact?
+
+
+18. Prompt Engineering (ChatGPT/OpenAI): You mentioned using OpenAI APIs. How have you integrated large language models or prompt-based solutions into your NLP workflows?
+
+
+19. Text Summarization or Extraction: In your experience, how do you handle summarizing long texts or extracting key information from documents?
+
+
+
+Deep Learning (6 Questions)
+
+20. Frameworks & Tools: Which deep learning frameworks (TensorFlow, Keras, PyTorch) have you used, and for what types of projects?
+
+
+21. Neural Network Architectures: Can you share an example of when you used a CNN vs. an RNN or a Transformer-based architecture?
+
+
+22. Transfer Learning: Have you leveraged pre-trained models (e.g., BERT, GPT) for any NLP tasks? If so, how did it improve your project outcomes?
+
+
+23. Model Monitoring: Once a deep learning model is deployed, how do you monitor its performance and guard against model drift?
+
+
+24. GPU/TPU Acceleration: Have you utilized GPU or TPU resources for training large models? How did you optimize training times?
+
+
+25. Ethical & Responsible AI: In building deep learning models, have you encountered bias or fairness issues? What strategies did you employ to address them?
+
+
+
+
+---
+
+How to Use These Questions
+
+Tailor the Discussion: Pick and choose the questions most relevant to the specific role’s day-to-day responsibilities (e.g., heavier on NLP if text analytics is a core function).
+
+Drill Deeper: For each answer, ask follow-up questions to probe the candidate’s depth of understanding and real-world problem-solving skills.
+
+Practical Scenarios: Encourage the candidate to walk through real examples, show code snippets, or discuss challenges they faced, ensuring they have hands-on experience.
+
+
+By using these 50 questions—split evenly between data-oriented (Python, SQL, Power BI, Tableau) and ML/AI-focused (Machine Learning, OCR, NLP, Deep Learning)—you can thoroughly assess the candidate’s breadth of skills and how they’ve applied them in their past projects.
+
+
+
+Below are 50 interview questions split into two categories of 25 questions each. The first category focuses on Python, SQL, Power BI, and general data engineering (reflecting the candidate’s internships and projects), while the second category covers Machine Learning, NLP, OCR, and Deep Learning (expanding on potential areas where the candidate’s skills could be applied or further developed).
+
+
+---
+
+Category 1: Python, SQL, Power BI, and Data Engineering (25 Questions)
+
+Python (6 Questions)
+
+1. API Development with FastAPI
+
+Could you walk us through how you built the College Management System using FastAPI and SQLite? What were your main considerations for structuring the endpoints?
+
+
+
+2. Data Validation with Pydantic
+
+How did you use Pydantic for validating data in your FastAPI project? Can you share an example of a model and its validation logic?
+
+
+
+3. Data Wrangling with Pandas
+
+Describe a scenario from your Gramener internship where you had to clean or transform a messy dataset using Pandas. What techniques or functions did you find most helpful?
+
+
+
+4. Visualization with Matplotlib
+
+In your Gramener internship, you mentioned using Matplotlib. Could you give an example of a custom visualization you created to highlight specific insights?
+
+
+
+5. Python Packaging and Environments
+
+How do you manage project dependencies and virtual environments when working on multiple Python-based projects simultaneously?
+
+
+
+6. Error Handling & Logging
+
+What strategies do you employ for error handling and logging in Python applications to make debugging easier?
+
+
+
+
+SQL (6 Questions)
+
+7. Database Schema Design
+
+In your College Management System, how did you structure the SQLite database tables (e.g., for students, courses)? What were your key design decisions?
+
+
+
+8. SQL Queries & Joins
+
+Describe a complex SQL query you wrote for your IPL Dashboard. Which types of joins did you use, and why?
+
+
+
+9. Data Extraction & Loading
+
+How did you pull data into SQL Server Management Studio for your IPL Dashboard project? Did you face any challenges in handling large CSV or Excel files?
+
+
+
+10. Performance Optimization
+
+
+
+What steps do you take to optimize SQL queries when dealing with large datasets, for example, in a scenario like analyzing multiple IPL seasons?
+
+
+11. Stored Procedures & Functions
+
+
+
+Have you ever used stored procedures or functions in SQL to automate repetitive tasks? Can you describe a scenario?
+
+
+12. Security & Access Control
+
+
+
+How do you manage user privileges or roles in SQL Server to ensure sensitive data remains protected?
+
+
+Power BI (6 Questions)
+
+13. Data Modeling & Relationships
+
+
+
+Could you walk us through how you structured the data model for your IPL Dashboard in Power BI? How did you define relationships among tables?
+
+
+14. Creating KPIs & Measures
+
+
+
+What kinds of KPIs did you track in the IPL Dashboard, and how did you create or calculate these measures in Power BI?
+
+
+15. Dashboard Design
+
+
+
+When building an executive-level dashboard, what are the key principles you follow to ensure clarity and actionable insights?
+
+
+16. Data Refresh & Gateways
+
+
+
+Can you describe your approach to scheduling data refreshes in Power BI? Did you use an on-premises data gateway for SQL Server data?
+
+
+17. Power Query Editor
+
+
+
+How have you used Power Query to clean or transform data before loading it into Power BI? Could you share a specific example?
+
+
+18. Publishing & Collaboration
+
+
+
+How did you share your Power BI reports with stakeholders? Did you use Power BI Service or embed the reports in another portal?
+
+
+Data Engineering & General Project Questions (7 Questions)
+
+19. End-to-End Pipeline
+
+
+
+Can you describe an end-to-end data pipeline you built, from ingestion (e.g., CSV, Excel) to final visualization (Power BI) or API consumption (FastAPI)?
+
+
+20. Handling Large Datasets
+
+
+
+During your Gramener or Raymond internship, how did you handle large or streaming datasets? Any specific tools or frameworks used?
+
+
+21. Version Control & Collaboration
+
+
+
+What’s your approach to using Git or other version control systems for your data/analytics projects? How do you manage conflicts or pull requests?
+
+
+22. Cloud Services
+
+
+
+Have you deployed any part of your projects (e.g., FastAPI app, dashboards) to a cloud platform (Azure, AWS, GCP)? If so, what were the key steps or challenges?
+
+
+23. Automated Testing
+
+
+
+Do you incorporate testing frameworks (e.g., pytest) in your Python or data engineering workflows? How do you ensure code reliability?
+
+
+24. Documentation & Knowledge Sharing
+
+
+
+How do you document your data pipelines, API endpoints, or dashboards for future maintainers or collaborators?
+
+
+25. Learning from Internships
+
+
+
+What are the biggest takeaways from your Gramener and Raymond internships regarding data processing, collaboration, or stakeholder management?
+
+
+
+---
+
+Category 2: Machine Learning, NLP, OCR, and Deep Learning (25 Questions)
+
+(Note: While your resume focuses more on data engineering, API development, and dashboards, these questions probe broader ML/AI concepts you might encounter or pursue in future roles.)
+
+Machine Learning (7 Questions)
+
+1. Supervised vs. Unsupervised
+
+Can you explain the difference between supervised and unsupervised learning? Provide a brief example of each.
+
+
+
+2. Feature Engineering
+
+Suppose you’re predicting student performance in a College Management System. What features might you engineer from the student data?
+
+
+
+3. Model Evaluation
+
+Which metrics (accuracy, F1-score, etc.) would you prioritize for a classification model predicting whether a student might drop out? Why?
+
+
+
+4. Model Deployment
+
+How would you integrate a trained ML model into your FastAPI application for real-time predictions or recommendations?
+
+
+
+5. Cross-Validation & Overfitting
+
+What methods do you use (k-fold cross-validation, regularization) to reduce overfitting in ML models?
+
+
+
+6. Explainability
+
+If a stakeholder asks “Why did the model make this prediction?”, how would you approach explaining the results using techniques like SHAP or LIME?
+
+
+
+7. Real-Time Inference
+
+How might you handle real-time predictions for an IPL match performance model? Consider both infrastructure and latency requirements.
+
+
+
+
+NLP (6 Questions)
+
+8. NLP Basics
+
+Have you explored any natural language processing libraries (NLTK, spaCy, Hugging Face)? If so, which tasks did you solve (tokenization, sentiment analysis, etc.)?
+
+
+
+9. Text Data Preprocessing
+
+How would you clean raw text data (e.g., from a user feedback form) before feeding it into an NLP model?
+
+
+
+10. Named Entity Recognition
+
+
+
+Could you outline how you’d detect and label entities (like player names, locations) in sports-related text or news articles?
+
+
+11. Language Models
+
+
+
+How might you use large language models (e.g., GPT-based APIs) to summarize or generate reports about IPL matches or college activities?
+
+
+12. Sentiment Analysis
+
+
+
+Suppose you want to gauge student satisfaction with the College Management System. How would you implement a basic sentiment analysis pipeline?
+
+
+13. Handling Domain-Specific Vocabulary
+
+
+
+If you’re working with specialized terms (in petrochemicals or sports), how do you adapt NLP tools or models to handle domain-specific jargon?
+
+
+OCR (4 Questions)
+
+14. OCR Fundamentals
+
+
+
+Have you had any experience extracting text from images or PDFs (e.g., Tesseract, AWS Textract)? If so, what were the key challenges?
+
+
+15. Preprocessing for OCR
+
+
+
+If you’re scanning typed forms for the College Management System, how would you handle image noise, skew, or low-resolution scans?
+
+
+16. Accuracy & Validation
+
+
+
+Once text is extracted via OCR, how do you validate correctness, especially for critical fields like student IDs or exam scores?
+
+
+17. Scaling OCR Solutions
+
+
+
+What considerations come into play when processing thousands of documents daily? Think about batching, parallelization, and cloud services.
+
+
+Deep Learning (8 Questions)
+
+18. Neural Networks 101
+
+
+
+Can you explain the basic components of a neural network (layers, activation functions, etc.)?
+
+
+19. CNN vs. RNN
+
+
+
+In what scenarios would you use a Convolutional Neural Network instead of a Recurrent Neural Network, and vice versa?
+
+
+20. Transfer Learning
+
+
+
+How might you leverage pre-trained models (like ResNet or VGG) to speed up an image classification project?
+
+
+21. Deployment & Inference
+
+
+
+If you had a deep learning model for object detection, how would you integrate it into a real-time system (e.g., for scanning items in a manufacturing line at Raymond)?
+
+
+22. Hyperparameter Tuning
+
+
+
+What are some hyperparameters you typically adjust in a deep learning model, and how do they affect training?
+
+
+23. GPU Utilization
+
+
+
+Have you used GPUs for accelerating training? If so, how do you monitor and optimize GPU usage?
+
+
+24. Data Augmentation
+
+
+
+For an image-based project (e.g., scanning student documents), how might you use data augmentation to improve model robustness?
+
+
+25. Ethical & Practical Considerations
+
+
+
+What ethical or privacy concerns arise when using deep learning models on sensitive data (e.g., student records or financial info), and how do you address them?
+
+
+
+---
+
+Using These Questions
+
+Customize: Select the questions most relevant to your specific role. For instance, if the position is heavier on backend APIs and dashboards, focus on the Python, SQL, and Power BI sections.
+
+Drill Down: Ask follow-ups based on the candidate’s answers to gauge depth of knowledge and real-world application.
+
+Practical Focus: Encourage code or project examples to confirm hands-on experience.
+
+
+These 50 questions—25 on Python, SQL, Power BI, and data engineering and 25 on ML, NLP, OCR, and Deep Learning—should help you thoroughly assess the candidate’s breadth and depth of skills, as well as how they apply these technologies to real projects like the College Management System and IPL Dashboard.
+
+
+Minutes of Meeting (MoM)
+Date: [Add date here]
+Attendees: S, A, [Other participants if applicable]
+
+
+---
+
+1. Enhancement Feature: Quiz Template
+
+Proposal by S
+
+Display one question per page.
+
+Capture time taken to answer each question.
+
+Prevent users from navigating away, moving back and forth, or skipping questions.
+
+If a user leaves the quiz and returns, the timer should resume from where it stopped.
+
+
+Proposal by A
+
+Add a “Skip” option for questions.
+
+This skip functionality will be taken up in the second phase.
+
+
+Additional Notes
+
+No overall time limit for the entire quiz.
+
+Need to disable the “Answer Correction” option (the sixth option in the admin panel).
+
+
+
+2. Dashboard Requirements
+
+Deep Dive Dashboard (PFO)
+
+Provide process-level and collector-level views.
+
+Include LOB-level view for all teams under a collector.
+
+Assess PKT performance across teams in subprocesses.
+
+
+
+3. Timeline & Next Steps
+
+Work will commence on April 21, 2024.
+
+A follow-up call will be scheduled before April 21 to discuss any new requirements or additional ideas.
+
+
+
+---
+
+Action Items
+
+Team: Finalize requirements for one-question-per-page quiz design.
+
+Team: Confirm skip functionality scope for Phase 2.
+
+Team: Update dashboard specifications (process-level, collector-level, LOB-level views).
+
+Admin/Dev: Disable the sixth option (Answer Correction) in the admin panel.
+
+Project Lead: Schedule a call before April 21 for any additional inputs.
+
+
+End of Minutes
+
+
