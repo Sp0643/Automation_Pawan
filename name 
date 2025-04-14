@@ -1,0 +1,105 @@
+Thanks for the detailed explanation! Here's a step-by-step breakdown of what you're asking for, and then I’ll provide the full Python code to do this:
+
+
+---
+
+Step-by-step Plan
+
+1. Load three Excel files:
+
+File 1: DataFrame A (has User Name)
+
+File 2: DataFrame B (also has User Name)
+
+File 3: Roster DataFrame (has User Name, Manager, Team)
+
+
+
+2. Append A and B vertically into one combined DataFrame.
+
+
+3. Clean the User Name field in both the combined DataFrame and Roster:
+
+Remove whitespaces
+
+Remove punctuation
+
+Convert to lowercase
+
+Sort characters in alphabetical order
+
+
+
+4. Do a lookup (left join) from combined data to Roster using the cleaned name.
+
+
+5. Select only the relevant final columns:
+
+Original User Name
+
+Manager
+
+Team
+
+And any other specific columns you want (please specify if needed)
+
+
+
+
+
+---
+
+Python Code
+
+import pandas as pd
+import string
+
+# Load the Excel files
+df1 = pd.read_excel("file1.xlsx")
+df2 = pd.read_excel("file2.xlsx")
+roster_df = pd.read_excel("roster.xlsx")
+
+# Combine df1 and df2 vertically
+combined_df = pd.concat([df1, df2], ignore_index=True)
+
+# Function to normalize user names
+def normalize_name(name):
+    if pd.isna(name):
+        return ''
+    name = ''.join(e for e in str(name) if e.isalnum()).lower()
+    return ''.join(sorted(name))
+
+# Add normalized name column to both datasets
+combined_df['NormalizedName'] = combined_df['User Name'].apply(normalize_name)
+roster_df['NormalizedName'] = roster_df['User Name'].apply(normalize_name)
+
+# Merge on NormalizedName
+final_df = pd.merge(combined_df, roster_df[['NormalizedName', 'Manager', 'Team']], on='NormalizedName', how='left')
+
+# Choose relevant final output columns
+output_df = final_df[['User Name', 'Manager', 'Team'] + [col for col in combined_df.columns if col != 'NormalizedName' and col != 'User Name']]
+
+# Save final output
+output_df.to_excel("final_output.xlsx", index=False)
+
+
+---
+
+Expected Output
+
+You will get a single Excel file final_output.xlsx with:
+
+The original user name
+
+Their matched Manager
+
+Their matched Team
+
+And other relevant data from your original files A and B
+
+
+
+---
+
+If you want me to customize the final columns or handle any other special cleaning rules, feel free to share. Also, let me know if you're working with .csv files or different sheet names.
+
