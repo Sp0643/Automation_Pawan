@@ -103,3 +103,83 @@ And other relevant data from your original files A and B
 
 If you want me to customize the final columns or handle any other special cleaning rules, feel free to share. Also, let me know if you're working with .csv files or different sheet names.
 
+
+
+Perfect — you're looking to perform a lookup (similar to Excel’s VLOOKUP) where for each user in df1, you find their Manager from df2 based on User Name.
+
+
+---
+
+Scenario
+
+df1 contains a User Name column (the main dataset)
+
+df2 contains User Name, Manager, and maybe Team
+
+The issue: names might be written differently, so we'll normalize before matching:
+
+Lowercase
+
+Remove whitespace
+
+Remove punctuation
+
+Sort letters alphabetically
+
+
+
+
+---
+
+Python Code (with lookup using normalization)
+
+import pandas as pd
+import string
+
+# Load your data
+df1 = pd.read_excel("file1.xlsx")
+df2 = pd.read_excel("file2.xlsx")  # This acts like your "roster"
+
+# Function to normalize names
+def normalize_name(name):
+    if pd.isna(name):
+        return ''
+    # Remove punctuation and whitespace, convert to lowercase, then sort
+    cleaned = ''.join(char for char in str(name) if char.isalnum()).lower()
+    return ''.join(sorted(cleaned))
+
+# Apply normalization to both datasets
+df1['NormalizedName'] = df1['User Name'].apply(normalize_name)
+df2['NormalizedName'] = df2['User Name'].apply(normalize_name)
+
+# Create a lookup dictionary from df2
+manager_lookup = df2.set_index('NormalizedName')['Manager'].to_dict()
+team_lookup = df2.set_index('NormalizedName')['Team'].to_dict() if 'Team' in df2.columns else {}
+
+# Map Manager and Team to df1 using normalized names
+df1['Manager'] = df1['NormalizedName'].map(manager_lookup)
+df1['Team'] = df1['NormalizedName'].map(team_lookup)
+
+# Drop the helper column if not needed
+df1.drop(columns=['NormalizedName'], inplace=True)
+
+# Save or display final result
+df1.to_excel("output_with_manager_lookup.xlsx", index=False)
+
+
+---
+
+What You Get
+
+df1 will now have two new columns: Manager and Team (if available in df2)
+
+Lookup is fuzzy — so even slightly mismatched names get resolved if characters are same
+
+
+
+---
+
+Want me to run this code on the uploaded file and show you the output?
+
+
+
