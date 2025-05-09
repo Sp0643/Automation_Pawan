@@ -40,3 +40,38 @@ This will dynamically generate a text column specifying which columns contain da
 
 Would you like to add this logic inside a Multi-Field Formula Tool to apply it to multiple columns dynamically?
 
+
+
+In Alteryx, you can use the Formula tool to calculate the last working day and second last working day by skipping Saturdays and Sundays.
+
+1. Last Working Day Formula:
+
+Use this in a Formula tool with a new column, say LastWorkingDay:
+
+IF DateTimeFormat(DateTimeNow(),"%A") = "Monday" THEN
+    DateTimeAdd(DateTimeNow(), -3)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A") = "Sunday" THEN
+    DateTimeAdd(DateTimeNow(), -2)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A") = "Saturday" THEN
+    DateTimeAdd(DateTimeNow(), -1)
+ELSE
+    DateTimeAdd(DateTimeNow(), -1)
+ENDIF
+
+2. Second Last Working Day Formula:
+
+Use this in another Formula tool or column, say SecondLastWorkingDay:
+
+IF DateTimeFormat(DateTimeNow(),"%A") = "Monday" THEN
+    DateTimeAdd(DateTimeNow(), -4)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A") = "Sunday" THEN
+    DateTimeAdd(DateTimeNow(), -3)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A") = "Saturday" THEN
+    DateTimeAdd(DateTimeNow(), -2)
+ELSEIF DateTimeFormat(DateTimeAdd(DateTimeNow(), -1),"%A") = "Monday" THEN
+    DateTimeAdd(DateTimeNow(), -4)
+ELSEIF DateTimeFormat(DateTimeAdd(DateTimeNow(), -1),"%A") = "Sunday" THEN
+    DateTimeAdd(DateTimeNow(), -3)
+ELSE
+    DateTimeAdd(DateTimeNow(), -2)
+
