@@ -75,3 +75,84 @@ ELSEIF DateTimeFormat(DateTimeAdd(DateTimeNow(), -1),"%A") = "Sunday" THEN
 ELSE
     DateTimeAdd(DateTimeNow(), -2)
 
+
+
+To fetch "today minus two working days" date in Alteryx, while skipping weekends (Saturday and Sunday), you need to:
+
+1. Create a formula to subtract two business days from today.
+
+
+2. Extract the Day, Month, Year, and Date parts from that computed date.
+
+
+
+Here’s how you can do it using the Formula Tool:
+
+
+---
+
+1. Full Date Calculation (Excluding Weekends)
+
+IF DateTimeFormat(DateTimeNow(),"%A")="Monday" THEN
+    DateTimeAdd(DateTimeNow(), -4)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A")="Sunday" THEN
+    DateTimeAdd(DateTimeNow(), -3)
+ELSEIF DateTimeFormat(DateTimeNow(),"%A")="Tuesday" THEN
+    DateTimeAdd(DateTimeNow(), -4)
+ELSE
+    DateTimeAdd(DateTimeNow(), -2)
+ENDIF
+
+Call this output FinalDate
+
+
+---
+
+Now from this FinalDate, extract:
+
+2. Day (With Leading Zero)
+
+IF Length(ToString(DateTimeDay([FinalDate]))) = 1 THEN
+    "0" + ToString(DateTimeDay([FinalDate]))
+ELSE
+    ToString(DateTimeDay([FinalDate]))
+ENDIF
+
+
+---
+
+3. Month (With Leading Zero)
+
+IF Length(ToString(DateTimeMonth([FinalDate]))) = 1 THEN
+    "0" + ToString(DateTimeMonth([FinalDate]))
+ELSE
+    ToString(DateTimeMonth([FinalDate]))
+ENDIF
+
+
+---
+
+4. Year
+
+ToString(DateTimeYear([FinalDate]))
+
+
+---
+
+5. Final Date in yyyy-mm-dd format (Optional)
+
+DateTimeFormat([FinalDate], "%Y-%m-%d")
+
+
+---
+
+Summary:
+
+You first calculate the correct working date minus 2 using logic based on the day of the week.
+
+Then extract components as needed in separate formula fields.
+
+
+Let me know if you'd like to create this using a single expression or need to adjust for holidays as well.
+
+
