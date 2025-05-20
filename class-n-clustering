@@ -37,3 +37,72 @@ class MeanEmbeddingVectorizer(object):
             )
             for words in X
         ])
+
+
+
+To convert your current binary classification pipeline into a multiclass classification model using logistic regression and Word2Vec embeddings, you just need a few changes.
+
+
+---
+
+Step-by-Step Updates:
+
+1. Label Encode Multiclass Target:
+
+from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+y_train_enc = le.fit_transform(y_train)
+y_test_enc = le.transform(y_test)
+
+
+---
+
+2. Train Multiclass Logistic Regression:
+
+Use multi_class='multinomial' and solver='lbfgs' (commonly used for multiclass):
+
+from sklearn.linear_model import LogisticRegression
+
+lr_model = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=1000)
+lr_model.fit(X_train_vectors_w2v, y_train_enc)
+
+
+---
+
+3. Predictions and Evaluation:
+
+from sklearn.metrics import classification_report, confusion_matrix
+
+y_pred = lr_model.predict(X_val_vectors_w2v)
+
+print("Classification Report:")
+print(classification_report(y_test_enc, y_pred, target_names=le.classes_))
+
+print("Confusion Matrix:")
+print(confusion_matrix(y_test_enc, y_pred))
+
+
+---
+
+Optional: Predict Probabilities & AUC (one-vs-rest)
+
+from sklearn.metrics import roc_auc_score
+y_proba = lr_model.predict_proba(X_val_vectors_w2v)
+
+# For multiclass AUC (macro-average)
+auc_score = roc_auc_score(y_test_enc, y_proba, multi_class='ovr')
+print("Multiclass ROC AUC Score:", auc_score)
+
+
+---
+
+Let me know:
+
+How many unique classes are in your target?
+
+If you're using TF-IDF instead of Word2Vec for vectorization.
+
+
+I can adapt the code if needed.
+
