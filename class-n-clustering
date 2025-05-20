@@ -204,3 +204,34 @@ to_dict(): Converts the grouped result into a dictionary with keys as cluster ID
 
 Let me know if you'd like to save these corpora to files or analyze them for keywords, topics, etc.
 
+
+
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+import pandas as pd
+
+# Set your n-gram range (e.g., bigrams (2,2), trigrams (3,3), etc.)
+ngram_range = (2, 2)  # For bigrams
+top_n = 10            # Top 10 most frequent n-grams
+
+# Function to extract top n-grams from text
+def get_top_ngrams(text, ngram_range, top_n):
+    vec = CountVectorizer(ngram_range=ngram_range, stop_words='english')
+    bag_of_words = vec.fit_transform([text])
+    sum_words = bag_of_words.sum(axis=0)
+    words_freq = [(word, sum_words[0, idx]) for word, idx in vec.vocabulary_.items()]
+    words_freq = sorted(words_freq, key=lambda x: x[1], reverse=True)
+    return words_freq[:top_n]
+
+# Create a DataFrame to hold top n-grams for each cluster
+ngram_summary = {}
+
+for cluster_id, corpus in cluster_corpora.items():
+    ngram_summary[f'Cluster {cluster_id}'] = get_top_ngrams(corpus, ngram_range, top_n)
+
+# Convert to DataFrame for comparison
+ngram_df = pd.DataFrame(ngram_summary)
+
+# Display the n-gram comparison
+import ace_tools as tools; tools.display_dataframe_to_user(name="Top N-grams by Cluster", dataframe=ngram_df)
