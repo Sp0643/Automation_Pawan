@@ -145,3 +145,33 @@ The resulting column w2v_vector contains NumPy arrays of shape (100,).
 
 Let me know if you want to use pre-trained Word2Vec models like Google News instead.
 
+
+
+
+To apply KMeans clustering to the output of Word2Vec vectors, you just need to replace the X_tfidf in your current KMeans code with the Word2Vec matrix you've created from the earlier code. Here's how you can update and apply it:
+
+Step-by-Step Code:
+
+from sklearn.cluster import KMeans
+import numpy as np
+
+# Step 1: Convert Word2Vec vectors from series to a matrix (2D array)
+X_w2v = np.stack(df1['w2v_vector'].values)
+
+# Step 2: Define and fit KMeans
+num_clusters = 5
+kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+kmeans.fit(X_w2v)
+
+# Step 3: Assign cluster labels to the dataframe
+df1['cluster_kmeans'] = kmeans.labels_
+
+Notes:
+
+np.stack() is used to convert the list/Series of vectors into a proper 2D array.
+
+This code assumes you already ran the Word2Vec logic and have a column w2v_vector in df1.
+
+
+Let me know if you want to visualize the clusters or find the optimal number of clusters (Elbow method etc.).
+
