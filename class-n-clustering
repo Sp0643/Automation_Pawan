@@ -175,3 +175,32 @@ This code assumes you already ran the Word2Vec logic and have a column w2v_vecto
 
 Let me know if you want to visualize the clusters or find the optimal number of clusters (Elbow method etc.).
 
+
+
+Sure! Here's how you can create a separate text corpus for each KMeans cluster using the clean_text column and the assigned cluster_kmeans labels:
+
+Code to Create Corpus per Cluster
+
+# Group text data by KMeans clusters and join into a single string per cluster
+cluster_corpora = (
+    df1.groupby('cluster_kmeans')['clean_text']
+    .apply(lambda texts: ' '.join(texts.dropna()))
+    .to_dict()
+)
+
+# Display the corpora
+for cluster_id, corpus in cluster_corpora.items():
+    print(f"\n--- Cluster {cluster_id} Corpus ---\n")
+    print(corpus[:500], "...")  # Print first 500 characters for brevity
+
+Explanation:
+
+groupby('cluster_kmeans'): Groups rows by cluster label.
+
+.apply(lambda texts: ' '.join(...)): Joins all clean_text in each cluster.
+
+to_dict(): Converts the grouped result into a dictionary with keys as cluster IDs and values as corpora.
+
+
+Let me know if you'd like to save these corpora to files or analyze them for keywords, topics, etc.
+
