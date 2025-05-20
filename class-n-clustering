@@ -252,3 +252,74 @@ X_train, X_test, y_train, y_test = train_test_split(
 # Optional: Print shapes
 print("Train shape:", X_train.shape, y_train.shape)
 print("Test shape:", X_test.shape, y_test.shape)
+
+
+
+
+
+
+Here's the code to build and evaluate Random Forest and XGBoost classifiers using your X_train, y_train, X_test, y_test setup:
+
+
+---
+
+1. Random Forest Classifier
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, roc_curve
+
+# Train Random Forest
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Predict
+y_pred_rf = rf_model.predict(X_test)
+y_prob_rf = rf_model.predict_proba(X_test)[:, 1]
+
+# Evaluation
+print("Random Forest Classification Report:")
+print(classification_report(y_test, y_pred_rf))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_rf))
+
+# ROC-AUC
+roc_auc_rf = roc_auc_score(y_test, y_prob_rf)
+print("Random Forest ROC-AUC:", roc_auc_rf)
+
+
+---
+
+2. XGBoost Classifier
+
+from xgboost import XGBClassifier
+
+# Train XGBoost
+xgb_model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+xgb_model.fit(X_train, y_train)
+
+# Predict
+y_pred_xgb = xgb_model.predict(X_test)
+y_prob_xgb = xgb_model.predict_proba(X_test)[:, 1]
+
+# Evaluation
+print("XGBoost Classification Report:")
+print(classification_report(y_test, y_pred_xgb))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_xgb))
+
+# ROC-AUC
+roc_auc_xgb = roc_auc_score(y_test, y_prob_xgb)
+print("XGBoost ROC-AUC:", roc_auc_xgb)
+
+
+---
+
+Note:
+
+If y is multi-class, roc_auc_score() should be called with multi_class='ovr' or average='macro'.
+
+Make sure you’ve installed XGBoost:
+
+
+pip install xgboost
+
+Let me know if you're working on multi-class or binary classification so I can tailor metrics accordingly.
+
