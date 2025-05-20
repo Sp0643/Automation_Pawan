@@ -235,3 +235,20 @@ ngram_df = pd.DataFrame(ngram_summary)
 
 # Display the n-gram comparison
 import ace_tools as tools; tools.display_dataframe_to_user(name="Top N-grams by Cluster", dataframe=ngram_df)
+
+
+from sklearn.model_selection import train_test_split
+import numpy as np
+
+# Prepare features and labels
+X = np.stack(df1['w2v_vector'].values)  # Word2Vec vectors
+y = df1['cluster_kmeans'].values        # or any other target variable
+
+# Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# Optional: Print shapes
+print("Train shape:", X_train.shape, y_train.shape)
+print("Test shape:", X_test.shape, y_test.shape)
