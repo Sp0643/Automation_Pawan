@@ -17,3 +17,23 @@ w2v = dict(zip(model.wv.index_to_key, model.wv.vectors))  # for Gensim >= 4.x
 modelw = MeanEmbeddingVectorizer(w2v)
 X_train_vectors_w2v = modelw.transform(X_train_tok)
 X_val_vectors_w2v = modelw.transform(X_test_tok)
+
+
+
+class MeanEmbeddingVectorizer(object):
+    def __init__(self, word2vec):
+        self.word2vec = word2vec
+        self.dim = len(next(iter(word2vec.values())))  # dimensionality of vectors
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        import numpy as np
+        return np.array([
+            np.mean(
+                [self.word2vec[w] for w in words if w in self.word2vec] or [np.zeros(self.dim)],
+                axis=0
+            )
+            for words in X
+        ])
