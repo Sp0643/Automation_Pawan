@@ -106,3 +106,42 @@ If you're using TF-IDF instead of Word2Vec for vectorization.
 
 I can adapt the code if needed.
 
+
+
+
+To convert your code from TF-IDF to Word2Vec, you can use the gensim library. Here’s how to update your code for Word2Vec embedding:
+
+Updated Code for Word2Vec
+
+from gensim.models import Word2Vec
+from nltk.tokenize import word_tokenize
+import nltk
+
+# Ensure required NLTK data is available
+nltk.download('punkt')
+
+# Tokenize the clean text
+df1['tokens'] = df1['clean_text'].apply(word_tokenize)
+
+# Train Word2Vec model
+w2v_model = Word2Vec(sentences=df1['tokens'], vector_size=100, window=5, min_count=1, workers=4)
+
+# Function to get average Word2Vec vector for each document
+def get_avg_vector(tokens, model, vector_size):
+    vec = [model.wv[word] for word in tokens if word in model.wv]
+    return np.mean(vec, axis=0) if vec else np.zeros(vector_size)
+
+import numpy as np
+
+# Apply the function to get document vectors
+df1['w2v_vector'] = df1['tokens'].apply(lambda x: get_avg_vector(x, w2v_model, 100))
+
+Notes:
+
+Replace 100 in vector_size=100 and get_avg_vector(..., 100) if you want a different dimensionality.
+
+The resulting column w2v_vector contains NumPy arrays of shape (100,).
+
+
+Let me know if you want to use pre-trained Word2Vec models like Google News instead.
+
