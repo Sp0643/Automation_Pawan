@@ -1,0 +1,19 @@
+from gensim.models import Word2Vec
+import nltk
+import numpy as np
+
+# Tokenize the cleaned text
+df3['clean_text_tok'] = [nltk.word_tokenize(i) for i in df3['cleaned_text']]
+
+# Train Word2Vec model
+model = Word2Vec(df3['clean_text_tok'], min_count=1)
+
+# Create word-to-vector dictionary
+w2v = dict(zip(model.wv.index_to_key, model.wv.vectors))  # for Gensim >= 4.x
+
+# Define MeanEmbeddingVectorizer class (already done in your code)
+
+# Use the vectorizer
+modelw = MeanEmbeddingVectorizer(w2v)
+X_train_vectors_w2v = modelw.transform(X_train_tok)
+X_val_vectors_w2v = modelw.transform(X_test_tok)
