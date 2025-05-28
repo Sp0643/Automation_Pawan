@@ -194,3 +194,43 @@ Section	Chart produced	Insight you get
 No custom functions, classes, or tricky abstractions—just plain procedural code you can edit or extend inline. Happy charting!
 
 
+Here’s a straight-through Pandas snippet that adds all three new columns:
+
+import pandas as pd
+
+# df already loaded ----------------------------------------------------------
+# ── 1.  make sure TimeDelta is in seconds ------------------------------------
+# If TimeDelta is a string like "0:01:35", convert it; otherwise keep as-is.
+df['TimeDelta_sec'] = (
+    pd.to_timedelta(df['TimeDelta'])      # works for "hh:mm:ss", "m:s", etc.
+      .dt.total_seconds()                # → float (seconds)
+      .fillna(0)                         # optional: replace NaNs with 0
+      .astype(int)                       # make it int if you prefer
+)
+
+# ── 2.  derive minutes & hours ----------------------------------------------
+df['TimeDelta_minute'] = df['TimeDelta_sec'] / 60          # minutes  (float)
+df['TimeDelta_hour']   = df['TimeDelta_sec'] / 3600        # hours    (float)
+
+# ── 3.  week number from timestamp ------------------------------------------
+# If TimestampLocal is already datetime64, skip the conversion on the left.
+df['week_number'] = (
+    pd.to_datetime(df['TimestampLocal'])   # ensure datetime dtype
+      .dt.isocalendar()                    # ISO calendar (year, week, day)
+      .week                                # take the week component
+)
+
+# optional: tidy up -----------------------------------------------------------
+df.drop(columns='TimeDelta_sec', inplace=True)  # keep only the new fields
+
+What it adds
+
+New column	Type	Meaning
+
+TimeDelta_minute	float	duration in minutes
+TimeDelta_hour	float	duration in hours
+week_number	int	ISO week number (1–53) from timestamp
+
+
+That’s it—run once and the DataFrame has the extra analytics-friendly fields ready for plotting or grouping.
+
