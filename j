@@ -270,3 +270,167 @@ print(all_sheets['M 1-10'].head())
 
 Let me know if you want to combine all sheets too!
 
+
+
+
+
+Here is a full Python code to generate a summary table for each user from your dataset, assuming the following:
+
+Each row represents an activity log with a user.
+
+You have a column User id and a column deltaTime (in seconds or minutes).
+
+You want to:
+
+1. Get total time (converted to hours),
+
+
+2. Count records,
+
+
+3. Count working days (if total time > 1 hour),
+
+
+4. Compute average records/day and average working hours/day.
+
+
+
+
+
+---
+
+✅ Code
+
+import pandas as pd
+
+# Example input: df = all_sheets['M 1-10'] (already cleaned)
+
+# 1. Convert deltaTime to hours
+df['deltaTime_hours'] = df['deltaTime'] / 3600  # adjust if unit is minutes
+
+# 2. Convert date to proper datetime if not already
+df['Date'] = pd.to_datetime(df['Date']).dt.date  # remove time part
+
+# 3. Group by user and date to get daily total time per user
+daily = df.groupby(['User id', 'Date']).agg(
+    daily_hours=('deltaTime_hours', 'sum'),
+    records_per_day=('deltaTime_hours', 'count')
+).reset_index()
+
+# 4. Working day = days with total > 1 hour
+daily['is_working_day'] = daily['daily_hours'] > 1
+
+# 5. Summary per user
+summary = daily.groupby('User id').agg(
+    total_hours=('daily_hours', 'sum'),
+    total_records=('records_per_day', 'sum'),
+    working_days=('is_working_day', 'sum'),
+).reset_index()
+
+# 6. Add averages
+summary['avg_records_per_day'] = summary['total_records'] / summary['working_days']
+summary['avg_hours_per_day'] = summary['total_hours'] / summary['working_days']
+
+# 7. Display
+import ace_tools as tools; tools.display_dataframe_to_user(name="User Summary Table", dataframe=summary)
+
+
+---
+
+📌 Output Table Columns:
+
+User id
+
+total_hours – sum of delta time in hours
+
+total_records – number of records for user
+
+working_days – days where deltaTime > 1 hour
+
+avg_records_per_day – total records ÷ working days
+
+avg_hours_per_day – total hours ÷ working days
+
+
+Let me know if your deltaTime is in minutes instead of seconds — just divide by 60 instead of 3600.
+
+Here is a full Python code to generate a summary table for each user from your dataset, assuming the following:
+
+Each row represents an activity log with a user.
+
+You have a column User id and a column deltaTime (in seconds or minutes).
+
+You want to:
+
+1. Get total time (converted to hours),
+
+
+2. Count records,
+
+
+3. Count working days (if total time > 1 hour),
+
+
+4. Compute average records/day and average working hours/day.
+
+
+
+
+
+---
+
+✅ Code
+
+import pandas as pd
+
+# Example input: df = all_sheets['M 1-10'] (already cleaned)
+
+# 1. Convert deltaTime to hours
+df['deltaTime_hours'] = df['deltaTime'] / 3600  # adjust if unit is minutes
+
+# 2. Convert date to proper datetime if not already
+df['Date'] = pd.to_datetime(df['Date']).dt.date  # remove time part
+
+# 3. Group by user and date to get daily total time per user
+daily = df.groupby(['User id', 'Date']).agg(
+    daily_hours=('deltaTime_hours', 'sum'),
+    records_per_day=('deltaTime_hours', 'count')
+).reset_index()
+
+# 4. Working day = days with total > 1 hour
+daily['is_working_day'] = daily['daily_hours'] > 1
+
+# 5. Summary per user
+summary = daily.groupby('User id').agg(
+    total_hours=('daily_hours', 'sum'),
+    total_records=('records_per_day', 'sum'),
+    working_days=('is_working_day', 'sum'),
+).reset_index()
+
+# 6. Add averages
+summary['avg_records_per_day'] = summary['total_records'] / summary['working_days']
+summary['avg_hours_per_day'] = summary['total_hours'] / summary['working_days']
+
+# 7. Display
+import ace_tools as tools; tools.display_dataframe_to_user(name="User Summary Table", dataframe=summary)
+
+
+---
+
+📌 Output Table Columns:
+
+User id
+
+total_hours – sum of delta time in hours
+
+total_records – number of records for user
+
+working_days – days where deltaTime > 1 hour
+
+avg_records_per_day – total records ÷ working days
+
+avg_hours_per_day – total hours ÷ working days
+
+
+Let me know if your deltaTime is in minutes instead of seconds — just divide by 60 instead of 3600.
+
