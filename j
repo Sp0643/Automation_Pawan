@@ -234,3 +234,39 @@ week_number	int	ISO week number (1–53) from timestamp
 
 That’s it—run once and the DataFrame has the extra analytics-friendly fields ready for plotting or grouping.
 
+
+
+Here is the simplest step-by-step code to convert Excel serial dates (45757.99 style) to real datetime values like 2025-04-10:
+
+
+---
+
+✅ Step-by-step simple code:
+
+import pandas as pd
+
+# 1. Load all sheets
+all_sheets = pd.read_excel("Loretta 1-10 Apr - Copy.xlsx", sheet_name=None)
+
+# 2. Columns to convert
+date_cols = ['Date', 'TimestampLocal', 'TimestampUTC']
+
+# 3. Convert in each sheet
+for name, df in all_sheets.items():
+    for col in date_cols:
+        if col in df.columns:
+            df[col] = pd.to_datetime(df[col], unit='D', origin='1899-12-30')
+
+
+---
+
+🧪 To check:
+
+# View first few rows of any sheet
+print(all_sheets['M 1-10'].head())
+
+
+---
+
+Let me know if you want to combine all sheets too!
+
