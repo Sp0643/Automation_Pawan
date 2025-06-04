@@ -727,3 +727,69 @@ Question	Insight
 Let me know if you want to visualize any of these (bar plot, timeline, Sankey, etc.) or export to Excel.
 
 
+To add average idle events per working day, just divide IdleEvents by WorkingDays.
+
+Here’s how you do that step-by-step:
+
+
+---
+
+✅ Extended Code
+
+import pandas as pd
+
+# Assume df already has: User ID, TimestampLocal, Appl Name, TimeDeltaHours
+
+# Convert timestamp and extract date
+df['TimestampLocal'] = pd.to_datetime(df['TimestampLocal'])
+df['Date'] = df['TimestampLocal'].dt.date
+
+# Filter to working sessions: TimeDeltaHours > 1
+worked_df = df[df['TimeDeltaHours'] > 1]
+
+# Count unique working days per user
+working_days = worked_df.groupby('User ID')['Date'].nunique().reset_index(name='WorkingDays')
+
+# Identify idle time (gap > 300 sec)
+df = df.sort_values(by=['User ID', 'TimestampLocal'])
+df['GapSecs'] = df.groupby('User ID')['TimestampLocal'].diff().dt.total_seconds().fillna(0)
+df['IsIdle'] = df['GapSecs'] > 300
+
+# Count idle events per user
+idle_per_user = df[df['IsIdle']].groupby('User ID').size().reset_index(name='IdleEvents')
+
+# Merge idle count and working days
+summary = pd.merge(idle_per_user, working_days, on='User ID', how='outer').fillna(0)
+
+# Convert to integers
+summary['IdleEvents'] = summary['IdleEvents'].astype(int)
+summary['WorkingDays'] = summary['WorkingDays'].astype(int)
+
+# Calculate average idle events per day
+summary['IdlePerDay'] = summary.apply(
+    lambda row: row['IdleEvents'] / row['WorkingDays'] if row['WorkingDays'] > 0 else 0,
+    axis=1
+)
+
+# Round the result for better readability
+summary['IdlePerDay'] = summary['IdlePerDay'].round(2)
+
+print(summary.head())
+
+
+---
+
+✅ Final Output Sample
+
+User ID	IdleEvents	WorkingDays	IdlePerDay
+
+U001	15	5	3.00
+U002	4	2	2.00
+U003	0	3	0.00
+
+
+Let me know if you also want to track average idle minutes per day or add a threshold (e.g., flag high-idle users).
+
+
+
+
