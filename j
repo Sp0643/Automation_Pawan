@@ -636,3 +636,94 @@ Add a Time filter if you want to compare transitions by hour or day.
 
 Let me know if you want a version for Seaborn heatmap or user-specific flow!
 
+
+
+Here’s a complete Python script (no functions, no attachments required) that analyzes idle time behavior from your activity log using Pandas:
+
+
+---
+
+✅ Assumptions
+
+Your dataframe df must have at least these columns:
+
+User ID → identifies the user
+
+Appl Name → the application name (e.g. Word, Outlook)
+
+TimestampLocal → datetime of the event
+
+
+
+---
+
+✅ Code for All 4 Questions
+
+import pandas as pd
+
+# Load your data
+# df = pd.read_csv("your_file.csv")  # or pd.read_excel(...)
+
+# Convert timestamp to datetime
+df['TimestampLocal'] = pd.to_datetime(df['TimestampLocal'])
+
+# Sort data chronologically per user
+df = df.sort_values(by=['User ID', 'TimestampLocal'])
+
+# Calculate time gap between actions (in seconds)
+df['GapSecs'] = df.groupby('User ID')['TimestampLocal'].diff().dt.total_seconds().fillna(0)
+
+# Identify idle periods greater than 300 seconds
+df['IsIdle'] = df['GapSecs'] > 300
+
+# Capture app just before and after idle time
+df['AppBeforeIdle'] = df.groupby('User ID')['Appl Name'].shift(1)
+df['AppAfterIdle'] = df.groupby('User ID')['Appl Name'].shift(-1)
+
+# Filter only idle events
+idle_df = df[df['IsIdle']].copy()
+
+# ---------------------------------------------
+# 1. How many idle times per user
+idle_per_user = idle_df.groupby('User ID').size().reset_index(name='IdleEvents')
+print("\n1. Idle times per user:\n", idle_per_user)
+
+# ---------------------------------------------
+# 2. Idle time throughout the day (by hour)
+idle_df['Hour'] = idle_df['TimestampLocal'].dt.hour
+idle_by_hour = idle_df.groupby('Hour').size().reset_index(name='IdleEvents')
+print("\n2. Idle time by hour of day:\n", idle_by_hour)
+
+# ---------------------------------------------
+# 3. App opened just before and after idle
+apps_before_after_idle = idle_df[['User ID', 'AppBeforeIdle', 'AppAfterIdle']].dropna()
+print("\n3. Apps before and after idle:\n", apps_before_after_idle.head())
+
+# ---------------------------------------------
+# 4. Important App-wise idle stats (based on app before idle)
+app_idle_stats = idle_df.groupby('AppBeforeIdle').agg(
+    IdleCount=('GapSecs', 'count'),
+    TotalIdleTime=('GapSecs', 'sum'),
+    AvgIdleTime=('GapSecs', 'mean')
+).reset_index().sort_values(by='IdleCount', ascending=False)
+print("\n4. App-wise idle stats (e.g. Word, PDF):\n", app_idle_stats)
+
+
+---
+
+🔍 What This Tells You:
+
+Question	Insight
+
+1	Which users are going idle most often
+2	At what hours idle events occur most
+3	What app was running before and after long gaps
+4	Which apps are often followed by idle time (e.g. are users taking breaks from Word/PDF?)
+
+
+
+---
+
+Let me know if you want to visualize any of these (bar plot, timeline, Sankey, etc.) or export to Excel.
+
+
