@@ -576,3 +576,63 @@ Bring the SVG or variant statistics back into Tableau for storytelling.
 
 Ping me if you’d like a ready-made Jupyter notebook or need help interpreting specific process maps!
 
+
+
+
+Sure! Here's the complete code to generate a clickstream Sankey chart from your activity log using Plotly:
+
+import pandas as pd
+import plotly.graph_objects as go
+
+# Load your activity log (CSV or Excel)
+# For CSV:
+# df = pd.read_csv('your_file.csv')
+
+# For Excel:
+# df = pd.read_excel('your_file.xlsx')
+
+# Ensure Timestamp is datetime
+df['TimestampLocal'] = pd.to_datetime(df['TimestampLocal'])
+
+# Sort data to get sequential events
+df = df.sort_values(['User ID', 'TimestampLocal'])
+
+# Create a "Previous App" column to track app transitions
+df['PrevApp'] = df.groupby('User ID')['Appl Name'].shift()
+
+# Drop rows where previous app is missing (first events)
+transitions = df.dropna(subset=['PrevApp'])
+
+# Count each transition
+transition_counts = transitions.groupby(['PrevApp', 'Appl Name']).size().reset_index(name='Count')
+
+# Optional: Keep top 20 transitions for readability
+top_transitions = transition_counts.sort_values(by='Count', ascending=False).head(20)
+
+# Build unique node list
+labels = pd.unique(top_transitions[['PrevApp', 'Appl Name']].values.ravel())
+label_map = {label: idx for idx, label in enumerate(labels)}
+
+# Create Sankey source-target-value mapping
+sources = top_transitions['PrevApp'].map(label_map)
+targets = top_transitions['Appl Name'].map(label_map)
+values = top_transitions['Count']
+
+# Create Sankey diagram using Plotly
+fig = go.Figure(data=[go.Sankey(
+    node=dict(pad=15, thickness=20, label=labels),
+    link=dict(source=sources, target=targets, value=values)
+)])
+
+fig.update_layout(title_text="Clickstream Sankey Chart: App Transitions", font_size=12)
+fig.show()
+
+🔁 Adjustments You Can Make:
+
+Change ['Appl Name'] to ['Action Label'] or ['Process Name'] if those define actions better.
+
+Add a Time filter if you want to compare transitions by hour or day.
+
+
+Let me know if you want a version for Seaborn heatmap or user-specific flow!
+
