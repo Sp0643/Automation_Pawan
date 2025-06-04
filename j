@@ -434,3 +434,145 @@ avg_hours_per_day – total hours ÷ working days
 
 Let me know if your deltaTime is in minutes instead of seconds — just divide by 60 instead of 3600.
 
+
+
+
+
+1  · What “process mining” means
+
+Process mining sits at the crossroads of business-process management and data mining.
+It takes the raw event logs your systems already write (each row = who did what, when, and in what context) and:
+
+Core technique	What it does	Typical result
+
+Process discovery	Reconstructs the real-world flow from the log	Direct-follows graph, BPMN or Petri-net model
+Conformance checking	Compares the discovered flow with a “reference” SOP	Fitness & compliance scores, deviation list
+Enhancement / performance mining	Overlays times, costs, resources on the model	Bottleneck heat-maps, service-level stats
+
+
+All three start from the same minimal data schema: (case ID, activity, timestamp). 
+
+
+---
+
+2  · Mapping your columns to a process-mining event log
+
+Event-log field	Good candidate in your data	Notes
+
+Case ID	User ID PLUS a session stamp <br>(e.g. floor-date or a session number)	If you want to see an entire working day as one “instance,” use User ID + Date; if you want shorter sessions, create a new SessionID whenever the gap between two rows > X minutes.
+Activity	Appl Name, Process Name, or Action Label	Pick the column that best expresses “what happened”. You can concatenate two columns (e.g. Appl Name + ' – ' + Action Label) if it gives clearer steps.
+Timestamp	Timestamp Local	Keep as datetime.
+Resource (optional)	System User or Keyboard Command	Lets you run org-mining later.
+Duration (optional)	TimeDelta or GapSecs	Adds performance insights.
+
+
+> Tip – how to create sessions
+
+df = df.sort_values(['User ID','TimestampLocal'])
+df['GapSecs'] = df.groupby('User ID')['TimestampLocal'].diff().dt.total_seconds().fillna(0)
+df['SessionID'] = (df['GapSecs'] > 1800).cumsum()           # new session if gap > 30 min
+df['CaseID']    = df['User ID'] + '_' + df['SessionID'].astype(str)
+
+
+
+
+---
+
+3  · Rapid analysis in Python with PM4Py
+
+# ---- 0. install once ----
+# pip install pm4py pandas
+
+import pandas as pd, pm4py
+
+# 1. read and trim
+use_cols = ['CaseID','Appl Name','TimestampLocal']
+df = pd.read_csv('activity_log.csv', usecols=use_cols)
+df = df.rename(columns={
+    'CaseID':'case:concept:name',
+    'Appl Name':'concept:name',
+    'TimestampLocal':'time:timestamp'
+})
+df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
+
+# 2. convert to an event log object
+log = pm4py.format_dataframe(df, 
+         case_id='case:concept:name',
+         activity_key='concept:name',
+         timestamp_key='time:timestamp')
+event_log = pm4py.convert_to_event_log(log)
+
+# 3. discover a Directly-Follows Graph (fast, works for large logs)
+from pm4py.algo.discovery.dfg import algorithm as dfg_disc
+dfg = dfg_disc.apply(event_log)
+
+# 4. visualise & save as SVG
+from pm4py.visualization.dfg import visualizer as dfg_vis
+gviz = dfg_vis.apply(dfg, variant="frequency")
+dfg_vis.save(gviz, "dfg_user_flow.svg")
+
+# 5. find the top 10 variants (common “journeys”)
+from pm4py.statistics.traces.log import case_statistics
+variants = case_statistics.get_variant_statistics(event_log)
+for v in variants[:10]:
+    print(v['variant'], v['count'])
+
+What you’ll get
+
+dfg_user_flow.svg – a process-map showing which apps follow which, sized by frequency.
+
+Top-variant list – e.g. Explorer → Outlook → SharePoint (124 cases).
+
+
+You can extend the same log to conformance checking if you have a target process model, or use pm4py.algo.discovery.inductive for a full Petri net.
+
+(Reference starter tutorial on PM4Py: GitHub repo) 
+
+
+---
+
+4  · Doing it inside Tableau (quick wins)
+
+Analysis goal	Tableau approach
+
+Chronological timeline per user	Gantt: Exact Timestamp on Columns, User ID on Rows, Appl Name on Color/Size
+App-switch frequency	Create PrevApp = LOOKUP(MIN([Appl Name]),-1); build a matrix PrevApp → Appl Name and colour by Number of Records.
+Idle-time hotspots	Compute GapSecs (table calc). Bin into Idle <5 min / 5-15 / >15. Heat-map by Hour vs Day.
+Process map	Tableau 2024.2+ has Path marks; or use a Sankey template with Path Order generated from [Row Number].
+
+
+For deeper discovery use the Python-based Hyper extract you generated: publish top variants or bottleneck tables back into Tableau for executives.
+
+
+---
+
+5  · Interpreting the results on your dataset
+
+1. See “desk-hopping” patterns – which apps are most frequently followed by Outlook?
+
+
+2. Quantify idle breaks – what app did a user close before a ≥ 10-minute gap and what did they open after?
+
+
+3. Compare users/teams – use conformance scores to spot who follows the “happy path” vs who detours.
+
+
+
+That’s the essence of process mining: discover → check → improve. Once your event-log is in place, tools like PM4Py, Celonis, UiPath Process Mining, or even Power BI’s new process-mining visual can all reuse the same CSV or Hyper extract.
+
+
+---
+
+Next steps
+
+Decide session logic (whole day vs 30-min gaps).
+
+Pick activity granularity (App vs Action).
+
+Run the 10-line PM4Py script to get your first flow map.
+
+Bring the SVG or variant statistics back into Tableau for storytelling.
+
+
+Ping me if you’d like a ready-made Jupyter notebook or need help interpreting specific process maps!
+
