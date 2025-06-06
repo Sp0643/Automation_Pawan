@@ -793,3 +793,4 @@ Let me know if you also want to track average idle minutes per day or add a thre
 
 
 
+=PROPER(LEFT(L2,MIN(FIND({ "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},L2,2))-1)) & " " & PROPER(MID(L2,MIN(FIND({ "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},L2,2)),LEN(L2)))
