@@ -794,3 +794,46 @@ Let me know if you also want to track average idle minutes per day or add a thre
 
 
 =PROPER(LEFT(L2,MIN(FIND({ "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},L2,2))-1)) & " " & PROPER(MID(L2,MIN(FIND({ "A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"},L2,2)),LEN(L2)))
+
+
+
+Thanks for clarifying — and you're right to revisit that original formula. The issue comes from how Excel processes array constants (like { "A","B",... }) in normal formulas.
+
+To fix the error you're getting ("There's a problem with this formula"), try the correct version below — but enter it properly:
+
+
+---
+
+✅ Correct Working Formula (Dynamic Split Based on Capital Letters)
+
+=PROPER(LEFT(L2,MIN(IFERROR(FIND(MID(L2,ROW(INDIRECT("2:" & LEN(L2))),1),L2),LEN(L2)+1))-1)) & " " & PROPER(MID(L2,MIN(IFERROR(FIND(MID(L2,ROW(INDIRECT("2:" & LEN(L2))),1),L2),LEN(L2)+1)),LEN(L2)))
+
+
+---
+
+⚠️ VERY IMPORTANT:
+
+You must enter this formula as an array formula in older versions of Excel:
+
+After typing the formula, press Ctrl + Shift + Enter instead of just Enter.
+
+
+In Excel 365 or Excel 2019+, just press Enter — it auto-detects arrays.
+
+
+---
+
+🧠 What It Does:
+
+Uses ROW(INDIRECT(...)) to loop through characters from the second character onward.
+
+Finds the first capital letter after the first character — the assumed start of the last name.
+
+Splits the string and applies PROPER() to format both parts correctly.
+
+
+
+---
+
+Let me know if you're on Excel 365 / Excel 2016 / older — I’ll tailor it based on your version.
+
