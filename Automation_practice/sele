@@ -1,0 +1,74 @@
+Here's a dynamic Selenium Python script to click the ... (3-dot) buttons only for specific data sources (in this case RDVWA00A0058 and RPVWD00v0420). The script includes logic to:
+
+1. Check if both data sources are present.
+
+
+2. Click the corresponding ... button only if the data source matches.
+
+
+3. Skip iteration if only one is found or the match fails.
+
+
+
+
+---
+
+✅ Python Selenium Code:
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+import time
+
+# Setup
+driver = webdriver.Chrome()
+driver.get("your_target_url_here")  # Replace with actual URL
+time.sleep(3)  # Allow time for page to load
+
+# List of required data sources
+target_sources = ["RDVWA00A0058", "RPVWD00v0420"]
+
+# Find all elements that may contain data source paths
+all_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '/WLOSS/Data Sources/')]")
+
+# Track clicks
+clicked_sources = 0
+
+for elem in all_elements:
+    try:
+        text = elem.text.strip()
+        for source in target_sources:
+            if source in text:
+                # Locate parent block with the 3 dots button
+                three_dots = elem.find_element(By.XPATH, "./following-sibling::*[contains(., '...') or contains(@class, 'more-options')]")
+                three_dots.click()
+                print(f"Clicked 3 dots for {source}")
+                clicked_sources += 1
+                time.sleep(1)  # Adjust delay as needed
+                break  # Don't double-click if both match this block
+    except NoSuchElementException:
+        print(f"3-dot button not found for {elem.text}")
+        continue
+
+# Skip execution if not all expected sources are found
+if clicked_sources < len(target_sources):
+    print("One or more expected data sources not found or clickable. Skipping...")
+
+
+---
+
+🧠 Notes:
+
+Make sure the contains(text(), ...) works based on the exact formatting. Adjust XPath if the ... icon is inside a <button> or <span>.
+
+If the 3-dots icon is an SVG or icon button, you may need to use a CSS class like ".three-dot-icon" instead.
+
+You may also refine the XPath to something like:
+
+".//following::button[contains(@aria-label, 'More')][1]"
+
+to get to the right interactive element.
+
+
+Let me know if you want the same code for an exact HTML structure or using class names.
+
