@@ -58,3 +58,126 @@ try:
     print("Clicked 3-dot button for SQLServer source.")
 except Exception as e:
     print("Failed to find or click the button:", e)
+
+
+
+Certainly! Here's a clean and structured version of the reference loop logic using your context (i.e., /WLOSS/Data Sources/SQLServer text and 3-dot button).
+
+
+---
+
+✅ What This Code Does
+
+1. Goes to the landing page.
+
+
+2. Tries to find the text /WLOSS/Data Sources/SQLServer.
+
+
+3. If found, tries to click the 3-dot button next to it.
+
+
+4. Then attempts a second action (you mentioned "second part of the loop").
+
+
+5. If any part fails → it goes back to the landing page and restarts the loop.
+
+
+6. Continues until both steps succeed.
+
+
+
+
+---
+
+✅ Full Python Code
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+import time
+
+# Setup
+driver = webdriver.Chrome()
+landing_url = "https://your-landing-page-url.com"  # Replace with your actual landing page
+
+# Retry loop
+while True:
+    print("Navigating to landing page...")
+    driver.get(landing_url)
+    time.sleep(3)  # Wait for page load
+
+    try:
+        # STEP 1: Check if SQLServer data source is present
+        print("Looking for /WLOSS/Data Sources/SQLServer...")
+        source_xpath = "//span[text()='/WLOSS/Data Sources/SQLServer']"
+        driver.find_element(By.XPATH, source_xpath)
+
+        # STEP 2: Click on the 3-dot (Browse) button next to it
+        print("Found SQLServer, trying to click 3-dot button...")
+        button_xpath = f"{source_xpath}/following::button[contains(@aria-label, 'Browse')][1]"
+        button = driver.find_element(By.XPATH, button_xpath)
+        button.click()
+        print("3-dot button clicked.")
+
+        time.sleep(1)  # Give it a second to respond
+
+        # STEP 3: Try "second part" logic (customize as needed)
+        print("Checking if second part element is available...")
+        second_part_xpath = "//div[@class='your-second-part-class']"  # Replace with actual check
+        second_element = driver.find_element(By.XPATH, second_part_xpath)
+
+        # If second element found, perform next steps and break
+        print("Second element found, proceeding with next action.")
+        # Do your next steps here
+        break
+
+    except NoSuchElementException as e:
+        print("Required element not found. Restarting loop...\n")
+        time.sleep(2)
+        continue  # Reload the landing page and try again
+
+# After successful loop
+print("Loop completed successfully.")
+
+
+---
+
+🔁 Customize These:
+
+Placeholder	Replace With
+
+landing_url	Your actual page URL
+your-second-part-class	Actual class or condition to check in part 2
+time.sleep(...)	Use WebDriverWait if timing is dynamic
+print(...)	Replace with logs or actions
+
+
+
+---
+
+✅ Summary Flow:
+
+START LOOP
+|
+|--> check span[text()='/WLOSS/...']
+     |--> if not found → go to landing page
+     |--> else → click 3-dot
+         |--> then check second part element
+             |--> if found → break loop
+             |--> else → go back to landing
+
+
+---
+
+Would you like to add:
+
+Retry limits?
+
+WebDriverWait with timeout?
+
+Action chaining for second part interaction?
+
+
+Let me know if you want the second part step expanded.
+
