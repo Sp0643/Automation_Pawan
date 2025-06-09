@@ -1,3 +1,6 @@
+
+
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
@@ -36,3 +39,22 @@ for elem in all_elements:
 # Skip execution if not all expected sources are found
 if clicked_sources < len(target_sources):
     print("One or more expected data sources not found or clickable. Skipping...")
+
+
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+
+driver = webdriver.Chrome()
+driver.get("your_url_here")  # Replace with actual URL
+time.sleep(3)  # Wait for page to load
+
+# Locate the button next to the specific data source
+try:
+    button = driver.find_element(By.XPATH, "//span[text()='/WLOSS/Data Sources/SQLServer']/following::button[contains(@aria-label, 'Browse')][1]")
+    ActionChains(driver).move_to_element(button).click().perform()
+    print("Clicked 3-dot button for SQLServer source.")
+except Exception as e:
+    print("Failed to find or click the button:", e)
