@@ -1,0 +1,38 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
+import time
+
+# Setup
+driver = webdriver.Chrome()
+driver.get("your_target_url_here")  # Replace with actual URL
+time.sleep(3)  # Allow time for page to load
+
+# List of required data sources
+target_sources = ["RDVWA00A0058", "RPVWD00v0420"]
+
+# Find all elements that may contain data source paths
+all_elements = driver.find_elements(By.XPATH, "//*[contains(text(), '/WLOSS/Data Sources/')]")
+
+# Track clicks
+clicked_sources = 0
+
+for elem in all_elements:
+    try:
+        text = elem.text.strip()
+        for source in target_sources:
+            if source in text:
+                # Locate parent block with the 3 dots button
+                three_dots = elem.find_element(By.XPATH, "./following-sibling::*[contains(., '...') or contains(@class, 'more-options')]")
+                three_dots.click()
+                print(f"Clicked 3 dots for {source}")
+                clicked_sources += 1
+                time.sleep(1)  # Adjust delay as needed
+                break  # Don't double-click if both match this block
+    except NoSuchElementException:
+        print(f"3-dot button not found for {elem.text}")
+        continue
+
+# Skip execution if not all expected sources are found
+if clicked_sources < len(target_sources):
+    print("One or more expected data sources not found or clickable. Skipping...")
