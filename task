@@ -1,0 +1,100 @@
+Here’s a Python script that you can run in a Jupyter Notebook, where five code blocks (cells) will execute at five specific times during the day.
+
+We'll simulate delayed execution using time.sleep() and datetime.now() to check the clock.
+
+
+---
+
+✅ How it works:
+
+Each cell checks the current time, waits until the target time arrives, and then runs the block.
+
+
+---
+
+⚠️ Important Note:
+
+This will block the Jupyter kernel while waiting.
+
+Times must be in 24-hour format.
+
+
+
+---
+
+🔧 Sample Jupyter Notebook Code (One Cell per Block)
+
+📦 Prerequisites (Put this in Cell 1):
+
+from datetime import datetime
+import time
+
+def wait_until(target_time_str):
+    target_time = datetime.strptime(target_time_str, "%H:%M").time()
+    print(f"Waiting until {target_time} to run the block...")
+    while True:
+        now = datetime.now().time()
+        if now >= target_time:
+            print(f"Running at {datetime.now().strftime('%H:%M:%S')}")
+            break
+        time.sleep(10)  # Check every 10 seconds
+
+
+---
+
+▶️ Block 1 (Cell 2): Run at 09:00 AM
+
+wait_until("09:00")
+# Your code block 1
+print("Block 1: Task at 9:00 AM executed")
+
+
+---
+
+▶️ Block 2 (Cell 3): Run at 10:00 AM
+
+wait_until("10:00")
+# Your code block 2
+print("Block 2: Task at 10:00 AM executed")
+
+
+---
+
+▶️ Block 3 (Cell 4): Run at 11:00 AM
+
+wait_until("11:00")
+# Your code block 3
+print("Block 3: Task at 11:00 AM executed")
+
+
+---
+
+▶️ Block 4 (Cell 5): Run at 13:00 PM
+
+wait_until("13:00")
+# Your code block 4
+print("Block 4: Task at 1:00 PM executed")
+
+
+---
+
+▶️ Block 5 (Cell 6): Run at 15:00 PM
+
+wait_until("15:00")
+# Your code block 5
+print("Block 5: Task at 3:00 PM executed")
+
+
+---
+
+🧠 Tip:
+
+If you want to avoid blocking Jupyter, consider scheduling the jobs using:
+
+apscheduler in a Python script (not notebook)
+
+Or external task schedulers like Windows Task Scheduler / cron
+
+
+Let me know if you want the same functionality using background threads or async execution!
+
