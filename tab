@@ -1,0 +1,90 @@
+Yes, I understand your requirement clearly now:
+
+You want to create a calculated field SPLIT in Tableau that classifies each time chunk as one of these:
+
+Productive (Celonis)
+
+Non-Productive (Celonis)
+
+Idle (Celonis)
+
+Others (Celonis)
+
+Productive (Cap Plan)
+
+Non-Productive (Cap Plan)
+
+
+So you can stack bars based on the source (Celonis vs Cap Plan) and activity type.
+
+
+---
+
+✅ Step-by-Step Logic for SPLIT Field
+
+We’ll create a SPLIT field like this:
+
+IF [Productivity CP] > 0 THEN "Productive (Cap Plan)"
+ELSEIF [Non-Productivity CP] > 0 THEN "Non-Productive (Cap Plan)"
+ELSEIF [Productive] > 0 THEN "Productive (Celonis)"
+ELSEIF [Non-Productive] > 0 THEN "Non-Productive (Celonis)"
+ELSEIF [Idle] > 0 THEN "Idle (Celonis)"
+ELSEIF [Others] > 0 THEN "Others (Celonis)"
+END
+
+
+---
+
+✅ How to Use in the Chart
+
+1. Create the SPLIT field with the formula above.
+
+
+2. Create a Measure Names/Measure Values view for these:
+
+Productivity CP
+
+Non-Productivity CP
+
+Productive
+
+Non-Productive
+
+Idle
+
+Others
+
+
+
+3. Drag SPLIT to Color to distinguish activity type + source.
+
+
+4. Drag User ID or "System" to Columns (or Rows).
+
+
+5. Drag all related measures to Measure Values and plot as stacked bar.
+
+
+
+
+---
+
+✅ Optional (More Flexible Logic)
+
+If you're looping row-by-row instead of checking presence, use this instead:
+
+IF [SPLIT Category] = "Productive_CP" THEN "Productive (Cap Plan)"
+ELSEIF [SPLIT Category] = "Non-Productive_CP" THEN "Non-Productive (Cap Plan)"
+ELSEIF [SPLIT Category] = "Productive" THEN "Productive (Celonis)"
+ELSEIF [SPLIT Category] = "Non-Productive" THEN "Non-Productive (Celonis)"
+ELSEIF [SPLIT Category] = "Idle" THEN "Idle (Celonis)"
+ELSEIF [SPLIT Category] = "Others" THEN "Others (Celonis)"
+END
+
+Where SPLIT Category is a pre-created column with values like "Productive_CP", "Idle", etc.
+
+
+---
+
+Would you like a mock data reshaping structure that you can use for building it with Tableau’s "pivot" or union method?
+
