@@ -1,0 +1,21 @@
+import shap
+import lime.lime_tabular
+shap.initjs()
+
+explainer_shap = shap.LinearExplainer(clf, X_train_prepared)
+shap_values = explainer_shap.shap_values(X_test_prepared)
+shap.summary_plot(shap_values, X_test_prepared)
+
+explainer_lime = lime.lime_tabular.LimeTabularExplainer(
+    X_train_prepared.values,
+    feature_names=X_train_prepared.columns,
+    class_names=clf.classes_.astype(str).tolist(),
+    discretize_continuous=True
+)
+sample = 0
+exp = explainer_lime.explain_instance(
+    X_test_prepared.iloc[sample].values,
+    clf.predict_proba,
+    num_features=10
+)
+exp.as_pyplot_figure()
