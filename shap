@@ -1,3 +1,16 @@
+from sklearn.ensemble import RandomForestClassifier
+import pandas as pd
+import matplotlib.pyplot as plt
+
+model = RandomForestClassifier()
+model.fit(X_train_prepared, y_train_prepared)
+
+importances = model.feature_importances_
+features = pd.Series(importances, index=X_train_prepared.columns)
+features.sort_values(ascending=False).plot(kind='bar')
+plt.title("Feature Importance")
+plt.show()
+
 import shap
 import lime.lime_tabular
 shap.initjs()
