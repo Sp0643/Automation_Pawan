@@ -19,3 +19,25 @@ exp = explainer_lime.explain_instance(
     num_features=10
 )
 exp.as_pyplot_figure()
+
+
+
+
+Here is the only the new part you need to add to your existing code to include the predicted label (Met / Not Met) along with the probability of prediction:
+
+df_result = X_test_prepared.copy()
+df_result['Predicted_Label'] = clf.predict(X_test_prepared)
+df_result['Probability_Not_Met'] = clf.predict_proba(X_test_prepared)[:, 0]
+df_result['Probability_Met'] = clf.predict_proba(X_test_prepared)[:, 1]
+
+This will give you a DataFrame df_result with:
+
+all test features,
+
+predicted class (Predicted_Label), and
+
+probability for both classes.
+
+
+Let me know if you want to export this to Excel or filter top uncertain predictions.
+
