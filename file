@@ -1,0 +1,41 @@
+import os
+import shutil
+from pathlib import Path
+
+def move_latest_file(source_dir, target_dir, keep_latest=3):
+    source_dir = Path(source_dir)
+    target_dir = Path(target_dir)
+
+    # Ensure target directory exists
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    # Get all files in the source directory
+    files = [f for f in source_dir.iterdir() if f.is_file()]
+    if not files:
+        print("No files found in source directory.")
+        return
+
+    # Find the most recently modified file
+    latest_file = max(files, key=lambda f: f.stat().st_mtime)
+    
+    # Move the file
+    destination = target_dir / latest_file.name
+    shutil.move(str(latest_file), str(destination))
+    print(f"Moved: {latest_file.name} -> {destination}")
+
+    # Get list of files in target directory sorted by modified time (newest first)
+    target_files = sorted(
+        [f for f in target_dir.iterdir() if f.is_file()],
+        key=lambda f: f.stat().st_mtime,
+        reverse=True
+    )
+
+    # Remove files beyond the latest `keep_latest` ones
+    for old_file in target_files[keep_latest:]:
+        print(f"Deleting old file: {old_file.name}")
+        old_file.unlink()
+
+# Example usage
+source_directory = r"C:\path\to\source"
+target_directory = r"C:\path\to\target"
+move_latest_file(source_directory, target_directory)
