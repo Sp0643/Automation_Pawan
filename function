@@ -460,3 +460,123 @@ time	Only for human-readable timestamp printing in demos
 Everything is in the Python standard library—no extra installs required.
 Happy automating!
 
+
+
+Here’s a drop-in replacement for your current find_latest_file_and_copy that adds keyword filtering while staying almost identical to the code you’re already running.
+
+import os
+import shutil
+from pathlib import Path
+from typing import List, Union, Sequence
+
+def find_latest_file_and_copy(
+    source_dirs: Union[str, Path, Sequence[Union[str, Path]]],
+    destination_dir: Union[str, Path],
+    keywords: List[str] | None = None,
+    case_sensitive: bool = False,
+) -> Path:
+    """
+    Look through one *or* many source folders (recursively), find the most
+    recently-modified file whose **name** contains ANY of `keywords`, and copy
+    it to `destination_dir`.
+
+    Parameters
+    ----------
+    source_dirs      : str | Path | list/tuple
+        A single directory *or* an iterable of directories to search.
+    destination_dir  : str | Path
+        Where the newest matching file will be copied.
+    keywords         : list[str] | None
+        Text snippets to look for in the filename. If None or empty, every
+        file counts.
+    case_sensitive   : bool
+        Match keywords with or without case-sensitivity.
+
+    Returns
+    -------
+    pathlib.Path
+        The full path of the file that was copied.
+    """
+    # ---- normalise inputs ---------------------------------------------------
+    if isinstance(source_dirs, (str, Path)):
+        source_dirs = [source_dirs]
+
+    dest = Path(destination_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+
+    # ---- keyword pre-processing --------------------------------------------
+    if keywords:
+        kws = keywords if case_sensitive else [k.lower() for k in keywords]
+    else:
+        kws = []   # treat as "no filtering"
+
+    # ---- search for newest matching file ------------------------------------
+    latest_file      = None
+    latest_file_mtime = 0
+
+    for src in source_dirs:
+        for root, _, files in os.walk(src):
+            for file in files:
+                # ① keyword filter
+                name_to_check = file if case_sensitive else file.lower()
+                if kws and not any(kw in name_to_check for kw in kws):
+                    continue  # skip non-matches
+
+                # ② compare modification time
+                file_path = os.path.join(root, file)
+                try:
+                    mtime = os.path.getmtime(file_path)
+                except OSError:
+                    continue  # ignore unreadable files
+
+                if mtime > latest_file_mtime:
+                    latest_file_mtime  = mtime
+                    latest_file        = file_path
+
+    # ---- copy result (if found) ---------------------------------------------
+    if latest_file is None:
+        raise FileNotFoundError("No file matched the given keywords.")
+
+    dest_path = dest / Path(latest_file).name
+    shutil.copy2(latest_file, dest_path)  # copy2 keeps timestamps/metadata
+    print(f"Copied '{latest_file}'  →  '{dest_path}'")
+
+    return dest_path
+
+
+---
+
+How to call it
+
+# One directory
+find_latest_file_and_copy(
+    source_dirs=r"\\ent.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Daily Reports",
+    destination_dir=r"C:\Backups\Daily",
+    keywords=["wip", "report"],   # match ANY of these
+    case_sensitive=False,         # ignore case (default)
+)
+
+# Many directories
+sources = [
+    r"\\...Financial Cash Controls\...\2025",
+    r"\\...Agency Servicing\VIP\ARCOE Recons\ATI 1007201",
+    r"\\...MCCY Recon\2025",
+]
+find_latest_file_and_copy(
+    source_dirs=sources,
+    destination_dir=r"C:\Backups\Daily",
+    keywords=[".xlsx", "wip"],     # e.g. only Excel WIP files
+)
+
+What changed compared to your original snippet?
+
+Feature	Old version	New version
+
+Keyword filter	✘	✔ keywords argument, case-toggle
+Multiple source roots	✘ (single)	✔ source_dirs accepts list / tuple
+Pathlib for destination	partial	full use for mkdir & return value
+Type hints / docstring	minimal	expanded, beginner-friendly
+
+
+Copy the function into your script/notebook, adjust the call as shown, and you’re done. Let me know if you’d like any extra tweaks (e.g. keeping only the last N backups in the destination).
+
