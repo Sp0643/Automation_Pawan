@@ -580,3 +580,102 @@ Type hints / docstring	minimal	expanded, beginner-friendly
 
 Copy the function into your script/notebook, adjust the call as shown, and you’re done. Let me know if you’d like any extra tweaks (e.g. keeping only the last N backups in the destination).
 
+What went wrong?
+The | (pipe) syntax for “A or B” type hints only works in Python 3.10+.
+Your notebook/kernel is on an older version (3.9 or earlier), so it raises:
+
+TypeError: unsupported operand type(s) for |: '_GenericAlias' and 'NoneType'
+
+
+---
+
+2 quick ways to fix it
+
+A. Keep your current Python and switch to Optional[...]
+
+Replace every T | None with Optional[T] and import Optional from typing.
+
+import os
+import shutil
+from pathlib import Path
+from typing import List, Optional, Sequence, Union   # ← add Optional
+
+def find_latest_file_and_copy(
+    source_dirs: Union[str, Path, Sequence[Union[str, Path]]],
+    destination_dir: Union[str, Path],
+    keywords: Optional[List[str]] = None,            # ← use Optional
+    case_sensitive: bool = False,
+) -> Path:
+    # ---------- normalise inputs ----------------------------
+    if isinstance(source_dirs, (str, Path)):
+        source_dirs = [source_dirs]
+
+    dest = Path(destination_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+
+    # ---------- keyword prep --------------------------------
+    kws = []
+    if keywords:
+        kws = keywords if case_sensitive else [k.lower() for k in keywords]
+
+    # ---------- find newest matching file -------------------
+    latest_file = None
+    latest_mtime = 0
+
+    for src in source_dirs:
+        for root, _, files in os.walk(src):
+            for file in files:
+                # keyword filter
+                name = file if case_sensitive else file.lower()
+                if kws and not any(kw in name for kw in kws):
+                    continue
+
+                fp = os.path.join(root, file)
+                try:
+                    mtime = os.path.getmtime(fp)
+                except OSError:
+                    continue
+
+                if mtime > latest_mtime:
+                    latest_mtime = mtime
+                    latest_file  = fp
+
+    if latest_file is None:
+        raise FileNotFoundError("No file matched the given keywords.")
+
+    # ---------- copy & return -------------------------------
+    dest_path = dest / Path(latest_file).name
+    shutil.copy2(latest_file, dest_path)
+    print(f"Copied '{latest_file}' → '{dest_path}'")
+    return dest_path
+
+> That’s the only change—everything else keeps working exactly as before.
+
+
+
+
+---
+
+B. Upgrade your environment to Python 3.10+
+
+If you’d like the modern | syntax (and other 3.10 perks), install / switch to a 3.10 or newer interpreter:
+
+# Example for conda
+conda create -n py310 python=3.10
+conda activate py310
+pip install notebook  # or jupyterlab / VS Code etc.
+
+Then your original code compiles without edits.
+
+
+---
+
+TL;DR
+
+Stay on 3.8/3.9 → change List[str] | None to Optional[List[str]].
+
+Move to 3.10+ → keep the pipe syntax.
+
+
+Pick whichever suits your setup and you’ll be good to go. Happy coding!
+
