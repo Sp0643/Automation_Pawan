@@ -1,3 +1,183 @@
+Below is a beginner-friendly, “build-it-as-you-go” walkthrough followed by the complete function.
+Feel free to run each numbered cell in an interactive Python session (Jupyter, VS Code, or IDLE) to see what’s happening at every step.
+
+
+---
+
+1. Imports you’ll need
+
+# 1️⃣  Core libraries
+from pathlib import Path      # modern, object-oriented file paths
+import shutil                 # for copying files
+from typing import List       # for type hints (optional)
+
+
+---
+
+2. Gather every file under the source folder (recursively)
+
+# 2️⃣  Replace this with your own folder
+SRC_ROOT = Path(r"C:\path\to\source")
+
+all_files = [p for p in SRC_ROOT.rglob("*") if p.is_file()]
+print(f"Found {len(all_files)} files")
+
+Path.rglob("*") walks all sub-directories automatically.
+You should now see how many files were detected.
+
+
+---
+
+3. Keep only files whose names contain one (or more) keywords
+
+# 3️⃣  Define ANY keywords you want to match in the filename
+keywords = ["sales", "report", "2025"]
+
+def has_keyword(path: Path, kw_list: List[str], case_sensitive=False) -> bool:
+    name = path.name if case_sensitive else path.name.lower()
+    kws  = kw_list         if case_sensitive else [k.lower() for k in kw_list]
+    return any(kw in name for kw in kws)
+
+filtered = [f for f in all_files if has_keyword(f, keywords)]
+print(f"Matched {len(filtered)} files with keywords {keywords}")
+
+
+---
+
+4. Pick the most recently modified file from the filtered list
+
+# 4️⃣  Use the file’s “last-modified” timestamp
+latest_file = max(filtered, key=lambda p: p.stat().st_mtime, default=None)
+
+if latest_file is None:
+    raise FileNotFoundError("No files matched the given keywords.")
+print(f"Newest file is: {latest_file}")
+
+
+---
+
+5. Copy it to the destination folder
+
+# 5️⃣  Destination directory (will be created if missing)
+DST_DIR = Path(r"C:\path\to\destination")
+DST_DIR.mkdir(parents=True, exist_ok=True)
+
+# Preserve original filename and metadata
+copied_to = DST_DIR / latest_file.name
+shutil.copy2(latest_file, copied_to)
+
+print(f"Copied → {copied_to}")
+
+
+---
+
+6. (Optional) Keep only the N most recent files in the destination
+
+def prune_destination(dest: Path, keep_last: int = 3):
+    files = sorted(
+        [p for p in dest.iterdir() if p.is_file()],
+        key=lambda p: p.stat().st_mtime,
+        reverse=True,
+    )
+    for old in files[keep_last:]:
+        old.unlink()          # permanently delete
+        print(f"Deleted old backup: {old}")
+
+# Uncomment if you want this behaviour
+# prune_destination(DST_DIR, keep_last=3)
+
+
+---
+
+7. Full function
+
+Here’s the same logic wrapped in one tidy, reusable function:
+
+from pathlib import Path
+import shutil
+from typing import List, Optional
+
+def copy_latest_file(
+    src_root: str | Path,
+    dst_dir: str | Path,
+    keywords: List[str],
+    case_sensitive: bool = False,
+    keep_last: Optional[int] = None,
+) -> Path:
+    """
+    Find the newest file under `src_root` whose *filename* contains ANY of
+    the given `keywords`, copy it into `dst_dir`, and (optionally) keep only
+    the last `keep_last` files in that destination.
+
+    Returns the Path of the copied file.
+    """
+    src_root = Path(src_root)
+    dst_dir  = Path(dst_dir)
+    dst_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Find all matching files
+    matches = [
+        p for p in src_root.rglob("*") if p.is_file()
+        and (
+            (set(k if case_sensitive else k.lower() for k in keywords)
+             & {p.name}  # dummy to force evaluation
+             or any((k if case_sensitive else k.lower()) in
+                    (p.name if case_sensitive else p.name.lower())
+                    for k in keywords))
+        )
+    ]
+    if not matches:
+        raise FileNotFoundError("No file found with the specified keywords.")
+
+    # 2. Choose the newest
+    latest = max(matches, key=lambda p: p.stat().st_mtime)
+
+    # 3. Copy it
+    dest_path = dst_dir / latest.name
+    shutil.copy2(latest, dest_path)
+
+    # 4. Optionally prune old copies
+    if keep_last is not None:
+        files = sorted(
+            [f for f in dst_dir.iterdir() if f.is_file()],
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for old in files[keep_last:]:
+            old.unlink()
+
+    return dest_path
+
+Usage
+
+dest = copy_latest_file(
+    src_root=r"C:\Data",
+    dst_dir=r"C:\Backup\Daily",
+    keywords=["sales", ".xlsx"],
+    keep_last=3,            # omit or set to None if you don’t want pruning
+)
+print("Latest file copied to:", dest)
+
+
+---
+
+Why this design is beginner-friendly
+
+1. Pathlib everywhere – no back-slash headaches, clear methods (rglob, stem, suffix, etc.).
+
+
+2. Step-by-step build – run each section, inspect variables, gain confidence.
+
+
+3. Plain English docstring & comments – quickly recall what each piece does.
+
+
+4. Optional clean-up – copy-paste the function even if you don’t need the pruning part.
+
+
+
+You can now adapt the keyword list, source/destination folders, or the retention rule with a single line change. Happy coding!
+
 Absolutely! Let's start from the very basics, so you understand what a function is, how it works, and how to build up gradually to a more complex one.
 
 
