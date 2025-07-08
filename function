@@ -679,3 +679,244 @@ Move to 3.10+ → keep the pipe syntax.
 
 Pick whichever suits your setup and you’ll be good to go. Happy coding!
 
+
+
+
+Below is a ready-to-use script that folds in every improvement we discussed:
+
+✅ pathlib throughout – cleaner paths, no back-slash headaches
+
+✅ Keyword filter – only consider files whose names contain any of the given words
+
+✅ Optional renaming – avoids accidental overwrites when two sources share a filename
+
+✅ Keep only the last N backups in the destination folder
+
+✅ Basic logging – prints to screen and writes a timestamped log file
+
+
+> Run it as-is (edit the config block at the bottom), or import the two functions into another project.
+
+
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Copy the *latest* file from one or more source folders into a single
+destination folder with optional keyword filtering, automated renaming
+(to avoid overwrites), retention housekeeping, and simple logging.
+
+Compatible with Python 3.8+
+"""
+
+from __future__ import annotations
+import logging
+from datetime import datetime
+from pathlib import Path
+from shutil   import copy2
+from typing   import Iterable, List, Optional, Sequence, Union
+
+# ──────────────────────────────────────────────────────────────────────
+# 1.  Logger helper
+# ──────────────────────────────────────────────────────────────────────
+def setup_logger(log_dir: Path | str) -> logging.Logger:
+    """Create (or reuse) a logger that writes to <log_dir>/copy_latest.log"""
+    log_dir = Path(log_dir)
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    logger = logging.getLogger("copy_latest")
+    if logger.handlers:          # already configured
+        return logger
+
+    logger.setLevel(logging.INFO)
+    fmt = logging.Formatter("[%(asctime)s] %(levelname)s: %(message)s",
+                            datefmt="%Y-%m-%d %H:%M:%S")
+
+    # file handler
+    fh = logging.FileHandler(log_dir / "copy_latest.log", encoding="utf-8")
+    fh.setFormatter(fmt)
+    logger.addHandler(fh)
+
+    # console handler
+    ch = logging.StreamHandler()
+    ch.setFormatter(fmt)
+    logger.addHandler(ch)
+
+    return logger
+
+
+# ──────────────────────────────────────────────────────────────────────
+# 2.  Core utility: newest file inside *one* folder tree
+# ──────────────────────────────────────────────────────────────────────
+def newest_file(
+    root: Path,
+    keywords: Optional[List[str]] = None,
+    case_sensitive: bool = False,
+) -> Optional[Path]:
+    """
+    Walk `root` recursively and return the Path to the most recently
+    modified file whose name contains ANY of the `keywords`.
+
+    If `keywords` is None or empty ⇒ every file counts.
+    """
+    if keywords:
+        kws = keywords if case_sensitive else [k.lower() for k in keywords]
+    else:
+        kws = []
+
+    latest: Optional[Path] = None
+    latest_mtime = 0.0
+
+    for file in root.rglob("*"):
+        if not file.is_file():
+            continue
+
+        name = file.name if case_sensitive else file.name.lower()
+        if kws and not any(kw in name for kw in kws):
+            continue
+
+        try:
+            mtime = file.stat().st_mtime
+        except OSError:
+            continue
+
+        if mtime > latest_mtime:
+            latest_mtime = mtime
+            latest = file
+
+    return latest
+
+
+# ──────────────────────────────────────────────────────────────────────
+# 3.  Main routine – can handle MANY source roots
+# ──────────────────────────────────────────────────────────────────────
+def copy_latest_files(
+    source_dirs: Union[Path, str, Sequence[Union[Path, str]]],
+    destination_dir: Union[Path, str],
+    *,
+    keywords: Optional[List[str]] = None,
+    case_sensitive: bool = False,
+    keep_last: Optional[int] = 5,
+    rename_if_exists: bool = True,
+    logger: Optional[logging.Logger] = None,
+) -> None:
+    """
+    For each folder in `source_dirs`, find its newest matching file and
+    copy it into `destination_dir`.
+
+    Parameters
+    ----------
+    source_dirs        : single path *or* sequence of paths
+    destination_dir    : where copies go (created if missing)
+    keywords           : list of words/substrings to filter filenames
+    keep_last          : keep only the `keep_last` most recent files
+                         in the destination folder (None = keep all)
+    rename_if_exists   : add a timestamp suffix if the filename already
+                         exists in destination to avoid overwrite
+    """
+    if isinstance(source_dirs, (str, Path)):
+        source_dirs = [source_dirs]
+
+    dest = Path(destination_dir)
+    dest.mkdir(parents=True, exist_ok=True)
+
+    logger = logger or setup_logger(dest)
+
+    for src in source_dirs:
+        src_path = Path(src)
+        if not src_path.exists():
+            logger.warning(f"Source '{src_path}' does not exist – skipped.")
+            continue
+
+        latest = newest_file(src_path, keywords, case_sensitive)
+        if latest is None:
+            logger.info(f"No matching files in '{src_path}'.")
+            continue
+
+        # ── construct destination filename ────────────────────────────
+        target = dest / latest.name
+        if target.exists() and rename_if_exists:
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            target = dest / f"{latest.stem}_{ts}{latest.suffix}"
+
+        try:
+            copy2(latest, target)
+            logger.info(f"Copied '{latest}'  →  '{target}'")
+        except Exception as e:
+            logger.error(f"Failed to copy '{latest}': {e}")
+
+    # ── retention housekeeping ───────────────────────────────────────
+    if keep_last is not None:
+        files = sorted(
+            [f for f in dest.iterdir() if f.is_file()],
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for old in files[keep_last:]:
+            try:
+                old.unlink()
+                logger.info(f"Pruned old backup '{old.name}'")
+            except Exception as e:
+                logger.warning(f"Could not delete '{old}': {e}")
+
+
+# ──────────────────────────────────────────────────────────────────────
+# 4.  Example “config block” – edit & run
+# ──────────────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    # --- 4a. where to search -------------------------------------------------
+    SOURCES: Iterable[Path | str] = [
+        r"\\ent.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Financial Cash Controls\1_Daily Reports\Daily WIP Report\2025",
+        r"\\ent.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Agency Servicing\WIP\ARCOE Recons\MT 1007201",
+        r"\\ent.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Agency Servicing\WIP\ARCOE Recons\MCCY Recon\2025",
+        # add more paths as needed ...
+    ]
+
+    # --- 4b. destination “drop zone” ----------------------------------------
+    DESTINATION = (
+        r"\\ent.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Financial Cash Controls"
+        r"\FCC_Exception_Recon\DailyWIPBackups"
+    )
+
+    # --- 4c. filtering & housekeeping ---------------------------------------
+    KEYWORDS     = ["wip", ".xlsx"]     # Any file whose *name* contains one
+    KEEP_LAST    = 3                    # keep only newest 3 copies
+    CASE_SENSE   = False                # ignore case in matching
+
+    # --- 4d. run! ------------------------------------------------------------
+    copy_latest_files(
+        source_dirs   = SOURCES,
+        destination_dir = DESTINATION,
+        keywords        = KEYWORDS,
+        case_sensitive  = CASE_SENSE,
+        keep_last       = KEEP_LAST,
+        rename_if_exists= True,
+    )
+
+
+---
+
+How it works, in a nutshell
+
+1. newest_file() walks a single folder tree with Path.rglob("*"), filters on keywords, and returns the most recently modified file.
+
+
+2. copy_latest_files()
+
+loops over as many source roots as you supply
+
+copies each folder’s newest file into one common destination
+
+if two files share a name, it appends a timestamp to avoid overwriting
+
+finally, it deletes older backups so only the last keep_last remain
+
+
+
+3. Logging goes to both the terminal and copy_latest.log inside the destination folder, giving you an audit trail.
+
+
+
+Just tweak the “config block” at the bottom (source paths, keywords, retention count), save, and run the script from any environment that has network-share access.
+
