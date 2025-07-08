@@ -1055,3 +1055,68 @@ Wrapping file I/O in try/except keeps long batch jobs resilient—one bad path w
 
 Feel free to adjust log messages, add a keyword filter, or convert the prints to logging calls if you need more control over verbosity.
 
+
+
+Below is the drop-in replacement for the original function.
+Only six tiny edits were made, all marked with # <-- NEW so you can spot them quickly.
+
+def find_latest_file_and_copy(
+    source_dir: str,
+    destination_dir: str,
+    keyword: str | None = None          # <-- NEW (optional filter)
+) -> None:
+    """
+    Locate the newest file under `source_dir` (recursive) and copy it to
+    `destination_dir`.  
+    If *keyword* is supplied, only files whose **name contains that text**
+    (case-insensitive) are considered when choosing “newest”.
+    """
+    latest_file: Optional[str] = None
+    latest_file_mtime: float = 0.0
+
+    for root, _dirs, files in os.walk(source_dir):
+        for file in files:
+
+            # Skip files that don't match the keyword, if one was provided
+            if keyword and keyword.lower() not in file.lower():   # <-- NEW
+                continue                                          # <-- NEW
+
+            file_path = os.path.join(root, file)
+
+            try:
+                mtime = os.path.getmtime(file_path)
+            except OSError as err:
+                print(f"[WARN] Cannot stat {file_path!r}: {err}")
+                continue
+
+            if mtime > latest_file_mtime:
+                latest_file_mtime = mtime
+                latest_file = file_path
+
+    if latest_file is None:
+        msg = f"No files found under {source_dir!r}"
+        if keyword:                                              # <-- NEW
+            msg += f" matching keyword {keyword!r}"              # <-- NEW
+        print(f"[INFO] {msg}")
+        return
+
+    print(f"[INFO] Newest file in {source_dir!r}: {latest_file!r}")
+
+    try:
+        shutil.copy2(latest_file, destination_dir)
+        print(f"[OK]   Copied to → {destination_dir}")
+    except Exception as err:
+        print(f"[ERR]  Failed to copy {latest_file!r}: {err}")
+
+How to call it
+
+# Copy the newest “_Recon” file from each source directory
+for src in (source_directory1, source_directory2, source_directory3, source_directory4):
+    find_latest_file_and_copy(src, destination_directory, keyword="_Recon")
+
+Omit the keyword argument (or pass None) to get the original, “no-filter” behaviour.
+
+Matching is case-insensitive and checks the filename only (not folder segments).
+
+
+
