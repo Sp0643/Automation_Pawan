@@ -920,3 +920,138 @@ finally, it deletes older backups so only the last keep_last remain
 
 Just tweak the “config block” at the bottom (source paths, keywords, retention count), save, and run the script from any environment that has network-share access.
 
+Below you’ll find two parts:
+
+1. Plain-English walkthrough of what each section of the script does so you understand the flow.
+
+
+2. Same code rewritten with inline comments and a docstring so future-you (or a teammate) can read it quickly.
+
+
+
+
+---
+
+1. What the script does, step by step
+
+Step	Action	Why it matters
+
+1	Define find_latest_file_and_copy(source_dir, destination_dir)	Encapsulates the “search → pick newest → copy” workflow so you can reuse it on many folders.
+2	Initialise latest_file = None and latest_file_mtime = 0	Keeps track of the newest file seen so far and its “modified‐time” (epoch seconds).
+3	os.walk(source_dir)	Recursively iterates through all sub-folders and files under the given root.
+4	For every file, build its full path with os.path.join(root, file)	Needed because os.walk returns only the filename, not the folder.
+5	Get each file’s “last modified” timestamp with os.path.getmtime	Used to decide which file is the most recent.
+6	If the timestamp is newer than latest_file_mtime, store this path + time	Running maximum pattern lets you finish with the single most recent file.
+7	After the loop ends, check if latest_file:	Handles the case where the folder tree was empty.
+8	shutil.copy2(latest_file, destination_dir)	Copies and preserves metadata (timestamps, permissions).
+9	Wrap I/O calls in try … except blocks	Prevents the whole script from crashing if one path is unreadable or the copy fails.
+10	In the “main” block: build four source paths, one destination path, ensure the destination directory exists (os.makedirs(..., exist_ok=True)), then call the function for each source.	
+
+
+
+---
+
+2. Script with detailed comments
+
+#!/usr/bin/env python3
+"""
+Copy the most recently-modified file from one or more source directories
+(recursive search) into a single destination directory.
+
+© 2025  (feel free to add licence / author info here)
+"""
+from __future__ import annotations
+
+import os
+import shutil
+from typing import Optional
+
+
+def find_latest_file_and_copy(source_dir: str, destination_dir: str) -> None:
+    """
+    Locate the *newest* file anywhere under `source_dir` and copy it to
+    `destination_dir`, preserving the file’s metadata.
+
+    Parameters
+    ----------
+    source_dir : str
+        Root folder to search (walks through all sub-folders).
+    destination_dir : str
+        Folder where the newest file will be copied.
+
+    Notes
+    -----
+    • Uses `shutil.copy2` (rather than `copy`) so timestamps/permissions survive.  
+    • Prints progress instead of raising, so one bad file won’t abort the run.
+    """
+    latest_file: Optional[str] = None           # full path of newest file seen
+    latest_file_mtime: float = 0.0              # its modification time (epoch)
+
+    # --- Walk through *every* sub-directory and file ------------------------
+    for root, _dirs, files in os.walk(source_dir):
+        for file in files:
+            file_path = os.path.join(root, file)
+
+            try:
+                # Last-modified timestamp as seconds since 1970-01-01
+                mtime = os.path.getmtime(file_path)
+            except OSError as err:
+                # e.g. permission denied, path vanished, etc.
+                print(f"[WARN] Cannot stat {file_path!r}: {err}")
+                continue
+
+            # Keep track of the freshest file so far
+            if mtime > latest_file_mtime:
+                latest_file_mtime = mtime
+                latest_file = file_path
+
+    # ------------------------------------------------------------------------
+    if latest_file is None:
+        print(f"[INFO] No files found under {source_dir!r}")
+        return
+
+    print(f"[INFO] Newest file in {source_dir!r}: {latest_file!r}")
+
+    try:
+        shutil.copy2(latest_file, destination_dir)
+        print(f"[OK]   Copied to → {destination_dir}")
+    except Exception as err:  # broad, but we log & carry on
+        print(f"[ERR]  Failed to copy {latest_file!r}: {err}")
+
+
+# --------------------------------------------------------------------------- #
+# Example usage                                                               #
+# --------------------------------------------------------------------------- #
+if __name__ == "__main__":
+    # --- Define source locations (raw strings avoid back-slash escapes) -----
+    source_directory1 = r"\\net.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Financial Cash Controls\J - Daily Reports\Daily WIP Report\2025"
+    source_directory2 = r"\\net.wfb.bank.corp\WHLSDFS\Shared\Agency Servicing\WIP\AROE Recons\MT_1007201"
+    source_directory3 = r"\\net.wfb.bank.corp\WHLSDFS\Shared\Agency Servicing\WIP\AROE Recons\MCCY Recon\2025"
+    source_directory4 = r"\\net.wfb.bank.corp\WHLSDFS\Shared\Agency Servicing\WIP\AROE Recons\WT_DDA_ACH_SWEEP"
+
+    # Folder that will receive each “latest” file
+    destination_directory = (
+        r"\\net.wfb.bank.corp\WHLSDFS\Shared\Agency Services\Financial Cash Controls\FCC_Exception_Recon"
+    )
+
+    # Make sure the destination exists (won’t error if it already does)
+    os.makedirs(destination_directory, exist_ok=True)
+
+    # Iterate over each source root and perform the copy
+    for src in (source_directory1, source_directory2, source_directory3, source_directory4):
+        find_latest_file_and_copy(src, destination_directory)
+
+
+---
+
+Key take-aways
+
+os.walk gives you a depth-first traversal, so you don’t need extra logic for sub-folders.
+
+shutil.copy2 is a handy one-liner when you want to keep original timestamps.
+
+Wrapping file I/O in try/except keeps long batch jobs resilient—one bad path won’t halt the script.
+
+
+Feel free to adjust log messages, add a keyword filter, or convert the prints to logging calls if you need more control over verbosity.
+
