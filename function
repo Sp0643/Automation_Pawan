@@ -114,3 +114,169 @@ Would you like to now:
 
 Let me know your goal!
 
+
+
+
+Below is a mini-lesson you can run step-by-step.
+Each step adds one small idea; run it, inspect the output, and move on.
+At the end you’ll see the same pieces put together as one tidy function.
+
+
+---
+
+0.  Imports we’ll need
+
+from pathlib import Path        # modern, OS-independent path handling
+import shutil                   # for copying files
+import time                     # only for pretty-printing timestamps in this demo
+
+
+---
+
+1.  Point to your folders
+
+# 👉 Change these to match your machine
+SRC_DIR = Path(r"C:\Data\Reports")     # search starts here (all sub-folders included)
+DST_DIR = Path(r"C:\Data\Latest")      # where the newest file will be copied
+
+# Make sure the destination exists
+DST_DIR.mkdir(parents=True, exist_ok=True)
+
+Why Path instead of plain strings?
+Path objects work the same on Windows, macOS, and Linux and give you handy methods like .rglob().
+
+
+---
+
+2.  Find all files under SRC_DIR
+
+all_files = [f for f in SRC_DIR.rglob("*") if f.is_file()]
+print(f"Found {len(all_files)} files")
+
+What just happened?
+
+.rglob("*") walks every sub-folder.
+
+f.is_file() keeps regular files and skips directories.
+
+
+
+---
+
+3.  Filter by a keyword (or several)
+
+KEYWORDS = ["sales", "2025"]   # match files whose *names* contain BOTH words
+
+def name_has_keywords(path, keywords):
+    name_lower = path.name.lower()
+    return all(k.lower() in name_lower for k in keywords)
+
+matching_files = [f for f in all_files if name_has_keywords(f, KEYWORDS)]
+print(f"{len(matching_files)} files match {KEYWORDS}")
+
+(Change the words or add more to get the filter you need.)
+
+
+---
+
+4.  Pick the most recently modified one
+
+latest = max(matching_files, key=lambda f: f.stat().st_mtime)
+print("Latest file:", latest.name)
+print("Modified:", time.ctime(latest.stat().st_mtime))
+
+.stat().st_mtime returns the epoch time (seconds since 1970-01-01).
+max(..., key=...) grabs the path whose timestamp is greatest.
+
+
+---
+
+5.  Copy it to the destination
+
+destination_path = DST_DIR / latest.name          # keep the same file name
+shutil.copy2(latest, destination_path)            # copy2 preserves timestamps
+print("Copied to:", destination_path)
+
+That’s the whole workflow in bite-size pieces.
+Once each cell behaves as expected, you’re ready for the one-shot function 👇.
+
+
+---
+
+6.  The full beginner-friendly function
+
+from pathlib import Path
+import shutil
+
+def copy_latest_file(src_dir, dst_dir, keywords):
+    """
+    Search `src_dir` (incl. sub-folders) for the newest file whose *name*
+    contains *all* `keywords` (case-insensitive).  Copy it into `dst_dir`
+    and return the destination Path.
+
+    Example
+    -------
+    copy_latest_file(
+        r"C:\Data\Reports",                # source tree
+        r"C:\Data\Latest",                 # destination folder
+        keywords=["sales", "2025"]         # words that must appear in the file name
+    )
+    """
+    src_dir = Path(src_dir)
+    dst_dir = Path(dst_dir)
+    dst_dir.mkdir(parents=True, exist_ok=True)
+
+    # Collect candidate files
+    def match(p):
+        name = p.name.lower()
+        return all(k.lower() in name for k in keywords)
+
+    matches = [p for p in src_dir.rglob("*") if p.is_file() and match(p)]
+    if not matches:
+        raise FileNotFoundError(f"No files containing {keywords} found under {src_dir}")
+
+    # Latest by modification time
+    latest = max(matches, key=lambda p: p.stat().st_mtime)
+
+    # Copy it
+    target = dst_dir / latest.name
+    shutil.copy2(latest, target)   # use copy2 to preserve metadata
+    return target
+
+How to use it
+
+new_file = copy_latest_file(
+    src_dir=r"C:\Data\Reports",
+    dst_dir=r"C:\Data\Latest",
+    keywords=["sales", "2025"]
+)
+print("✅ Copied:", new_file)
+
+
+---
+
+What if I need to keep only the last N files in the destination?
+
+Add two lines at the end of the function:
+
+# --- optional clean-up: keep only N most recent files in dst_dir ---
+    N = 3
+    existing = sorted(dst_dir.glob("*"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for old in existing[N:]:
+        old.unlink()                      # delete anything older than the N freshest
+
+
+---
+
+Why these libraries?
+
+Library	Why we picked it
+
+pathlib	Clear, cross-platform paths
+shutil	Easy, reliable file copy
+time	Only for human-readable timestamp printing in demos
+
+
+Everything is in the Python standard library—no extra installs required.
+Happy automating!
+
