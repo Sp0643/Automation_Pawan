@@ -595,3 +595,59 @@ Use NumPy arrays for efficient mathematical operations and large-scale numerical
 
 Let me know if you'd like markdowns for other comparisons like **Pandas Series vs NumPy Array** or **DataFrame vs Dictionary**!
 
+
+
+
+# Basic Functions in pandas.DataFrame
+
+---
+
+## 🏗️ Structure & Type
+
+- `type(df)` : Returns the type of the DataFrame object.  
+- `len(df)` : Returns the number of rows in the DataFrame.  
+- `df.shape` : Returns a tuple representing (rows, columns).  
+- `df.dtypes` : Returns the data types of each column.  
+- `df.columns` : Returns the column labels.  
+- `df.index` : Returns the row index (labels).  
+- `df.values` : Returns the underlying NumPy array of values.  
+
+---
+
+## 🔍 Data Inspection
+
+- `df.head(n)` : Returns the first `n` rows of the DataFrame.  
+- `df.tail(n)` : Returns the last `n` rows.  
+- `df.sample(n)` : Returns a random sample of `n` rows.  
+- `df.info()` : Displays index, column names, non-null counts, and dtypes.  
+- `df.describe()` : Returns summary statistics for numeric columns.  
+- `df.isnull()` : Detects missing (NaN) values.  
+- `df.notnull()` : Detects non-missing values.  
+
+---
+
+## 🔁 Data Cleaning & Transformation
+
+- `df.drop(columns=['col1'])` : Drops specified columns.  
+- `df.dropna()` : Drops rows with any NaN values.  
+- `df.fillna(value)` : Fills NaN values with a specified value.  
+- `df.rename(columns={'old':'new'})` : Renames columns.  
+- `df.astype({'col': type})` : Changes data type of a column.  
+- `df.replace(to_replace, value)` : Replaces values in the DataFrame.
+
+---
+
+## 📊 Statistical Summary
+
+- `df.mean()` : Returns mean of numeric columns.  
+- `df.median()` : Returns median of numeric columns.  
+- `df.std()` : Returns standard deviation.  
+- `df.min()` / `df.max()` : Returns min or max values.  
+- `df.sum()` : Returns column-wise sum.  
+- `df.corr()` : Returns correlation matrix.  
+- `df.nunique()` : Returns number of unique values per column.  
+- `df.value_counts()` : Used on Series (e.g., `df['col'].value_counts()`).
+
+---
+
+✅ These functions form the foundation for exploring and manipulating tabular data using pandas DataFrames.
