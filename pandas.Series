@@ -651,3 +651,99 @@ Let me know if you'd like markdowns for other comparisons like **Pandas Series v
 ---
 
 ✅ These functions form the foundation for exploring and manipulating tabular data using pandas DataFrames.
+
+
+
+
+Sure! Here's a complete single Python markdown that combines everything shown in your image for filtering in pandas, structured cleanly for study or training material:
+
+# 🔍 Filtering in pandas
+
+Pandas filtering involves selecting a subset of rows or columns from a DataFrame or Series based on specified conditions.  
+This process is fundamental to data analysis, allowing users to isolate relevant data for further examination.
+
+---
+
+## ✅ Common Methods for Filtering
+
+### 1. Boolean Indexing
+This is the most common method, where a Boolean Series (`True`/`False` values) is created based on a condition applied to a column or multiple columns.  
+The DataFrame is then indexed with this Boolean Series, returning only the rows where the condition evaluates to `True`.
+
+```python
+filtered_df = df[df['Age'] > 30]
+
+
+---
+
+2. Using Logical Operators
+
+Multiple conditions can be combined using logical operators:
+
+& → AND
+
+| → OR
+
+~ → NOT
+
+
+Each condition should be enclosed in parentheses to avoid operator precedence issues.
+
+filtered_df = df[(df['Product'] == 'A') & (df['Sales'] > 100)]
+
+
+---
+
+3. isin() Method
+
+Filters rows where values in a column are present within a specified list or array.
+This mimics the SQL IN clause.
+
+filtered_df = df[df['City'].isin(['New York', 'London'])]
+
+
+---
+
+4. String Methods (for string columns)
+
+Used for filtering based on string patterns within a column.
+Common methods include:
+
+.str.contains()
+
+.str.startswith()
+
+.str.endswith()
+
+
+filtered_df = df[df['Name'].str.contains('John', case=False)]
+
+
+---
+
+5. .loc[] and .iloc[]
+
+Provide label-based and integer-location-based indexing, respectively.
+Can be used in combination with filtering conditions to select specific rows and columns.
+
+filtered_df = df.loc[df['Name'] == 'Sara', 'Score']
+
+
+---
+
+6. query() Method
+
+Allows filtering using a string expression, improving readability for complex filters.
+
+filtered_df = df.query("Age > 30 and Product == 'A'")
+
+
+---
+
+📌 Summary
+
+These methods offer flexibility in extracting specific subsets of data from pandas DataFrames and Series,
+catering to various filtering requirements in data analysis workflows.
+
+You can copy and paste this directly into a **Jupyter notebook markdown cell** or use it in any `.md` documentation file. Let me know if you’d like a companion notebook with code examples too.
+
