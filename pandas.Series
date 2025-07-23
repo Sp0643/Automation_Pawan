@@ -371,3 +371,89 @@ This curated list covers the most commonly used functions for data cleaning in p
 - **`df.between(a, b)`** – Check if values fall within range `a` and `b`
 
 ---
+
+
+Great! Let’s extend your story with MultiIndexing that includes categories like Vegetables and Fruits — and then show how a smart shopkeeper machine (your Python code) can generate a mixed-category bill.
+
+
+---
+
+🧺 7️⃣ MultiIndex Example with Categories: "Vegetables" and "Fruits"
+
+import pandas as pd
+
+# Define categories and items
+categories = ["Vegetable", "Vegetable", "Vegetable", "Fruit", "Fruit", "Fruit"]
+items = ["Onion", "Potato", "Brinjal", "Apple", "Banana", "Orange"]
+prices = [50, 30, 45, 100, 25, 60]
+
+# Create MultiIndex
+multi_index = pd.MultiIndex.from_arrays([categories, items], names=["Category", "Item"])
+
+# Create Series
+shop_series = pd.Series(prices, index=multi_index)
+print("🧾 Price Register:\n", shop_series)
+
+
+---
+
+🧪 8️⃣ Creating a Mixed Bill (Veg + Fruit Purchase)
+
+# Create a new bill: 2 Potatoes, 1 Brinjal, 3 Apples, 5 Bananas
+my_bill = (
+    shop_series[("Vegetable", "Potato")] * 2 +
+    shop_series[("Vegetable", "Brinjal")] * 1 +
+    shop_series[("Fruit", "Apple")] * 3 +
+    shop_series[("Fruit", "Banana")] * 5
+)
+
+print("\n💰 Total Bill for Mixed Items:", my_bill)
+
+
+---
+
+✅ Output Sample:
+
+🧾 Price Register:
+Category   Item   
+Vegetable  Onion      50
+           Potato     30
+           Brinjal    45
+Fruit      Apple     100
+           Banana     25
+           Orange     60
+dtype: int64
+
+💰 Total Bill for Mixed Items: 2*30 + 1*45 + 3*100 + 5*25 = 555
+
+
+---
+
+💡 Bonus Explanation for Learners:
+
+MultiIndex is like organizing shelves in a store: first by Category, then by Item.
+
+It helps in structuring data hierarchically.
+
+This is useful in real-life scenarios like:
+
+Supermarket billing systems
+
+Financial category breakdowns
+
+Sensor data by location and time
+
+
+
+
+---
+
+Would you like:
+
+A .ipynb notebook with this entire storyline + explanations?
+
+Quiz or exercises for learners to try creating their own bills?
+
+
+Let me know and I’ll generate it for you!
+
