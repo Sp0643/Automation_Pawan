@@ -457,3 +457,27 @@ Quiz or exercises for learners to try creating their own bills?
 
 Let me know and I’ll generate it for you!
 
+
+
+
+
+
+import pandas as pd
+
+# Define data
+items_with_category = [
+    ("Vegetable", "Onion"),
+    ("Vegetable", "Potato"),
+    ("Vegetable", "Brinjal"),
+    ("Fruit", "Apple"),
+    ("Fruit", "Banana"),
+    ("Fruit", "Orange")
+]
+prices = [50, 30, 45, 100, 25, 60]
+
+# Create MultiIndex Series
+shop_series = pd.Series(prices, index=pd.MultiIndex.from_tuples(items_with_category, names=["Category", "Item"]))
+
+# 🔍 Accessing price of Onion under Vegetable using tuple
+onion_price = shop_series[("Vegetable", "Onion")]
+print("Price of Vegetable - Onion:", onion_price)
