@@ -230,3 +230,144 @@ Certainly! Here's a single Python markdown block you can paste into a Jupyter No
 
 Let me know if you'd like a version with icons or emojis for better visual cues, or a companion code block version for hands-on practice.
 
+
+
+
+Absolutely! Below is a well-organized Python markdown block for a Jupyter Notebook Markdown cell that lists top pandas data cleaning functions with concise definitions.
+
+And after that, I’ve included a code example block for hands-on understanding. 👍
+
+
+---
+
+✅ Python Markdown Block (Paste into a Markdown Cell)
+
+# 🧹 Data Cleaning Functions in pandas
+
+## 🔍 Missing Values
+- **`.isna()`**: Detects missing values (returns True for NaN).
+- **`.notna()`**: Detects non-missing values (returns True where data is present).
+- **`.fillna(value)`**: Fills missing values with a specified value.
+- **`.dropna()`**: Drops rows (or columns) with missing values.
+
+## 🧭 Duplicates
+- **`.duplicated()`**: Returns a boolean Series indicating duplicate rows.
+- **`.drop_duplicates()`**: Removes duplicate rows.
+
+## 🧼 Replacing & Mapping
+- **`.replace(old, new)`**: Replaces values throughout the DataFrame.
+- **`.map()`**: Maps values using a function or dictionary (on Series).
+- **`.astype(type)`**: Converts data type of a column.
+
+## 🧹 Column & Row Management
+- **`.drop(labels, axis)`**: Drops specified rows or columns.
+- **`.rename()`**: Renames columns or indexes.
+- **`.apply(func)`**: Applies a function across DataFrame/Series.
+
+## 🕵️ Value Filtering & Validation
+- **`.between()`**: Filters numeric values within a range.
+- **`.clip(lower, upper)`**: Trims values outside of range.
+- **`.where(condition)`**: Keeps values where condition is True, replaces others with NaN.
+
+
+---
+
+🧪 Code Example Block (Paste into a Code Cell)
+
+import pandas as pd
+import numpy as np
+
+# Sample DataFrame
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Alice', 'David', None],
+    'Age': [25, np.nan, 25, 30, 22],
+    'Score': [88, 92, 88, np.nan, 70]
+})
+
+# Detect missing values
+print(df.isna())
+
+# Drop rows with any missing values
+cleaned_df = df.dropna()
+
+# Fill missing age with average
+df['Age'] = df['Age'].fillna(df['Age'].mean())
+
+# Check for duplicates
+print(df.duplicated())
+
+# Drop duplicate rows
+df = df.drop_duplicates()
+
+# Replace specific value
+df['Name'] = df['Name'].replace('Alice', 'Alicia')
+
+# Drop column
+df = df.drop(columns='Score')
+
+# Convert Age to integer
+df['Age'] = df['Age'].astype(int)
+
+print(df)
+
+
+---
+
+Let me know if you'd like a quiz or exercise section added to reinforce these concepts!
+
+
+
+# 🧹 Top Data Cleaning Functions in pandas (Training Reference)
+
+This curated list covers the most commonly used functions for data cleaning in pandas, including missing values, duplicates, type conversions, and structural cleanup. Ideal for quick reference or as a checklist during preprocessing.
+
+---
+
+## ✅ Top Data Cleaning Functions in pandas
+
+---
+
+### 🔍 Handling Missing Values
+
+- **`df.isna()`** – Detect missing values (NaNs)
+- **`df.notna()`** – Detect non-missing values
+- **`df.dropna()`** – Drop rows/columns with missing values
+- **`df.fillna(value)`** – Fill missing values with a specified constant, method, or interpolation
+- **`df.interpolate()`** – Fill missing values using interpolation
+
+---
+
+### 🧭 Handling Duplicates
+
+- **`df.duplicated()`** – Identify duplicated rows
+- **`df.drop_duplicates()`** – Remove duplicate rows
+
+---
+
+### 🔧 Data Replacement & Transformation
+
+- **`df.replace(old, new)`** – Replace specific values
+- **`df.map()`** – Map values using a dictionary or function (Series only)
+- **`df.apply(func)`** – Apply a function across rows or columns
+- **`df.applymap(func)`** – Apply a function element-wise (only for DataFrame)
+- **`df.astype(type)`** – Convert data type of columns
+
+---
+
+### 🧹 Dropping & Renaming
+
+- **`df.drop(labels, axis=0 or 1)`** – Drop specified rows or columns
+- **`df.rename(columns={...})`** – Rename columns
+- **`df.reset_index()`** – Reset the index to default integer values
+- **`df.set_index('column')`** – Set a column as the new index
+
+---
+
+### 🧪 Filtering & Clipping
+
+- **`df.where(condition)`** – Keep values that meet condition, replace others with NaN
+- **`df.mask(condition)`** – Opposite of `where()`, replaces values that meet condition
+- **`df.clip(lower, upper)`** – Limit values within a range
+- **`df.between(a, b)`** – Check if values fall within range `a` and `b`
+
+---
