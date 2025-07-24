@@ -747,3 +747,131 @@ catering to various filtering requirements in data analysis workflows.
 
 You can copy and paste this directly into a **Jupyter notebook markdown cell** or use it in any `.md` documentation file. Let me know if you’d like a companion notebook with code examples too.
 
+
+
+
+Absolutely! Here's how you can structure your tutorial using your provided data. We’ll walk through:
+
+1. Using .apply() to extract weekday from createdDate
+
+
+2. Using .value_counts() to analyze request volume by weekday
+
+
+3. Using .map() to modify or tag a column (e.g., adding suffix to requestStatus)
+
+
+4. Difference between .apply() vs .map()
+
+
+5. Using .apply() on a DataFrame row-wise
+
+
+
+
+---
+
+🧪 Sample Code Tutorial
+
+import pandas as pd
+
+# Sample DataFrame based on your image
+data = {
+    'requestNumber': [114692, 144578, 146134, 146425, 146426],
+    'caseNumber': [106502, 135131, 136554, 136842, 136843],
+    'requestStatus': ['QC - COMPLETE RETURN TO MAKER', 'COMPLETE', 'IN PROCESS', 'CANCELLED', 'CANCELLED'],
+    'createdDate': ['2024-10-25 02:17:20.827', '2024-11-12 16:14:18.589', 
+                    '2024-11-12 23:42:37.549', '2024-11-13 12:32:06.473', '2024-11-13 12:32:06.542']
+}
+
+df = pd.DataFrame(data)
+
+# Convert createdDate to datetime
+df['createdDate'] = pd.to_datetime(df['createdDate'])
+
+# ✅ Apply function to extract weekday
+df['createdWeekday'] = df['createdDate'].apply(lambda x: x.strftime('%A'))
+
+# ✅ Count how many requestNumbers per weekday
+weekday_counts = df['createdWeekday'].value_counts()
+
+print("📊 Request Count by Weekday:")
+print(weekday_counts)
+
+
+---
+
+🧠 Understanding .apply() vs .map() vs .applymap()
+
+1. .apply() on Series (like a single column)
+
+# Add prefix to each status using apply
+df['statusLabel'] = df['requestStatus'].apply(lambda x: f"Status: {x}")
+
+2. .map() on Series (lightweight transformation or dictionary-based)
+
+# Tagging known statuses for demo
+status_tag = {
+    'COMPLETE': '✅ Done',
+    'IN PROCESS': '🔄 Ongoing',
+    'CANCELLED': '❌ Cancelled'
+}
+
+# Only affects exact matches
+df['statusTag'] = df['requestStatus'].map(status_tag)
+
+3. .applymap() on entire DataFrame (only works on DataFrame, element-wise)
+
+# Example: converting everything to string uppercase
+df_upper = df[['requestStatus']].applymap(str.upper)
+
+
+---
+
+📚 Summary Table
+
+Function	Use Case	Works On
+
+.apply()	Row or column-wise function (flexible)	Series / DataFrame
+.map()	Simple transformation or dict mapping	Series only
+.applymap()	Element-wise operation	DataFrame only
+
+
+
+---
+
+🧠 Analogy for Explanation (Optional Fun Way)
+
+map is like a translator for each word in a sentence (each element in a column). It’s fast and direct.
+
+apply is like a smart assistant who can take a full sentence and do anything with it.
+
+applymap is like a filter that touches every word in every sentence, one by one.
+
+
+
+---
+
+🧾 Final Display
+
+print(df[['requestNumber', 'createdDate', 'createdWeekday', 'requestStatus', 'statusLabel', 'statusTag']])
+
+
+---
+
+📈 Visual (Optional):
+
+You could plot this for better engagement:
+
+import matplotlib.pyplot as plt
+
+weekday_counts.plot(kind='bar', title='Request Volume by Weekday', ylabel='Number of Requests')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+
+
+---
+
+Let me know if you'd like this wrapped in a Jupyter Notebook cell or turned into a Streamlit app!
+
