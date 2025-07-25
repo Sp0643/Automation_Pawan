@@ -1,0 +1,338 @@
+Sure! Here's the complete content of the Pandas_Series_Training_Notebook.ipynb, written in clean Markdown and Python code cells for your review:
+
+
+---
+
+📘 Markdown & Code Cell Breakdown
+
+
+---
+
+Markdown Cell: Notebook Title
+
+# Pandas Series & DataFrame Training Notebook
+
+This notebook contains examples and explanations of Pandas Series and DataFrame operations, designed for beginner-friendly training sessions.
+
+
+---
+
+Markdown Cell: Section 1
+
+## Section 1: Creating Series from List, Dictionary, and Mixed Types
+
+
+---
+
+Code Cell: Basic Series Creation
+
+import pandas as pd
+
+# Creating Series from list
+topics = ["variables", "pandas", "numpy"]
+s1 = pd.Series(topics)
+print("Series from list:")
+print(s1)
+
+# Creating Series from numbers
+s2 = pd.Series([5, 7, 8, 9, 15, 5, 50, 13])
+print("Series from numbers:")
+print(s2)
+
+# Creating Series from boolean values
+s3 = [True, False, False, False, True, True, False]
+print("Series from booleans:")
+print(pd.Series(s3))
+
+# Creating mixed-type Series
+s3a = pd.Series([5, 7, 8, 9, 15, 5, 50, 13, "pandas", True, 5.87])
+print("Mixed-type Series:")
+print(s3a)
+
+
+---
+
+Code Cell: Series from Dictionary and Custom Index
+
+# Series from dictionary
+dictionary = {"Monday": "EDA", "Tuesday": "Pandas", "Wednesday": "Selenium"}
+s4 = pd.Series(dictionary)
+print("Series from dictionary:")
+print(s4)
+
+# Series using index parameter
+topics = ["Foundation", "Pandas-EDA", "Automation-Selenium", "ETL"]
+weekdays = ["Monday", "Tuesday", "Wednesday", "Friday"]
+
+s5 = pd.Series(topics)
+s6 = pd.Series(weekdays)
+s7 = pd.Series(topics, index=weekdays)
+s8 = pd.Series(weekdays, index=topics)
+
+print("Series with default index:")
+print(s5)
+
+print("Series with weekdays as values:")
+print(s6)
+
+print("Series with weekdays as index:")
+print(s7)
+
+print("Series with topics as index:")
+print(s8)
+
+
+---
+
+Markdown Cell: Section 2
+
+## Section 2: Series Properties and Exploration
+
+
+---
+
+Code Cell: Series Attributes and Exploration
+
+print("Length of Series:", len(s2))
+print("Shape:", s2.shape)
+print("Data type:", s2.dtype)
+print("Index:", s2.index)
+print("Values:", s2.values)
+
+# Exploring Series
+print("First 5 values:", s2.head())
+print("Last 5 values:", s2.tail())
+print("Random sample (2 values):", s2.sample(2))
+print("Unique values:", s2.unique())
+print("Value counts:", s2.value_counts())
+
+
+---
+
+Code Cell: Sorting and Reindexing
+
+print("Sort by values (descending):")
+print(s2.sort_values(ascending=False))
+
+print("Sort by index:")
+print(s7.sort_index())
+
+print("Reset index:")
+print(s7.reset_index())
+
+# Reindexing
+weekdays_new = ["Monday", "Tuesday", "Saturday", "Sunday"]
+s7 = pd.Series(topics, index=weekdays)
+print("Reindexed Series:")
+print(s7.reindex(weekdays_new))
+
+
+---
+
+Markdown Cell: Section 3
+
+## Section 3: Series Slicing Examples
+
+
+---
+
+Code Cell: Series Slicing
+
+print("Full series from index 0:")
+print(s2[0:])
+
+print("Full series using [:]:")
+print(s2[:])
+
+print("First 3 elements:")
+print(s2[:3])
+
+print("Reversed series:")
+print(s2[::-1])
+
+
+---
+
+Markdown Cell: Section 4
+
+## Section 4: Shopkeeper Analogy with Series
+
+
+---
+
+Code Cell: Shopkeeper Series
+
+vegetable = ["Onion", "Potato", "Brinjal"]
+prices = [50, 30, 45]
+total_price = pd.Series(prices, index=vegetable)
+print("Total price list:")
+print(total_price)
+
+# Purchase calculation
+my_purchase = total_price["Onion"] * 5 + total_price["Potato"] * 2.5
+print("Total Purchase:", my_purchase)
+
+# Using codes instead of names
+vegetable_code = [100, 101, 102]
+price = pd.Series(prices, index=vegetable_code)
+print("Prices with codes:")
+print(price)
+
+my_bill = price[100] * 5 + price[101] * 2.5
+print("Bill using codes:", my_bill)
+
+
+---
+
+Markdown Cell: Section 5
+
+## Section 5: MultiIndex in Series
+
+
+---
+
+Code Cell: MultiIndex Series
+
+categories = ["Vegetable", "Vegetable", "Vegetable", "Fruit", "Fruit", "Fruit"]
+items = ["Onion", "Potato", "Brinjal", "Apple", "Banana", "Orange"]
+prices = [50, 30, 45, 100, 25, 60]
+
+multi_index = pd.MultiIndex.from_arrays([categories, items], names=["Category", "Item"])
+shop_series = pd.Series(prices, index=multi_index)
+
+print("Shopkeeper price list with multi-index:")
+print(shop_series)
+
+# Accessing values
+onion_price = shop_series["Vegetable", "Onion"]
+orange_price = shop_series["Fruit", "Orange"] * 2
+bill = onion_price + orange_price
+print("Total bill (Onion + 2x Orange):", bill)
+
+
+---
+
+Let me know if you’d like me to now add:
+
+The DataFrame section (from the last 4 images),
+
+Exercises and quiz cells,
+
+Or bundle it all into one enhanced training package.
+
+
+
+
+
+Here is the complete Pandas DataFrame training code, cleanly formatted with comments and markdown-style section headers. You can paste this into your Jupyter notebook:
+
+
+---
+
+Section 6: Pandas DataFrame Creation and Exploration
+
+
+---
+
+1. Create DataFrame from Dictionary of Lists
+
+import pandas as pd
+
+# Create a DataFrame with multiple columns
+data = {
+    'DataSource': ['MongoDB', 'Oracle', 'Teradata', 'BO', 'SharePoint', 'EDL', 'PBRS', 'Outlook'],
+    'NumberOfReports': [5, 7, 8, 9, 15, 5, 50, 13],
+    'PrimaryOwner': ['Sohan', 'Sandeep', 'Soumya', 'Sushma', 'Varnika', 'Noki', 'Vishal', 'Nitin']
+}
+
+df_Reports1 = pd.DataFrame(data)
+
+# Display top and bottom rows
+print("Top 3 Rows:")
+print(df_Reports1.head(3))
+
+print("\nBottom 3 Rows:")
+print(df_Reports1.tail(3))
+
+
+---
+
+2. Create DataFrame from List of Lists
+
+# Define data as list of lists
+data = [
+    ['MongoDB', 5],
+    ['Oracle', 7],
+    ['Teradata', 8],
+    ['BO', 9]
+]
+
+# Create DataFrame with custom column names
+df_Reports2 = pd.DataFrame(data, columns=['DataSource', 'NumberOfReports'])
+
+print("DataFrame from list of lists:")
+print(df_Reports2.head())
+
+
+---
+
+3. Create DataFrame from List of Dictionaries
+
+# Each dictionary represents a row
+data = [
+    {'DataSource': 'MongoDB', 'NumberOfReports': 5},
+    {'DataSource': 'Oracle', 'NumberOfReports': 7},
+    {'DataSource': 'EDL', 'NumberOfReports': 5}
+]
+
+df_Reports3 = pd.DataFrame(data)
+print("DataFrame from list of dictionaries:")
+print(df_Reports3.head())
+
+
+---
+
+4. Explore DataFrame Structure
+
+# View metadata and structure
+print("Type of object:", type(df_Reports1))
+print("Length:", len(df_Reports1))
+print("Shape:", df_Reports1.shape)
+print("Data types:\n", df_Reports1.dtypes)
+print("Columns:", df_Reports1.columns)
+print("Index:", df_Reports1.index)
+print("Values:\n", df_Reports1.values)
+
+
+---
+
+5. Descriptive Statistics and Sampling
+
+# Summary statistics
+print("Mean:", df_Reports1['NumberOfReports'].mean())
+print("Standard Deviation:", df_Reports1['NumberOfReports'].std())
+
+# Describe entire DataFrame
+print("Describe:\n", df_Reports1.describe())
+
+# Sample rows
+print("Head:\n", df_Reports1.head(2))
+print("Tail:\n", df_Reports1.tail(1))
+print("Sample:\n", df_Reports1.sample(3))
+
+# Info summary
+print("Info:")
+df_Reports1.info()
+
+# Null checks
+print("Is Null:\n", df_Reports1.isnull())
+print("Not Null:\n", df_Reports1.notnull())
+
+
+---
+
+Let me know if you want this extended with filtering, grouping, or plotting examples.
+
+
+
+
