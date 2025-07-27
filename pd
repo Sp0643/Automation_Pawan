@@ -336,3 +336,169 @@ Let me know if you want this extended with filtering, grouping, or plotting exam
 
 
 
+
+Here is the full updated code with one-liner comments and clear line separators using print("-" * 40) for better readability:
+
+# Length of the Series
+print("Length of Series:", len(s2))
+print("-" * 40)
+
+# Shape of the Series
+print("Shape:", s2.shape)
+print("-" * 40)
+
+# Data type of the Series
+print("Data type:", s2.dtype)
+print("-" * 40)
+
+# Index of the Series
+print("Index:", s2.index)
+print("-" * 40)
+
+# Values in the Series
+print("Values:", s2.values)
+print("-" * 40)
+
+# First 5 rows
+print(s2.head())
+print("-" * 40)
+
+# Last 5 rows
+print(s2.tail())
+print("-" * 40)
+
+# Sample 1 random value
+print(s2.sample())
+print("-" * 40)
+
+# Unique values
+print(s2.unique())
+print("-" * 40)
+
+# Sample 2 random values
+print(s2.sample(2))
+print("-" * 40)
+
+# Unique values again (redundant but shows usage)
+print(s2.unique())
+print("-" * 40)
+
+# Value counts (frequency of each value)
+print(s2.value_counts())
+print("-" * 40)
+
+# Sum of all values
+print("Sum:", s2.sum())
+print("-" * 40)
+
+# Minimum value
+print("Min:", s2.min())
+print("-" * 40)
+
+# Maximum value
+print("Max:", s2.max())
+print("-" * 40)
+
+# Mean value
+print("Mean:", s2.mean())
+print("-" * 40)
+
+# Median value
+print("Median:", s2.median())
+print("-" * 40)
+
+# Mode value
+print("Mode:", s2.mode())
+print("-" * 40)
+
+# Standard deviation
+print("Standard Deviation:", s2.std())
+print("-" * 40)
+
+# Summary statistics
+print("\nDescribe:\n", s2.describe())
+print("-" * 40)
+
+# Sort values in descending order
+print(f"Sort Values:\n{s2.sort_values(ascending=False)}")
+print("-" * 40)
+
+# Sort index of another Series s7
+print(s7.sort_index())
+print("-" * 40)
+
+# Reset index of Series s7
+print(s7.reset_index())
+print("-" * 40)
+
+Let me know if you want to wrap this in a Jupyter Notebook with markdown sections!
+
+
+
+
+Here is the updated version of your DataFrame inspection and summary code with one-liner comments and clear line separators (print("-" * 40)) for better readability:
+
+# Check type of object
+print("Type of object:", type(df_Reports1))
+print("-" * 40)
+
+# Get number of rows
+print("Length:", len(df_Reports1))
+print("-" * 40)
+
+# Get shape (rows, columns)
+print("Shape:", df_Reports1.shape)
+print("-" * 40)
+
+# Check data types of each column
+print("Data types:\n", df_Reports1.dtypes)
+print("-" * 40)
+
+# List of column names
+print("Columns:", df_Reports1.columns)
+print("-" * 40)
+
+# Get index range
+print("Index:", df_Reports1.index)
+print("-" * 40)
+
+# Access all values
+print("Values:\n", df_Reports1.values)
+print("-" * 40)
+
+
+# Display top 2 rows
+print("Head:\n", df_Reports1.head(2))
+print("-" * 40)
+
+# Display last row
+print("Tail:\n", df_Reports1.tail(1))
+print("-" * 40)
+
+# Get 3 random rows
+print("Sample:\n", df_Reports1.sample(3))
+print("-" * 40)
+
+# Display concise summary of the DataFrame
+print("Info:")
+df_Reports1.info()
+print("-" * 40)
+
+# Show statistical summary for numeric columns
+print("Describe:\n", df_Reports1.describe())
+print("-" * 40)
+
+# Show True for NaN values
+print("Isnull:\n", df_Reports1.isnull())
+print("-" * 40)
+
+# Show True for non-NaN values
+print("Notnull:\n", df_Reports1.notnull())
+print("-" * 40)
+
+Let me know if you'd like to turn this into a formatted notebook section or add output samples.
+
+
+
+
+
