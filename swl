@@ -1,0 +1,50 @@
+Absolutely—no need to optimize anything. The simplest, safe way is to wrap your whole query and use a window function to keep only the latest row per dpid.
+
+Use this pattern (Oracle):
+
+SELECT *
+FROM (
+    SELECT q.*,
+           ROW_NUMBER() OVER (
+               PARTITION BY q.DPID                -- <-- your dpid column
+               ORDER BY    q.CREATED_DATE DESC    -- <-- your “created date” column
+           ) AS rn
+    FROM (
+        /* ====== YOUR EXISTING QUERY GOES HERE, UNCHANGED ====== */
+        -- SELECT ... FROM ... lots of joins/subqueries ...
+        /* ======================================================= */
+    ) q
+)
+WHERE rn = 1;
+
+What to plug in for the column names (based on your screenshots)
+
+DPID → looks like DEA_PID_DEAL (it was aliased as “Deal PID”).
+
+CREATED_DATE → I can see fields like TRE_DTE_REC_CREATE or PRE_DTE_CREATE (and an alias “Create Date”). Use whichever column in your SELECT truly represents the creation timestamp.
+
+
+> If your inner query aliases have spaces (e.g., "Create Date"), either:
+
+refer to it exactly as q."Create Date" in the ORDER BY, or
+
+add a clean alias in the inner wrapper:
+
+SELECT <existing columns>,
+       <your-create-date-expression> AS CREATED_DATE
+FROM   (...)
+
+
+
+
+Tie-breaker (optional but recommended)
+
+If two rows share the exact same created date for the same dpid, add a deterministic tie-breaker (e.g., transaction rid) to the ORDER BY:
+
+ROW_NUMBER() OVER (
+  PARTITION BY q.DPID
+  ORDER BY q.CREATED_DATE DESC, q.TRANSACTION_RID DESC
+) AS rn
+
+That’s it. Paste your current query between the inner parentheses and this will return one row per DPID with the latest created date.
+
